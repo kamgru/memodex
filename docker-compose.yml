@@ -1,0 +1,22 @@
+services:
+  
+  app:
+    build: ./src
+    ports:
+      - "5000:80"
+
+  db:
+    image: "mcr.microsoft.com/mssql/server:2022-CU4-ubuntu-20.04"
+    volumes:
+      - "mssql:/app/data"
+    environment:
+      - ACCEPT_EULA=y
+      - MSSQL_PID=express
+      - MSSQL_SA_PASSWORD_FILE=/run/secrets/db_password
+
+volumes:
+  mssql:
+
+secrets:
+  db_password:
+    file: ./db_password.txt
