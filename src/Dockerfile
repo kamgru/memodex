@@ -8,7 +8,7 @@ WORKDIR /src
 COPY ["Memodex.WebApp/Memodex.WebApp.csproj", "Memodex.WebApp/"]
 RUN dotnet restore "Memodex.WebApp/Memodex.WebApp.csproj"
 COPY . .
-WORKDIR "/src/Memodex.WebApp"
+WORKDIR "Memodex.WebApp"
 RUN dotnet build "Memodex.WebApp.csproj" -c Release -o /app/build
 
 FROM build AS publish
