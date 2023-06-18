@@ -2,3 +2,4 @@ bin/
 obj/
 .idea/
 Properties/
+db_password.txt
