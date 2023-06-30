@@ -1,0 +1,41 @@
+@page
+@model Memodex.WebApp.Pages.BrowseCategories
+
+<div class="container">
+    <table>
+        <tbody>
+        @foreach (BrowseCategories.CategoryItem item in Model.Data.Items)
+        {
+            <tr data-item-id="@item.Id">
+                <td>@item.Name</td>
+                <td>@item.ItemCount</td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+        <tr>
+            <td>
+                @if (Model.Data.TotalPages <= 5)
+                {
+                    for (int i = 1; i <= Model.Data.TotalPages; i++)
+                    {
+                        <a href="?p=@i&n=@Model.Data.ItemCount" class="@(Model.Data.Page == i ? "current-page" : "")">@i</a>
+                    }
+                }
+                else
+                {
+                    <a href="?page=1&n=@Model.Data.ItemCount">1</a>
+                    for (int i = Model.Data.Page - 2; i <= Model.Data.Page + 2; i++)
+                    {
+                        if (i > 1 && i < Model.Data.TotalPages)
+                        {
+                            <a href="?p=@i&n=@Model.Data.ItemCount" class="@(Model.Data.Page == i ? "current-page" : "")">@i</a>
+                        }
+                    }
+                    <a href="?p=@(Model.Data.TotalPages)&n=@Model.Data.ItemCount">@Model.Data.TotalPages</a>
+                }
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+</div>

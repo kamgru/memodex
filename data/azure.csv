@@ -1,0 +1,20 @@
+Azure|What is Azure?|Microsoft's cloud computing platform and service
+Azure|What are the main components of Azure?|Compute, Storage, Networking, and Databases
+Azure|What is Azure Virtual Machine (VM)?|A virtualized computing resource running on Azure
+Azure|What is Azure Blob Storage?|A scalable object storage service for unstructured data
+Azure|What is Azure App Service?|A platform-as-a-service (PaaS) offering for building web and mobile apps
+Azure|What is Azure Functions?|A serverless computing service for running event-triggered code
+Azure|What is Azure SQL Database?|A managed relational database service for Azure
+Azure|What is Azure Cosmos DB?|A globally distributed, multi-model database service
+Azure|What is Azure Active Directory (Azure AD)?|Microsoft's cloud-based identity and access management service
+Azure|What is Azure DevOps?|A set of development tools and services for planning, building, and deploying applications
+Azure|What is Azure Kubernetes Service (AKS)?|A managed container orchestration service for deploying and managing containers
+Azure|What is Azure Functions?|A serverless compute service that lets you run event-triggered code
+Azure|What is Azure Logic Apps?|A cloud-based service that allows you to create and run automated workflows
+Azure|What is Azure Cognitive Services?|A set of APIs and services that enable developers to add AI capabilities to applications
+Azure|What is Azure IoT Hub?|A fully managed service for enabling reliable and secure communication between IoT devices and the cloud
+Azure|What is Azure Machine Learning?|A cloud-based service for building, deploying, and managing machine learning models
+Azure|What is Azure Data Factory?|A cloud-based data integration service for orchestrating and automating data workflows
+Azure|What is Azure Monitor?|A service that provides comprehensive monitoring and diagnostics for Azure resources
+Azure|What is Azure Security Center?|A unified security management and advanced threat protection service for Azure
+Azure|What is Azure Resource Manager (ARM)?|A management framework for deploying, managing, and organizing Azure resources

@@ -5,15 +5,18 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>227a50c5-f9de-466f-98cf-c2f238846ff3</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="MediatR" Version="12.0.1" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.7" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.7">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.7" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.7" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.7">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
