@@ -12,7 +12,9 @@ services:
     environment:
       - ACCEPT_EULA=y
       - MSSQL_PID=express
-      - MSSQL_SA_PASSWORD_FILE=/run/secrets/db_password
+      - MSSQL_SA_PASSWORD=${admin_password}
+    ports:
+      - "1433:1433"
 
 volumes:
   mssql:

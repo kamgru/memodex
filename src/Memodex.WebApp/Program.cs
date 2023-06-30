@@ -1,9 +1,15 @@
-var builder = WebApplication.CreateBuilder(args);
+using System.Reflection;
+using Memodex.WebApp.Data;
+using Microsoft.EntityFrameworkCore;
 
-// Add services to the container.
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddRazorPages();
+builder.Services.AddDbContext<MemodexContext>(
+    opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("MemodexDb")));
+builder.Services.AddMediatR(opt => opt.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
