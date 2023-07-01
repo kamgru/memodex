@@ -17,7 +17,11 @@ public class MemodexContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Flashcard>()
-            .HasOne(flashcard => flashcard.Category)
+            .HasOne(flashcard => flashcard.Deck)
             .WithMany(category => category.Flashcards);
+
+        modelBuilder.Entity<Deck>()
+            .HasOne(deck => deck.Category)
+            .WithMany(category => category.Decks);
     }
 }
