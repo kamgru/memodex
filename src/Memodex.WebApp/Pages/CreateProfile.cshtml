@@ -1,0 +1,11 @@
+@page
+@model Memodex.WebApp.Pages.CreateProfile
+
+<div class="container">
+    <form method="post">
+        <label asp-for="FormData.Name">Name</label>
+        <input asp-for="FormData.Name" />
+        <span asp-validation-for="FormData.Name">Name is required</span>
+        <input type="submit" value="Create Profile" />
+    </form>
+</div>
