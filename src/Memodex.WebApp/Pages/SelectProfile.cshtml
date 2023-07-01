@@ -1,0 +1,20 @@
+@page
+@model Memodex.WebApp.Pages.SelectProfile
+
+<div class="container">
+    <h1>Who's using Memodex?</h1>
+    <table>
+        @foreach (SelectProfile.ProfileItem item in Model.Profiles)
+        {
+            <tr>
+                <td>
+                    <form method="post">
+                        <input type="hidden" name="Id" value="@item.Id"/>
+                        <input type="hidden" name="Name" value="@item.Name"/>
+                        <input type="submit" value="@item.Name"/>
+                    </form>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
