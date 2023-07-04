@@ -41,7 +41,7 @@ namespace Memodex.WebApp.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Memodex.WebApp.Data.Deck", b =>
@@ -69,7 +69,7 @@ namespace Memodex.WebApp.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Deck");
+                    b.ToTable("Deck", (string)null);
                 });
 
             modelBuilder.Entity("Memodex.WebApp.Data.Flashcard", b =>
@@ -95,7 +95,7 @@ namespace Memodex.WebApp.Data.Migrations
 
                     b.HasIndex("DeckId");
 
-                    b.ToTable("Flashcards");
+                    b.ToTable("Flashcards", (string)null);
                 });
 
             modelBuilder.Entity("Memodex.WebApp.Data.Profile", b =>
@@ -112,7 +112,7 @@ namespace Memodex.WebApp.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Profiles");
+                    b.ToTable("Profiles", (string)null);
                 });
 
             modelBuilder.Entity("Memodex.WebApp.Data.Deck", b =>
