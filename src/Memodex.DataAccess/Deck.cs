@@ -1,4 +1,4 @@
-namespace Memodex.WebApp.Data;
+namespace Memodex.DataAccess;
 
 public class Deck
 {
@@ -6,6 +6,7 @@ public class Deck
     public required string Name { get; set; }
     public string? Description { get; set; }
     public int ItemCount { get; set; }
+    public int CategoryId { get; set; }
     public ICollection<Flashcard> Flashcards { get; set; } = new List<Flashcard>();
-    public Category Category { get; set; }
+    public Category Category { get; set; } = null!;
 }

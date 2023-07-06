@@ -1,4 +1,4 @@
-namespace Memodex.WebApp.Data;
+namespace Memodex.DataAccess;
 
 public class Profile
 {
