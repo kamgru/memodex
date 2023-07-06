@@ -1,6 +1,7 @@
+using Memodex.WebApp.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Memodex.WebApp.Data;
+namespace Memodex.DataAccess;
 
 public class MemodexContext : DbContext 
 { 
@@ -13,7 +14,8 @@ public class MemodexContext : DbContext
     public DbSet<Flashcard> Flashcards => Set<Flashcard>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Profile> Profiles => Set<Profile>();
-    
+    public DbSet<Deck> Decks => Set<Deck>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Flashcard>()
@@ -23,5 +25,8 @@ public class MemodexContext : DbContext
         modelBuilder.Entity<Deck>()
             .HasOne(deck => deck.Category)
             .WithMany(category => category.Decks);
+        
+        modelBuilder.Entity<Deck>()
+            .ToTable("Decks");
     }
 }
