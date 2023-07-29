@@ -1,5 +1,4 @@
 using Memodex.DataAccess;
-using Memodex.WebApp.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Memodex.Cli;

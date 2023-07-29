@@ -23,6 +23,14 @@ public static class DeckImportCommandFactory
             IsRequired = true
         };
 
+        Option<string> descriptionOption = new Option<string>(
+            new[] { "--description", "-d" },
+            description: "The description of the deck to import"
+        )
+        {
+            IsRequired = true
+        };
+
         Option<int> categoryIdOption = new Option<int>(
             new[] { "--category-id", "-c" },
             description: "The category id of the deck to import"
@@ -33,24 +41,25 @@ public static class DeckImportCommandFactory
 
         Command command = new("import", "Import a deck to the database")
         {
-            pathOption,
             nameOption,
-            categoryIdOption
+            descriptionOption,
+            categoryIdOption,
+            pathOption,
         };
 
-        command.SetHandler((name, categoryId, filename) =>
+        command.SetHandler((name, description, categoryId, filename) =>
         {
             MemodexContext memodexContext = MemodexContextFactory.Create();
             Deck deck = new()
             {
                 Name = name,
                 CategoryId = categoryId,
-                Flashcards = new List<Flashcard>()
+                Flashcards = new List<Flashcard>(),
+                Description = description
             };
 
             using TextReader textReader = File.OpenText(filename);
-            string? line;
-            while ((line = textReader.ReadLine()) != null)
+            while (textReader.ReadLine() is { } line)
             {
                 string[] parts = line.Split('|');
                 string question = parts[0];
@@ -64,7 +73,7 @@ public static class DeckImportCommandFactory
 
             memodexContext.Decks.Add(deck);
             memodexContext.SaveChanges();
-        }, nameOption, categoryIdOption, pathOption);
+        }, nameOption, descriptionOption, categoryIdOption, pathOption);
         return command;
     }
 }

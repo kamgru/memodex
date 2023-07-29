@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Data\" />
+      <_ContentIncludedByDefault Remove="Pages\Shared\Components\PickCategory\Default.cshtml" />
     </ItemGroup>
 
 </Project>
