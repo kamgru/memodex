@@ -1,10 +1,8 @@
 using MediatR;
 using Memodex.DataAccess;
-using Memodex.WebApp.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 
 namespace Memodex.WebApp.Pages;
 
@@ -24,7 +22,7 @@ public class SelectProfile : PageModel
         Profiles = await _mediator.Send(new GetProfilesRequest());
         if (Profiles.Count == 0)
         {
-            return RedirectToPage("SelectProfile");
+            return RedirectToPage("CreateProfile");
         } 
         
         return Page();

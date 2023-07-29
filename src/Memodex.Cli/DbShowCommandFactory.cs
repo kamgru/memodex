@@ -19,5 +19,6 @@ public static class DbShowCommandFactory
         {
             Console.WriteLine("No connection string found. Please set one using the 'db set' command.");
         }
+        Console.WriteLine(connectionString);
     }
 }

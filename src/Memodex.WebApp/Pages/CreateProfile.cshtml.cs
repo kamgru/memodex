@@ -1,6 +1,5 @@
 using MediatR;
 using Memodex.DataAccess;
-using Memodex.WebApp.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 

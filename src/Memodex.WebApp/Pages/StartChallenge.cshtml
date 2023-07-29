@@ -1,0 +1,24 @@
+@page
+@model Memodex.WebApp.Pages.StartChallenge
+
+@if (Model.SelectedCategoryId is null)
+{
+    <div>
+        @foreach(var category in Model.Categories)
+        {
+            <a href="@Url.Page("StartChallenge", new { categoryId = category.Id })">@category.Name</a>
+        }
+    </div>
+}
+else
+{
+    <div>
+        @foreach (var deck in Model.Decks)
+        {
+            <form method="post">
+                <input type="hidden" value="@deck.Id" name="deckId" />
+                <button type="submit">@deck.Name</button>
+            </form>
+        }
+    </div>
+}
