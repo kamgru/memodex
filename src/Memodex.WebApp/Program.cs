@@ -1,6 +1,5 @@
 using System.Reflection;
 using Memodex.DataAccess;
-using Memodex.WebApp.Data;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 

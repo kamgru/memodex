@@ -1,0 +1,44 @@
+@page
+@model Engage
+
+@{
+    Layout = "_Layout";
+}
+
+@if (Model.CurrentFlashcard is null || Model.Input is null)
+{
+    <span>error</span>
+}
+else
+{
+    <div>
+        <div>
+            @Model.CurrentFlashcard.Question
+        </div>
+        <div>
+            <button id="reveal-btn">Reveal Answer</button>
+        </div>
+        <div id="answer-container" style="display: none">
+            @Model.CurrentFlashcard.Answer
+        </div>
+        <div>
+            <form method="post">
+                <input type="hidden" asp-for="Input!.ChallengeId"/> 
+                <input type="hidden" asp-for="Input!.FlashcardId"/> 
+                <label>
+                <input type="checkbox" asp-for="Input!.NeedsReview"/>
+                    Mark for review
+                </label>
+                <input type="submit" value="Next"/>
+            </form>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.getElementById("reveal-btn").addEventListener("click", function () {
+            document.getElementById("answer-container").style.display = "block";
+        });
+    </script>
+}
