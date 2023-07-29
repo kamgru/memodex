@@ -1,6 +1,5 @@
 using System.CommandLine;
 using Memodex.DataAccess;
-using Memodex.WebApp.Data;
 
 namespace Memodex.Cli;
 

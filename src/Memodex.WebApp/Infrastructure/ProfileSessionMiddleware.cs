@@ -13,6 +13,11 @@ public class ProfileSessionMiddleware
     
     public async Task InvokeAsync(HttpContext context, IMediator mediator)
     {
+        if (context.Request.Path == "/CreateProfile")
+        {
+            await _next(context);
+            return;
+        }
         if (context.Request.Path == "/SelectProfile")
         {
             await _next(context);

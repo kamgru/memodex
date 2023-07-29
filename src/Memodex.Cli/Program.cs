@@ -4,6 +4,7 @@ using Memodex.Cli;
 Command dbCommand = new Command("db");
 dbCommand.AddCommand(DbSetCommandFactory.Create());
 dbCommand.AddCommand(DbShowCommandFactory.Create());
+dbCommand.AddCommand(DbWipeCommandFactory.Create());
 
 Command categoryCommand = new Command("category");
 categoryCommand.AddCommand(CategoryAddCommandFactory.Create());
