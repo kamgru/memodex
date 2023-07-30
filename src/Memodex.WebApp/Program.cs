@@ -12,6 +12,12 @@ builder.Services.AddMediatR(opt => opt.RegisterServicesFromAssembly(Assembly.Get
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddControllersWithViews()
+        .AddRazorRuntimeCompilation();
+}
+
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.

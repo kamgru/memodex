@@ -2,7 +2,6 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+    Layout = "Shared/_Layout.cshtml";
 }
-<div>
-    <a href="@Url.Page("StartChallenge")">Start Challenge</a>
-</div>
+<a href="@Url.Page("StartChallenge")" class="font-size-xl">Start Challenge</a>
