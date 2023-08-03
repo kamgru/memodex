@@ -56,7 +56,8 @@ public class CreateProfile : PageModel
         { 
             _memodexContext.Profiles.Add(new Profile
             {
-                Name = request.Name
+                Name = request.Name,
+                AvatarPath = "default.png"
             });
             
             return _memodexContext.SaveChangesAsync(cancellationToken);    

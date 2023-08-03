@@ -50,24 +50,37 @@ public class SelectProfile : PageModel
     {
         public int Id { get; set; }
         public required string Name { get; set; }
+        public required string AvatarPath { get; set; }
     }
     
     public class GetProfilesHandler : IRequestHandler<GetProfilesRequest, List<ProfileItem>>
     {
         private readonly MemodexContext _memodexContext;
+        private readonly IConfiguration _configuration;
 
-        public GetProfilesHandler(MemodexContext memodexContext)
+        public GetProfilesHandler(MemodexContext memodexContext, IConfiguration configuration)
         {
             _memodexContext = memodexContext;
+            _configuration = configuration;
         }
 
         public async Task<List<ProfileItem>> Handle(GetProfilesRequest request, CancellationToken cancellationToken)
         {
+            string? rootPath = _configuration.GetSection("Media")
+                .GetSection("Avatars")
+                .GetValue<string>("Path");
+
+            if (string.IsNullOrEmpty(rootPath))
+            {
+                throw new InvalidOperationException("Missing configuration for Media:Avatars:Path.");
+            }
+            
             return await _memodexContext.Profiles
                 .Select(item => new ProfileItem
                 {
                     Id = item.Id,
-                    Name = item.Name
+                    Name = item.Name,
+                    AvatarPath = Path.Combine("media", rootPath, $"t_{item.AvatarPath}")
                 })
                 .ToListAsync(cancellationToken);
         }
