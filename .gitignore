@@ -3,3 +3,4 @@ obj/
 .idea/
 db_password.txt
 node_modules/
+appsettings.Development.json
