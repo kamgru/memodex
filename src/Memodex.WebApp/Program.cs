@@ -2,6 +2,7 @@ using System.Reflection;
 using Memodex.DataAccess;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        app.Configuration.GetSection("Media").GetValue<string>("Path")),
+    RequestPath = "/media"
+});
 app.UseSession();
 app.UseRouting();
 app.UseAuthorization();
