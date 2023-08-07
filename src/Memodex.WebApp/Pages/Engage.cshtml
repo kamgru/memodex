@@ -11,22 +11,22 @@
 }
 else
 {
-    <div>
-        <div>
+    <div class="w-9/12 mx-auto mt-10">
+        <div class="border p-10">
             @Model.CurrentFlashcard.Question
         </div>
-        <div>
-            <button id="reveal-btn">Reveal Answer</button>
+        <div class="mt-10">
+            <button id="reveal-btn" class="p-2 border-green-400 rounded bg-green-600">Reveal Answer</button>
         </div>
         <div id="answer-container" style="display: none">
             @Model.CurrentFlashcard.Answer
         </div>
         <div>
             <form method="post">
-                <input type="hidden" asp-for="Input!.ChallengeId"/> 
-                <input type="hidden" asp-for="Input!.FlashcardId"/> 
+                <input type="hidden" asp-for="Input!.ChallengeId"/>
+                <input type="hidden" asp-for="Input!.FlashcardId"/>
                 <label>
-                <input type="checkbox" asp-for="Input!.NeedsReview"/>
+                    <input type="checkbox" asp-for="Input!.NeedsReview"/>
                     Mark for review
                 </label>
                 <input type="submit" value="Next"/>
