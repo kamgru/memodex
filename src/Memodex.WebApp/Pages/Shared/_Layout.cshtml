@@ -1,14 +1,30 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@using Memodex.WebApp.Infrastructure
+@using Microsoft.AspNetCore.Antiforgery
+@inject IProfileProvider ProfileProvider
+@inject IAntiforgery Xrsf
+
+@{
+    CurrentProfile? profile = await ProfileProvider.GetSelectedProfileAsync();
+}
+
+<!DOCTYPE html>
+<html lang="en" class="h-full @(profile?.PreferredTheme)" data-profile-id="@profile?.Id">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - Memodex.WebApp</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <meta name="AntiForgeryToken" content="@Xrsf.GetAndStoreTokens(Context).RequestToken" />
 </head>
-<body>
+@if (profile is not null)
+{
+    <partial name="_NavBar" model="profile"/>
+}
+<body class="h-full bg-gray-50 dark:bg-slate-800 flex flex-col">
+
+
 <div class="container mx-auto">
-    <main role="main" >
+    <main role="main">
         @RenderBody()
     </main>
 </div>
