@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using MediatR;
 
 namespace Memodex.WebApp.Infrastructure;
@@ -5,7 +6,12 @@ namespace Memodex.WebApp.Infrastructure;
 public class ProfileSessionMiddleware
 {
     private readonly RequestDelegate _next;
-
+    private readonly ImmutableHashSet<string> _allowedPaths = ImmutableHashSet.Create(
+        "/editprofile",
+        "/createprofile",
+        "/selectprofile"
+    );
+    
     public ProfileSessionMiddleware(RequestDelegate next)
     {
         _next = next;
@@ -13,12 +19,7 @@ public class ProfileSessionMiddleware
     
     public async Task InvokeAsync(HttpContext context, IMediator mediator)
     {
-        if (context.Request.Path == "/CreateProfile")
-        {
-            await _next(context);
-            return;
-        }
-        if (context.Request.Path == "/SelectProfile")
+        if (_allowedPaths.Contains(context.Request.Path.ToString().ToLowerInvariant()))
         {
             await _next(context);
             return;
