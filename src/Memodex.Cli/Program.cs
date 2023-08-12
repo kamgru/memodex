@@ -1,21 +1,21 @@
 ﻿using System.CommandLine;
 using Memodex.Cli;
 
-Command dbCommand = new Command("db");
+Command dbCommand = new("db");
 dbCommand.AddCommand(DbSetCommandFactory.Create());
 dbCommand.AddCommand(DbShowCommandFactory.Create());
 dbCommand.AddCommand(DbWipeCommandFactory.Create());
 
-Command categoryCommand = new Command("category");
-categoryCommand.AddCommand(CategoryAddCommandFactory.Create());
+Command categoryCommand = new("category");
+categoryCommand.AddCommand(CategoryAddCommandFactory.Create(CategoryAddDefaultCommandFactory.Create()));
 categoryCommand.AddCommand(CategoryListCommandFactory.Create());
 
-Command deckCommand = new Command("deck");
+Command deckCommand = new("deck");
 deckCommand.AddCommand(DeckAddCommandFactory.Create());
 deckCommand.AddCommand(DeckListCommandFactory.Create());
 deckCommand.AddCommand(DeckImportCommandFactory.Create());
 
-Command flashcardCommand = new Command("flashcard");
+Command flashcardCommand = new("flashcard");
 flashcardCommand.AddCommand(FlashcardAddCommandFactory.Create());
 flashcardCommand.AddCommand(FlashcardListCommandFactory.Create());
 

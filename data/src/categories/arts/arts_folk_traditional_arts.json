@@ -1,0 +1,46 @@
+{
+    "name": "Folk & Traditional Arts",
+    "description": "Discover the art forms, crafts, and practices that have been passed down through generations across various cultures.",
+    "flashcards": [
+        {
+            "question": "Which country is known for its Matryoshka nesting dolls?",
+            "answer": "Russia"
+        },
+        {
+            "question": "In which Asian country is the traditional art of Batik widely practiced?",
+            "answer": "Indonesia"
+        },
+        {
+            "question": "Which Native American people are known for their intricate woven baskets?",
+            "answer": "Pomo"
+        },
+        {
+            "question": "Which Scandinavian country is famous for its Dala horses?",
+            "answer": "Sweden"
+        },
+        {
+            "question": "In which country did the art of origami originate?",
+            "answer": "Japan"
+        },
+        {
+            "question": "Which African country is known for its colorful beadwork and Maasai jewelry?",
+            "answer": "Kenya"
+        },
+        {
+            "question": "The Day of the Dead ('D\u00eda de los Muertos') festival, which features colorful sugar skulls, originates from which country?",
+            "answer": "Mexico"
+        },
+        {
+            "question": "Which island nation is known for its traditional tapa cloth made from bark?",
+            "answer": "Tonga"
+        },
+        {
+            "question": "Kente cloth, a brightly colored woven fabric, comes from which African country?",
+            "answer": "Ghana"
+        },
+        {
+            "question": "Which country is renowned for its traditional shadow puppetry, known as 'Wayang Kulit'?",
+            "answer": "Indonesia"
+        }
+    ]
+}
