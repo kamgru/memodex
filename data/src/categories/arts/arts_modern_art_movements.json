@@ -1,0 +1,46 @@
+{
+    "name": "Modern Art Movements",
+    "description": "From the groundbreaking to the controversial, modern art movements have shaped the trajectory of art history. Explore the various phases, key artists, and defining artworks that have left an indelible mark on the art world.",
+    "flashcards": [
+        {
+            "question": "Which art movement is characterized by the use of simple geometric shapes and is often associated with artists like Piet Mondrian?",
+            "answer": "De Stijl"
+        },
+        {
+            "question": "Salvador Dal\u00ed is most associated with which art movement?",
+            "answer": "Surrealism"
+        },
+        {
+            "question": "Which art movement emphasizes the spontaneous application of paint and is often associated with Jackson Pollock?",
+            "answer": "Abstract Expressionism"
+        },
+        {
+            "question": "'Les Demoiselles d'Avignon' is a groundbreaking work of which art movement?",
+            "answer": "Cubism"
+        },
+        {
+            "question": "Which movement, emerging in the mid-20th century, often combines ordinary objects in unexpected ways, as seen in the works of artists like Robert Rauschenberg?",
+            "answer": "Assemblage"
+        },
+        {
+            "question": "Which art movement is characterized by a return to figurative painting and a reaction against abstract art, especially in the 1980s?",
+            "answer": "Neo-Expressionism"
+        },
+        {
+            "question": "Which movement is known for using everyday objects and presenting them as art?",
+            "answer": "Dada"
+        },
+        {
+            "question": "Who is the artist behind the famous pop art piece 'Campbell's Soup Cans'?",
+            "answer": "Andy Warhol"
+        },
+        {
+            "question": "Which art movement seeks to represent a subject as it exists in the world, without abstraction or interpretation?",
+            "answer": "Realism"
+        },
+        {
+            "question": "Which movement emerged in the late 1960s and focuses on the viewer's experience and perception?",
+            "answer": "Minimalism"
+        }
+    ]
+}

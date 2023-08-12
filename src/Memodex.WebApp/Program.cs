@@ -14,6 +14,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 builder.Services.AddScoped<IProfileProvider, ProfileProvider>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<MediaPathProvider>();
 
 if (builder.Environment.IsDevelopment())
 {
@@ -33,10 +34,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+string mediaRootPath = app.Configuration.GetSection("Media").GetValue<string>("Path")
+    ?? throw new InvalidOperationException("Missing configuration for Media:Path.");
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(
-        app.Configuration.GetSection("Media").GetValue<string>("Path")),
+    FileProvider = new PhysicalFileProvider(mediaRootPath),
     RequestPath = "/media"
 });
 app.UseSession();

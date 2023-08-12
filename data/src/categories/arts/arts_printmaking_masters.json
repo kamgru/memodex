@@ -1,0 +1,46 @@
+{
+    "name": "Printmaking & Its Masters",
+    "description": "From ancient woodcuts to modern lithographs, journey through the evocative world of printmaking and its pioneers.",
+    "flashcards": [
+        {
+            "question": "Which printmaking technique involves carving into a block of wood?",
+            "answer": "Woodcut"
+        },
+        {
+            "question": "Which artist is known for his series 'Thirty-Six Views of Mount Fuji'?",
+            "answer": "Katsushika Hokusai"
+        },
+        {
+            "question": "In which printmaking process is an image etched into a metal plate using acid?",
+            "answer": "Etching"
+        },
+        {
+            "question": "Which German Renaissance artist is renowned for his woodcuts and engravings?",
+            "answer": "Albrecht D\u00fcrer"
+        },
+        {
+            "question": "What is the name of the printmaking technique that uses a flat stone or metal plate?",
+            "answer": "Lithography"
+        },
+        {
+            "question": "Which printmaking method involves cutting away areas from a soft sheet, leaving raised areas to receive ink?",
+            "answer": "Relief printing"
+        },
+        {
+            "question": "Which 20th-century artist is known for his color linocuts, especially of the South of France?",
+            "answer": "Pablo Picasso"
+        },
+        {
+            "question": "In which country did Ukiyo-e, a genre of woodblock prints, originate?",
+            "answer": "Japan"
+        },
+        {
+            "question": "Which printmaking technique involves cutting into the surface of a metal plate with a burin?",
+            "answer": "Engraving"
+        },
+        {
+            "question": "Aquatint, a variant of etching, is used to achieve what effect in printmaking?",
+            "answer": "Tonal effects"
+        }
+    ]
+}

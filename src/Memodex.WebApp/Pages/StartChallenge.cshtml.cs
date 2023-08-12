@@ -1,5 +1,6 @@
 using MediatR;
 using Memodex.DataAccess;
+using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ public class StartChallenge : PageModel
         return RedirectToPage("Engage", new { challengeId });
     }
 
-    public record CategoryItem(int Id, string Name, string Description);
+    public record CategoryItem(int Id, string Name, string Description, string Image);
 
     public record DeckItem(int Id, string Name, string Description, int ItemCount);
 
@@ -53,10 +54,12 @@ public class StartChallenge : PageModel
     public class GetCategoryItemsHandler : IRequestHandler<GetCategoryItems, IEnumerable<CategoryItem>>
     {
         private readonly MemodexContext _memodexContext;
+        private readonly MediaPathProvider _mediaPathProvider;
 
-        public GetCategoryItemsHandler(MemodexContext memodexContext)
+        public GetCategoryItemsHandler(MemodexContext memodexContext, MediaPathProvider mediaPathProvider)
         {
             _memodexContext = memodexContext;
+            _mediaPathProvider = mediaPathProvider;
         }
 
         public async Task<IEnumerable<CategoryItem>> Handle(
@@ -69,7 +72,8 @@ public class StartChallenge : PageModel
                 .Select(category => new CategoryItem(
                     category.Id,
                     category.Name,
-                    category.Description))
+                    category.Description,
+                    _mediaPathProvider.GetCategoryThumbnailPath(category.ImageFilename)))
                 .ToListAsync(cancellationToken);
 
             return result;
@@ -121,7 +125,7 @@ public class StartChallenge : PageModel
                 throw new InvalidOperationException("Cannot create a challenge with no flashcards.");
             }
 
-            Challenge challenge = new Challenge
+            Challenge challenge = new()
             {
                 DeckId = request.DeckId,
                 ProfileId = 1,
