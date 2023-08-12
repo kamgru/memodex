@@ -4,43 +4,39 @@
     Layout = "Shared/_Layout";
 }
 
-<div class="container mx-auto">
-    <div class="px-5 lg:w-1/2 mx-auto">
 
-        @if (Model.SelectedCategoryId is null)
-        {
-            <h1>Pick a Category</h1>
-            @foreach (var category in Model.Categories)
-            {
-                <a href="@Url.Page("StartChallenge", new { categoryId = category.Id })"
-                   class="block p-4 rounded-lg shadow-lg mb-6 transition 
+@if (Model.SelectedCategoryId is null)
+{
+    <h1>Pick a Category</h1>
+    @foreach (var category in Model.Categories)
+    {
+        <a href="@Url.Page("StartChallenge", new { categoryId = category.Id })"
+           class="block p-4 rounded-lg shadow-lg mb-6 transition 
                     duration-200 ease-in-out transform hover:scale-105 border">
-                    <h2 class="text-xl pt-1 pb-2 text-slate-800 dark:text-slate-400">@category.Name</h2>
-                    <div class="flex items-start">
-                        <img src="@category.Image" alt="@category.Name" class="w-16 h-16 rounded mr-6">
-                        <p class="text-sm">@category.Description</p>
-                    </div>
-                </a>
-            }
-        }
-        else
-        {
-            <h1>Pick a deck to start the challenge</h1>
-            <div class="grid sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-                @foreach (var deck in Model.Decks)
-                {
-                    <form method="post" class="block p-4 rounded-lg shadow-lg mb-6 transition 
-                                                  duration-200 ease-in-out transform hover:scale-105 border">
-                        <input type="hidden" name="deckId" value="@deck.Id" />
-                        <button class="flex flex-col h-full">
-                            <h2 class="flex-1 text-xl pt-1 pb-2 text-slate-800 dark:text-slate-400">@deck.Name</h2>
-                            <div class="flex-1 flex items-start text-sm text-left">
-                                @deck.Description
-                            </div>
-                        </button>
-                    </form>
-                }
+            <h2 class="text-xl pt-1 pb-2 text-slate-800 dark:text-slate-400">@category.Name</h2>
+            <div class="flex items-start">
+                <img src="@category.Image" alt="@category.Name" class="w-16 h-16 rounded mr-6">
+                <p class="text-sm">@category.Description</p>
             </div>
+        </a>
+    }
+}
+else
+{
+    <h1>Pick a deck to start the challenge</h1>
+    <div class="grid sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+        @foreach (var deck in Model.Decks)
+        {
+            <form method="post" class="block p-4 rounded-lg shadow-lg mb-6 transition 
+                                                  duration-200 ease-in-out transform hover:scale-105 border">
+                <input type="hidden" name="deckId" value="@deck.Id"/>
+                <button class="flex flex-col h-full">
+                    <h2 class="flex-1 text-xl pt-1 pb-2 text-slate-800 dark:text-slate-400">@deck.Name</h2>
+                    <div class="flex-1 flex items-start text-sm text-left">
+                        @deck.Description
+                    </div>
+                </button>
+            </form>
         }
     </div>
-</div>
+}
