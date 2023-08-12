@@ -7,4 +7,5 @@ public class Category
     public required string Description { get; set; }
     public int ItemCount { get; set; }
     public required ICollection<Deck> Decks { get; set; }
+    public required string ImageFilename { get; set; }
 }

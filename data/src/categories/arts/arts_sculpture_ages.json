@@ -1,0 +1,46 @@
+{
+    "name": "Sculpture through the Ages",
+    "description": "From ancient stone carvings to modern metal installations, navigate the fascinating journey of sculpture.",
+    "flashcards": [
+        {
+            "question": "Which ancient civilization created the colossal statues known as the Colossi of Memnon?",
+            "answer": "Ancient Egypt"
+        },
+        {
+            "question": "The 'Venus of Willendorf', a famous prehistoric sculpture, was found in which country?",
+            "answer": "Austria"
+        },
+        {
+            "question": "Which Greek sculptor is credited with creating the statue of Zeus at Olympia, one of the Seven Wonders of the Ancient World?",
+            "answer": "Phidias"
+        },
+        {
+            "question": "Which French sculptor created 'The Thinker' and 'The Gates of Hell'?",
+            "answer": "Auguste Rodin"
+        },
+        {
+            "question": "The 'Terracotta Army' was buried with the first emperor of which dynasty?",
+            "answer": "Qin Dynasty"
+        },
+        {
+            "question": "Which Italian artist sculpted 'The Ecstasy of Saint Teresa'?",
+            "answer": "Gian Lorenzo Bernini"
+        },
+        {
+            "question": "Which modernist sculptor is known for his abstract, biomorphic shapes and was inspired by surrealism?",
+            "answer": "Henry Moore"
+        },
+        {
+            "question": "Which American artist is known for his mobiles, a type of moving sculpture?",
+            "answer": "Alexander Calder"
+        },
+        {
+            "question": "The 'Moai' statues are located on which remote island?",
+            "answer": "Easter Island"
+        },
+        {
+            "question": "Which contemporary British artist is known for her large-scale spider sculptures?",
+            "answer": "Louise Bourgeois"
+        }
+    ]
+}

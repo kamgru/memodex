@@ -1,0 +1,46 @@
+{
+    "name": "Ceramics & Pottery",
+    "description": "Dive into the rich and diverse world of ceramics, exploring techniques, history, and iconic pieces.",
+    "flashcards": [
+        {
+            "question": "Which ancient civilization is known for its blue-painted pottery?",
+            "answer": "Ancient Egypt"
+        },
+        {
+            "question": "What is the high-temperature furnace used to fire ceramics called?",
+            "answer": "Kiln"
+        },
+        {
+            "question": "Which country is famous for its blue and white porcelain?",
+            "answer": "China"
+        },
+        {
+            "question": "What type of clay is known for its white and smooth finish when fired?",
+            "answer": "Porcelain"
+        },
+        {
+            "question": "In which country did the Raku firing technique originate?",
+            "answer": "Japan"
+        },
+        {
+            "question": "Which process involves applying a liquid clay slip to a ceramic object?",
+            "answer": "Slip casting"
+        },
+        {
+            "question": "What is the term for pottery that has not yet been fired?",
+            "answer": "Greenware"
+        },
+        {
+            "question": "Which tool is used to shape and smooth pots on a wheel?",
+            "answer": "Rib"
+        },
+        {
+            "question": "Which decorative technique involves scratching through a surface layer to reveal a lower layer of a contrasting color?",
+            "answer": "Sgraffito"
+        },
+        {
+            "question": "What is the name for a ceramic glaze that is matte and pebbled in texture?",
+            "answer": "Matte glaze"
+        }
+    ]
+}

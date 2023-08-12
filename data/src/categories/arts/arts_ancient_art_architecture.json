@@ -1,0 +1,46 @@
+{
+    "name": "Ancient Art & Architecture",
+    "description": "The ancient civilizations left behind a rich tapestry of art and architecture that tells tales of their cultures, beliefs, and innovations. Journey through time and space to uncover the wonders of the ancient world.",
+    "flashcards": [
+        {
+            "question": "Which ancient civilization is known for building pyramids as tombs for their pharaohs?",
+            "answer": "Ancient Egypt"
+        },
+        {
+            "question": "The 'Lion Gate' is a monumental sculpture from which ancient civilization?",
+            "answer": "Mycenaean"
+        },
+        {
+            "question": "Which ancient civilization is renowned for its detailed terracotta army that was buried with the first emperor?",
+            "answer": "Ancient China (Qin Dynasty)"
+        },
+        {
+            "question": "The Parthenon is a temple dedicated to which Greek goddess?",
+            "answer": "Athena"
+        },
+        {
+            "question": "Which ancient civilization is known for its intricate stepwells and the Indus Valley cities of Harappa and Mohenjo-Daro?",
+            "answer": "Ancient India"
+        },
+        {
+            "question": "The 'Ishtar Gate' was a prominent entrance to which ancient city?",
+            "answer": "Babylon"
+        },
+        {
+            "question": "Which ancient civilization created the Moai, the famous stone statues on Easter Island?",
+            "answer": "The Rapa Nui people"
+        },
+        {
+            "question": "The Colosseum, a grand amphitheater, is located in which ancient city?",
+            "answer": "Rome"
+        },
+        {
+            "question": "The 'Nefertiti Bust' belongs to which ancient civilization?",
+            "answer": "Ancient Egypt"
+        },
+        {
+            "question": "The ancient city of Petra, known for its rock-cut architecture, is located in which modern-day country?",
+            "answer": "Jordan"
+        }
+    ]
+}
