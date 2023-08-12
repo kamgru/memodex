@@ -1,0 +1,46 @@
+{
+    "name": "Renaissance Art",
+    "description": "The Renaissance, a period of great artistic revival, brought forth masterpieces that continue to inspire and captivate. Dive into this set to test your knowledge on the iconic artists, their creations, and the essence of the Renaissance.",
+    "flashcards": [
+        {
+            "question": "Which city is often referred to as the birthplace of the Renaissance?",
+            "answer": "Florence"
+        },
+        {
+            "question": "Who painted the Sistine Chapel's ceiling?",
+            "answer": "Michelangelo"
+        },
+        {
+            "question": "Which artist is known for the paintings 'Mona Lisa' and 'The Last Supper'?",
+            "answer": "Leonardo da Vinci"
+        },
+        {
+            "question": "'The School of Athens' is a famous fresco painted by which artist?",
+            "answer": "Raphael"
+        },
+        {
+            "question": "Which Renaissance artist is known for his detailed notebooks and studies on anatomy?",
+            "answer": "Leonardo da Vinci"
+        },
+        {
+            "question": "Which early Renaissance artist wrote 'The Lives of the Most Excellent Painters, Sculptors, and Architects'?",
+            "answer": "Giorgio Vasari"
+        },
+        {
+            "question": "Who painted 'The Birth of Venus'?",
+            "answer": "Sandro Botticelli"
+        },
+        {
+            "question": "Which artist is considered the pioneer of Renaissance portraiture?",
+            "answer": "Jan van Eyck"
+        },
+        {
+            "question": "The 'Vitruvian Man' is a drawing by which artist?",
+            "answer": "Leonardo da Vinci"
+        },
+        {
+            "question": "Which sculptor created the bronze statue 'David', different from Michelangelo's marble version?",
+            "answer": "Donatello"
+        }
+    ]
+}

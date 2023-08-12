@@ -1,0 +1,37 @@
+[
+    {
+        "name": "Arts",
+        "description": "Dive into the world of creative expression, spanning visual arts, literature, and theater. Explore famous artists, their masterpieces, and the various artistic movements that have shaped culture throughout history.",
+        "image": "arts.png"
+    },
+    {
+        "name": "Geography",
+        "description": "Embark on a journey across continents, countries, and cities. Discover natural wonders, geopolitical boundaries, and the diverse cultures that inhabit our world.",
+        "image": "geography.png"
+    },
+    {
+        "name": "History",
+        "description": "Step back in time to witness the events, figures, and decisions that have forged our present. From ancient civilizations to modern-day revolutions, uncover the stories that have shaped humanity.",
+        "image": "history.png"
+    },
+    {
+        "name": "Science",
+        "description": "Delve into the realm of discovery, experimentation, and understanding. Explore the intricacies of biology, the vastness of space, and the fundamental laws that govern our universe.",
+        "image": "science.png"
+    },
+    {
+        "name": "Technology",
+        "description": "Navigate the ever-evolving landscape of tools, machines, and digital advancements. Understand the inventions that have revolutionized our lives and the innovators behind them.",
+        "image": "technology.png"
+    },
+    {
+        "name": "Music",
+        "description": "Tune into the rhythms, melodies, and harmonies that have echoed through the ages. Learn about legendary musicians, iconic albums, and the diverse genres that provide a soundtrack to our lives.",
+        "image": "music.png"
+    },
+    {
+        "name": "Movies",
+        "description": "Step onto the silver screen and immerse yourself in the world of cinema. Dive into classic films, modern blockbusters, and the visionary directors who bring stories to life.",
+        "image": "movies.png"
+    }
+]
