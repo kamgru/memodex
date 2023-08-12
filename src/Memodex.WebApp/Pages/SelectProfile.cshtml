@@ -2,17 +2,19 @@
 @model Memodex.WebApp.Pages.SelectProfile
 
 <h1 class="text-center text-lg">Who's using Memodex?</h1>
-<table>
-    @foreach (SelectProfile.ProfileItem item in Model.Profiles)
-    {
-        <tr>
-            <td>
-                <form method="post">
-                    <input type="hidden" name="Id" value="@item.Id"/>
-                    <input type="hidden" name="Name" value="@item.Name"/>
-                    <input type="image" src="@item.AvatarPath" value="@item.Name" alt="avatar image"/>
-                </form>
-            </td>
-        </tr>
-    }
-</table>
+<div class="container mx-auto">
+    <div class="flex flex-wrap justify-center">
+        @foreach (SelectProfile.ProfileItem profile in Model.Profiles)
+        {
+            <form method="post" class="transition duration-200 ease-in-out transform hover:scale-105">
+                <input type="hidden" name="Id" value="@profile.Id"/>
+                <button>
+                    <div class="text-center p-4">
+                        <img src="@profile.AvatarPath" alt="@profile.AvatarPath" class="mx-auto w-24 h-24 rounded-full shadow-lg">
+                        <p class="mt-2">@profile.Name</p>
+                    </div>
+                </button>
+            </form>
+        }
+    </div>
+</div>
