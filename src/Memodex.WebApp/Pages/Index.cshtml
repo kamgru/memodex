@@ -69,7 +69,8 @@
                 @foreach (IndexModel.InReviewChallenge challenge in Model.Challenges.InReviewChallenges)
                 {
                     <li class="py-2">
-                        <a href="#" class="block hover:bg-gray-100 dark:hover:bg-slate-600 rounded p-2">
+                        <a href="@Url.Page("Review", new { challengeId = challenge.Id })"
+                           class="block hover:bg-gray-100 dark:hover:bg-slate-600 rounded p-2">
                             <div class="text-lg font-medium dark:text-slate-400">@challenge.DeckName</div>
                             <div class="text-sm text-gray-500">Steps to Review: @challenge.StepsToReview</div>
                         </a>
