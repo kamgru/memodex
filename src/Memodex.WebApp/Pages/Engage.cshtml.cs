@@ -43,7 +43,7 @@ public class Engage : PageModel
             Input.NeedsReview));
 
         return result.IsFinished
-            ? RedirectToPage("CompleteChallenge")
+            ? RedirectToPage("CompleteChallenge", new { challengeId = Input.ChallengeId })
             : RedirectToPage("Engage", new { challengeId = Input.ChallengeId });
     }
 
