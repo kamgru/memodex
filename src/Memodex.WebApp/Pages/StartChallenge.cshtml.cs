@@ -130,9 +130,9 @@ public class StartChallenge : PageModel
                 DeckId = request.DeckId,
                 ProfileId = 1,
                 CurrentStepIndex = 0,
-                IsFinished = false,
                 CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = DateTime.UtcNow,
+                State = ChallengeState.InProgress
             };
 
             challenge.ChallengeSteps = flashcards.Select((flashcard, index) => new ChallengeStep
