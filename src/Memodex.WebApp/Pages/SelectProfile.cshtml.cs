@@ -20,20 +20,22 @@ public class SelectProfile : PageModel
     public async Task<IActionResult> OnGetAsync()
     {
         Profiles = await _mediator.Send(new GetProfilesRequest());
-        if (Profiles.Count == 0)
-        {
-            return RedirectToPage("CreateProfile");
-        } 
         
+        switch (Profiles.Count)
+        {
+            case 0:
+                return RedirectToPage("CreateProfile");
+            case 1:
+                await _mediator.Send(new SelectProfileRequest(Profiles.First().Id));
+                return RedirectToPage("Index");
+        }
+
         return Page();
     }
 
     public async Task<IActionResult> OnPostAsync(ProfileItem profileItem)
     {
-        await _mediator.Send(new SelectProfileRequest
-        {
-            ProfileId = profileItem.Id
-        });
+        await _mediator.Send(new SelectProfileRequest(profileItem.Id));
         return RedirectToPage("Index");
     }
     
@@ -41,10 +43,8 @@ public class SelectProfile : PageModel
     {
     }
 
-    public class SelectProfileRequest : IRequest
-    {
-        public int ProfileId { get; set; }
-    }
+    public record SelectProfileRequest(
+        int ProfileId) : IRequest;
 
     public class ProfileItem
     {
