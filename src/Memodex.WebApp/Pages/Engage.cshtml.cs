@@ -47,10 +47,10 @@ public class Engage : PageModel
     public record StepInput(int ChallengeId, int FlashcardId, bool NeedsReview);
 
     public record FlashcardItem(
-        int Id, 
-        string Question, 
-        string Answer, 
-        string DeckTitle, 
+        int Id,
+        string Question,
+        string Answer,
+        string DeckTitle,
         int DeckItemCount,
         int CurrentStep);
 
@@ -103,12 +103,14 @@ public class Engage : PageModel
 
             var flashcard = await _memodexContext.Flashcards
                 .Include(deck => deck.Deck)
-                .Select(item => new {
+                .Select(item => new
+                {
                     item.Id,
                     item.Question,
                     item.Answer,
                     item.Deck.Name,
-                    item.Deck.Flashcards.Count })
+                    item.Deck.Flashcards.Count
+                })
                 .FirstOrDefaultAsync(
                     item => item.Id == currentStep.FlashcardId,
                     cancellationToken);
@@ -178,6 +180,8 @@ public class Engage : PageModel
             {
                 challenge.CurrentStepIndex++;
             }
+
+            challenge.UpdatedAt = DateTime.UtcNow;
 
             await _memodexContext.SaveChangesAsync(cancellationToken);
 
