@@ -2,11 +2,16 @@ using Memodex.DataAccess;
 
 namespace Memodex.WebApp.Infrastructure;
 
-public record CurrentProfile(int Id, string Name, string AvatarPath, string PreferredTheme);
+public record CurrentProfile(
+    int Id,
+    string Name,
+    string AvatarPath,
+    string PreferredTheme);
 
 public interface IProfileProvider
 {
     Task<CurrentProfile?> GetSelectedProfileAsync();
+    int? GetCurrentProfileId();
 }
 
 public class ProfileProvider : IProfileProvider
@@ -15,7 +20,9 @@ public class ProfileProvider : IProfileProvider
     private readonly MemodexContext _memodexContext;
     private readonly IConfiguration _configuration;
 
-    public ProfileProvider(IHttpContextAccessor httpContextAccessor, MemodexContext memodexContext,
+    public ProfileProvider(
+        IHttpContextAccessor httpContextAccessor,
+        MemodexContext memodexContext,
         IConfiguration configuration)
     {
         _httpContextAccessor = httpContextAccessor;
@@ -51,7 +58,15 @@ public class ProfileProvider : IProfileProvider
             profile.Name,
             Path.Combine("media", rootPath, $"t_{profile.AvatarPath}"),
             profile.PreferredTheme);
-        
+
         return currentProfile;
+    }
+
+    public int? GetCurrentProfileId()
+    {
+        HttpContext context = _httpContextAccessor.HttpContext
+                              ?? throw new InvalidOperationException("HttpContext is null.");
+
+        return context.Session.GetInt32(Common.Constants.SelectedProfileSessionKey);
     }
 }
