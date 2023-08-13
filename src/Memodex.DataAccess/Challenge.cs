@@ -10,4 +10,6 @@ public class Challenge
     public bool IsFinished { get; set; }
     public ICollection<ChallengeStep> ChallengeSteps { get; set; } = new List<ChallengeStep>();
     public int? CurrentStepIndex { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }

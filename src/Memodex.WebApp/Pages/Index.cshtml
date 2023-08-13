@@ -1,7 +1,81 @@
 ﻿@page
 @model IndexModel
+
 @{
     ViewData["Title"] = "Home page";
     Layout = "Shared/_Layout.cshtml";
 }
-<a href="@Url.Page("StartChallenge")" class="font-size-xl">Start Challenge</a>
+
+<section class="mb-8">
+    <h1 class="mb-4">Ready to Test Your Knowledge?</h1>
+    <p class="mb-4">
+        Dive deep into exciting topics, challenge your understanding, and embark on a journey of discovery.
+        Every challenge you take brings new insights and knowledge.
+    </p>
+    <a href="@Url.Page("StartChallenge")"
+       class="my-4 px-3 py-2 rounded-xl bg-blue-700 dark:bg-blue-400 text-gray-100 inline-block">
+        Start a Challenge
+    </a>
+    <p>
+        and see how much you've got to learn!
+    </p>
+</section>
+
+@if (Model.Challenges!.UnfinishedChallenges.Any())
+{
+    <section class="mb-8">
+        <h2 class="mb-4">
+            Unfinished Business Awaits!
+        </h2>
+        <p class="mb-4">
+            You've started the journey, and now it's time to see it through! Dive back into the challenges
+            you began and conquer every question. Every step you take is a step closer to mastery.
+        </p>
+        <h3 class="mb-4">
+            Resume an unfinished challenge and continue your path to becoming an expert!
+        </h3>
+        <div class="bg-white dark:bg-slate-800 dark:border-neutral-400 dark:border shadow rounded p-4 divide-y divide-gray-200 mb-8">
+            <ul>
+                @foreach (IndexModel.UnfinishedChallenge challenge in Model.Challenges.UnfinishedChallenges)
+                {
+                    <li class="py-2">
+                        <a href="@Url.Page("Engage", new { challengeId = challenge.Id })"
+                           class="block hover:bg-gray-100 dark:hover:bg-slate-600 rounded p-2">
+                            <div class="text-lg font-medium dark:text-slate-400">@challenge.DeckName</div>
+                            <div class="text-sm text-gray-500">Progress: @challenge.CurrentStep of @challenge.TotalSteps</div>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </section>
+}
+
+@if (Model.Challenges.InReviewChallenges.Any())
+{
+    <section class="mb-8 pb-5">
+        <h2 class="mb-4">
+            Brush Up On Your Highlights!
+        </h2>
+        <p class="mb-4">
+            You've conquered the challenge, but some flashcards caught your attention. It's time to revisit and
+            solidify those concepts! Reviewing strengthens understanding and ensures long-term retention.
+        </p>
+        <h3 class="mb-4">
+            Dive back in to review the details and perfect your understanding!
+        </h3>
+        <div class="bg-white dark:bg-slate-800 dark:border-neutral-400 dark:border shadow rounded p-4 divide-y divide-gray-200 mb-8">
+            <ul>
+                @foreach (IndexModel.InReviewChallenge challenge in Model.Challenges.InReviewChallenges)
+                {
+                    <li class="py-2">
+                        <a href="#" class="block hover:bg-gray-100 dark:hover:bg-slate-600 rounded p-2">
+                            <div class="text-lg font-medium dark:text-slate-400">@challenge.DeckName</div>
+                            <div class="text-sm text-gray-500">Steps to Review: @challenge.StepsToReview</div>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </section>
+}
