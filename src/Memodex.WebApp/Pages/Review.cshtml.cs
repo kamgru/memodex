@@ -43,7 +43,7 @@ public class Review : PageModel
             Input.FlashcardId));
 
         return result.IsFinished
-            ? RedirectToPage("CompleteChallenge")
+            ? RedirectToPage("CompleteChallenge", new { challengeId = Input.ChallengeId })
             : RedirectToPage("Review", new { challengeId = Input.ChallengeId });
     }
 
