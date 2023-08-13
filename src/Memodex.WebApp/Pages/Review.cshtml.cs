@@ -6,13 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Memodex.WebApp.Pages;
 
-public class Engage : PageModel
+public class Review : PageModel
 {
     private readonly IMediator _mediator;
 
-    public Engage(
+    public Review(
         IMediator mediator)
-        => _mediator = mediator;
+    {
+        _mediator = mediator;
+    }
 
     public FlashcardItem? CurrentFlashcard { get; set; }
 
@@ -25,8 +27,7 @@ public class Engage : PageModel
         CurrentFlashcard = await _mediator.Send(new GetNextFlashcard(challengeId));
         Input = new StepInput(
             challengeId,
-            CurrentFlashcard.Id,
-            false);
+            CurrentFlashcard.Id);
         return Page();
     }
 
@@ -39,18 +40,12 @@ public class Engage : PageModel
 
         SubmitResult result = await _mediator.Send(new SubmitFlashcard(
             Input.ChallengeId,
-            Input.FlashcardId,
-            Input.NeedsReview));
+            Input.FlashcardId));
 
         return result.IsFinished
             ? RedirectToPage("CompleteChallenge")
-            : RedirectToPage("Engage", new { challengeId = Input.ChallengeId });
+            : RedirectToPage("Review", new { challengeId = Input.ChallengeId });
     }
-
-    public record StepInput(
-        int ChallengeId,
-        int FlashcardId,
-        bool NeedsReview);
 
     public record FlashcardItem(
         int Id,
@@ -60,20 +55,19 @@ public class Engage : PageModel
         int DeckItemCount,
         int CurrentStep);
 
-    public record FlashcardStep(
-        FlashcardItem Flashcard,
-        bool IsLast);
-
-    public record GetNextFlashcard(
-        int ChallengeId) : IRequest<FlashcardItem>;
+    public record StepInput(
+        int ChallengeId,
+        int FlashcardId);
 
     public record SubmitFlashcard(
         int ChallengeId,
-        int FlashcardId,
-        bool NeedsReview) : IRequest<SubmitResult>;
+        int FlashcardId) : IRequest<SubmitResult>;
 
     public record SubmitResult(
         bool IsFinished);
+
+    public record GetNextFlashcard(
+        int ChallengeId) : IRequest<FlashcardItem>;
 
     public class GetNextFlashcardHandler : IRequestHandler<GetNextFlashcard, FlashcardItem>
     {
@@ -88,7 +82,9 @@ public class Engage : PageModel
             CancellationToken cancellationToken)
         {
             Challenge? challenge = await _memodexContext.Challenges
-                .Include(challenge => challenge.ChallengeSteps.OrderBy(step => step.Index))
+                .Include(challenge => challenge.ChallengeSteps
+                    .Where(step => step.NeedsReview)
+                    .OrderBy(step => step.Index))
                 .Where(challenge => challenge.Id == request.ChallengeId)
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -102,9 +98,9 @@ public class Engage : PageModel
                 throw new InvalidOperationException("Challenge has no current step");
             }
 
-            if (challenge.State != ChallengeState.InProgress)
+            if (challenge.State != ChallengeState.InReview)
             {
-                throw new InvalidOperationException("Challenge is not in progress");
+                throw new InvalidOperationException("Challenge is not in review");
             }
 
             ChallengeStep? currentStep = challenge.ChallengeSteps
@@ -113,6 +109,11 @@ public class Engage : PageModel
             if (currentStep is null)
             {
                 throw new InvalidOperationException("Could not find current step");
+            }
+
+            if (!currentStep.NeedsReview)
+            {
+                throw new InvalidOperationException("Current step does not need review");
             }
 
             var flashcard = await _memodexContext.Flashcards
@@ -157,7 +158,9 @@ public class Engage : PageModel
             CancellationToken cancellationToken)
         {
             Challenge? challenge = await _memodexContext.Challenges
-                .Include(challenge => challenge.ChallengeSteps.OrderBy(step => step.Index))
+                .Include(challenge => challenge.ChallengeSteps
+                    .Where(step => step.NeedsReview)
+                    .OrderBy(step => step.Index))
                 .FirstOrDefaultAsync(
                     item => item.Id == request.ChallengeId,
                     cancellationToken);
@@ -172,11 +175,11 @@ public class Engage : PageModel
                 throw new InvalidOperationException("Challenge has no current step");
             }
 
-            if (challenge.State != ChallengeState.InProgress)
+            if (challenge.State != ChallengeState.InReview)
             {
-                throw new InvalidOperationException("Challenge is not in progress");
+                throw new InvalidOperationException("Challenge is not in review");
             }
-            
+
             ChallengeStep? currentStep = challenge.ChallengeSteps
                 .FirstOrDefault(step => step.Index == challenge.CurrentStepIndex);
 
@@ -185,27 +188,22 @@ public class Engage : PageModel
                 throw new InvalidOperationException("Could not find current step");
             }
 
-            currentStep.NeedsReview = request.NeedsReview;
+            ChallengeStep? nextStep = challenge.ChallengeSteps
+                .SkipWhile(step => step.Index <= currentStep.Index)
+                .FirstOrDefault();
 
-            if (challenge.CurrentStepIndex == challenge.ChallengeSteps.Count - 1)
+            challenge.CurrentStepIndex = nextStep?.Index;
+
+            if (nextStep is null)
             {
-                challenge.State = challenge.ChallengeSteps.Any(step => step.NeedsReview)
-                    ? ChallengeState.InReview
-                    : ChallengeState.Complete;
-                challenge.CurrentStepIndex = challenge.ChallengeSteps
-                    .FirstOrDefault(step => step.NeedsReview)?
-                    .Index;
-            }
-            else
-            {
-                challenge.CurrentStepIndex++;
+                challenge.State = ChallengeState.Complete;
             }
 
             challenge.UpdatedAt = DateTime.UtcNow;
 
             await _memodexContext.SaveChangesAsync(cancellationToken);
 
-            return new SubmitResult(challenge.State != ChallengeState.InProgress);
+            return new SubmitResult(nextStep is null);
         }
     }
 }

@@ -70,7 +70,7 @@ public class IndexModel : PageModel
                 .Include(challenge => challenge.ChallengeSteps)
                 .Include(challenge => challenge.Deck)
                 .Where(challenge => challenge.ProfileId == request.ProfileId)
-                .Where(challenge => challenge.IsFinished== false)
+                .Where(challenge => challenge.State == ChallengeState.InProgress)
                 .Select(challenge => new UnfinishedChallenge(
                     challenge.Id,
                     challenge.CreatedAt,
@@ -84,8 +84,7 @@ public class IndexModel : PageModel
                 .Include(challenge => challenge.ChallengeSteps)
                 .Include(challenge => challenge.Deck)
                 .Where(challenge => challenge.ProfileId == request.ProfileId)
-                .Where(challenge => challenge.IsFinished)
-                .Where(c => c.ChallengeSteps.Any(step => step.NeedsReview))
+                .Where(challenge => challenge.State == ChallengeState.InReview)
                 .Select(challenge => new InReviewChallenge(
                     challenge.Id,
                     challenge.CreatedAt,
