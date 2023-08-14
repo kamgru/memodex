@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Memodex.WebApp.Pages;
 
-public class EditProfile : PageModel
+public class MyProfile : PageModel
 {
     private readonly IMediator _mediator;
 
-    public EditProfile(IMediator mediator)
+    public MyProfile(IMediator mediator)
     {
         _mediator = mediator;
     }
