@@ -8,21 +8,7 @@ public class MediaPathProvider
     {
         _configuration = configuration;
     }
-    
-    public string GetAvatarFilename(string avatarFilename)
-    {
-        string? avatarPath = _configuration.GetSection("Media")
-            .GetSection("Avatars")
-            .GetValue<string>("Path");
 
-        if (string.IsNullOrEmpty(avatarPath))
-        {
-            throw new InvalidOperationException("Missing configuration for Media:Avatars:Path.");
-        }
-
-        return Path.Combine("media", avatarPath, avatarFilename);
-    }
-    
     public string GetAvatarThumbnailPath(string avatarFilename)
     {
         string? avatarPath = _configuration.GetSection("Media")

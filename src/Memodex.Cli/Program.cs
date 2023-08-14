@@ -19,9 +19,13 @@ Command flashcardCommand = new("flashcard");
 flashcardCommand.AddCommand(FlashcardAddCommandFactory.Create());
 flashcardCommand.AddCommand(FlashcardListCommandFactory.Create());
 
+Command avatarCommand = new("avatar");
+avatarCommand.AddCommand(AvatarImportCommandFactory.Create());
+
 Command rootCommand = new RootCommand();
 rootCommand.AddCommand(dbCommand);
 rootCommand.AddCommand(categoryCommand);
 rootCommand.AddCommand(deckCommand);
 rootCommand.AddCommand(flashcardCommand);
+rootCommand.AddCommand(avatarCommand);
 await rootCommand.InvokeAsync(args);

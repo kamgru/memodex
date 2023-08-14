@@ -11,7 +11,8 @@ public class StartChallenge : PageModel
 {
     private readonly IMediator _mediator;
 
-    public StartChallenge(IMediator mediator)
+    public StartChallenge(
+        IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -20,7 +21,9 @@ public class StartChallenge : PageModel
     public IEnumerable<DeckItem> Decks { get; set; } = new List<DeckItem>();
     public int? SelectedCategoryId { get; set; }
 
-    public async Task<IActionResult> OnGetAsync(int? categoryId, int? deckId)
+    public async Task<IActionResult> OnGetAsync(
+        int? categoryId,
+        int? deckId)
     {
         if (categoryId is null)
         {
@@ -35,28 +38,41 @@ public class StartChallenge : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync(int deckId)
+    public async Task<IActionResult> OnPostAsync(
+        int deckId)
     {
         int challengeId = await _mediator.Send(new CreateChallenge(deckId));
         return RedirectToPage("Engage", new { challengeId });
     }
 
-    public record CategoryItem(int Id, string Name, string Description, string Image);
+    public record CategoryItem(
+        int Id,
+        string Name,
+        string Description,
+        string Image);
 
-    public record DeckItem(int Id, string Name, string Description, int ItemCount);
+    public record DeckItem(
+        int Id,
+        string Name,
+        string Description,
+        int ItemCount);
 
     public record GetCategoryItems : IRequest<IEnumerable<CategoryItem>>;
 
-    public record GetDeckItems(int CategoryId) : IRequest<IEnumerable<DeckItem>>;
+    public record GetDeckItems(
+        int CategoryId) : IRequest<IEnumerable<DeckItem>>;
 
-    public record CreateChallenge(int DeckId) : IRequest<int>;
+    public record CreateChallenge(
+        int DeckId) : IRequest<int>;
 
     public class GetCategoryItemsHandler : IRequestHandler<GetCategoryItems, IEnumerable<CategoryItem>>
     {
         private readonly MemodexContext _memodexContext;
         private readonly MediaPathProvider _mediaPathProvider;
 
-        public GetCategoryItemsHandler(MemodexContext memodexContext, MediaPathProvider mediaPathProvider)
+        public GetCategoryItemsHandler(
+            MemodexContext memodexContext,
+            MediaPathProvider mediaPathProvider)
         {
             _memodexContext = memodexContext;
             _mediaPathProvider = mediaPathProvider;
@@ -84,12 +100,15 @@ public class StartChallenge : PageModel
     {
         private readonly MemodexContext _memodexContext;
 
-        public GetDeckItemsHandler(MemodexContext memodexContext)
+        public GetDeckItemsHandler(
+            MemodexContext memodexContext)
         {
             _memodexContext = memodexContext;
         }
 
-        public async Task<IEnumerable<DeckItem>> Handle(GetDeckItems request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<DeckItem>> Handle(
+            GetDeckItems request,
+            CancellationToken cancellationToken)
         {
             List<DeckItem> deckItems = await _memodexContext.Decks
                 .Include(deck => deck.Flashcards)
@@ -108,13 +127,19 @@ public class StartChallenge : PageModel
     public class CreateChallengeHandler : IRequestHandler<CreateChallenge, int>
     {
         private readonly MemodexContext _memodexContext;
+        private readonly IProfileProvider _profileProvider;
 
-        public CreateChallengeHandler(MemodexContext memodexContext)
+        public CreateChallengeHandler(
+            MemodexContext memodexContext,
+            IProfileProvider profileProvider)
         {
             _memodexContext = memodexContext;
+            _profileProvider = profileProvider;
         }
 
-        public async Task<int> Handle(CreateChallenge request, CancellationToken cancellationToken)
+        public async Task<int> Handle(
+            CreateChallenge request,
+            CancellationToken cancellationToken)
         {
             List<Flashcard> flashcards = await _memodexContext.Flashcards
                 .Where(x => x.DeckId == request.DeckId)
@@ -128,20 +153,23 @@ public class StartChallenge : PageModel
             Challenge challenge = new()
             {
                 DeckId = request.DeckId,
-                ProfileId = 1,
+                ProfileId = _profileProvider.GetCurrentProfileId() ??
+                            throw new InvalidOperationException("Cannot create a challenge without a profile."),
                 CurrentStepIndex = 0,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 State = ChallengeState.InProgress
             };
 
-            challenge.ChallengeSteps = flashcards.Select((flashcard, index) => new ChallengeStep
+            challenge.ChallengeSteps = flashcards.Select((
+                flashcard,
+                index) => new ChallengeStep
             {
                 Index = index,
                 FlashcardId = flashcard.Id,
                 Challenge = challenge
             }).ToList();
-            
+
             _memodexContext.Challenges.Add(challenge);
             await _memodexContext.SaveChangesAsync(cancellationToken);
 
