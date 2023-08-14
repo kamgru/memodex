@@ -16,6 +16,7 @@ public class MemodexContext : DbContext
     public DbSet<Deck> Decks => Set<Deck>();
     public DbSet<Challenge> Challenges => Set<Challenge>();
     public DbSet<ChallengeStep> ChallengeSteps => Set<ChallengeStep>();
+    public DbSet<Avatar> Avatars => Set<Avatar>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
