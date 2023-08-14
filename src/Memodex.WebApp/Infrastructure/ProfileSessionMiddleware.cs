@@ -7,7 +7,7 @@ public class ProfileSessionMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ImmutableHashSet<string> _allowedPaths = ImmutableHashSet.Create(
-        "/editprofile",
+        "/myprofile",
         "/createprofile",
         "/selectprofile"
     );

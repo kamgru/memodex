@@ -17,7 +17,7 @@ const updateTheme = () => {
     }
     const token = document.querySelector('meta[name="AntiForgeryToken"]').content;
     
-    const url = '/editprofile?handler=updatetheme';
+    const url = '/myprofile?handler=updatetheme';
     fetch(url, {
         method: 'POST',
         headers: {
@@ -28,3 +28,12 @@ const updateTheme = () => {
     })
         .then(response => response.json());
 }
+
+document.querySelector('.relative.inline-block').addEventListener('click', function() {
+    const dropdown = document.getElementById('profileDropdown');
+    if (dropdown.classList.contains('hidden')) {
+        dropdown.classList.remove('hidden');
+    } else {
+        dropdown.classList.add('hidden');
+    }
+});
