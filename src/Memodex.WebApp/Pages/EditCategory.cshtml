@@ -1,0 +1,88 @@
+@page
+@model Memodex.WebApp.Pages.EditCategory
+
+@{
+    Layout = "Shared/_Layout";
+    if (Model.Category is null)
+    {
+        Response.Redirect("/Error");
+    }
+}
+@if (TempData.TryGetValue("Notification", out object? value))
+{
+    string? notification = value?.ToString();
+    if (notification is null)
+    {
+        Response.Redirect("/Error");
+    }
+    
+    <div class="fixed bottom-4 right-4 bg-green-700 text-white px-6 py-4 rounded-md shadow-lg" id="notificationPopup">
+        @notification
+        <button class="ml-4 close-popup">&times;</button>
+    </div>
+
+}
+<form method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Category!.Id" value="@Model.Category!.Id" />
+    <div class="space-y-12">
+        <div class="border-b border-gray-900/10 pb-12">
+            <h2>Edit Category</h2>
+            <p>Make changes to the category details below.</p>
+
+            <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div class="col-span-full">
+                    <label for="UploadedImage">Category Image</label>
+                    <div class="mt-2 flex items-center gap-x-3">
+                        <img id="current-image" src="@Model.Category!.ImagePath" alt="Current Category Image" class="h-12 w-12 rounded-full">
+                        <label class="rounded-md bg-white px-2.5 py-1.5 text-sm text-slate-600 shadow-sm ring-1 ring-inset 
+ring-gray-300 dark:ring-slate-600 dark:bg-slate-800 hover:bg-gray-50 cursor-pointer">
+                            Change
+                            <input id="UploadedImage" name="formFile" type="file" class="sr-only">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="sm:col-span-4">
+                    <label for="name">Category Name</label>
+                    <div class="mt-2">
+                        <input type="text" id="name" name="Category.Name" value="@Model.Category.Name" required>
+                    </div>
+                </div>
+
+                <div class="col-span-full">
+                    <label for="description">Description</label>
+                    <div class="mt-2">
+                        <textarea id="description" name="Category.Description" rows="3">@Model.Category.Description</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-6 flex items-center justify-end gap-x-6">
+        <a href="@Url.Page("BrowseCategories")" class="">Cancel</a>
+        <button type="submit" class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Update Category</button>
+        <button type="submit" formaction="./OnPostDeleteAsync" onclick="return confirm('Are you sure you want to delete this category?');" class="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">Delete Category</button>
+    </div>
+</form>
+
+@section Scripts
+{
+    <script>
+    document.getElementById('UploadedImage').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.querySelector('#current-image').src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    document.querySelector('.close-popup').addEventListener('click', function(event) {
+        document.querySelector('#notificationPopup').style.display = 'none';
+    });
+
+    </script>
+}
