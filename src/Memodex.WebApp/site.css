@@ -13,3 +13,17 @@ h1 {
 h2{
     @apply text-xl pt-1 pb-2 text-blue-900 dark:text-slate-400
 }
+
+label {
+    @apply block text-blue-900 dark:text-slate-400
+}
+
+input[type=text] {
+    @apply block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm px-2 
+    text-slate-600 dark:text-slate-400 dark:bg-slate-900 dark:ring-slate-600
+}
+
+textarea {
+    @apply block w-full rounded-md border-0 py-1.5 px-2 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm
+    text-slate-600 dark:text-slate-400 dark:bg-slate-900 dark:ring-slate-600
+}

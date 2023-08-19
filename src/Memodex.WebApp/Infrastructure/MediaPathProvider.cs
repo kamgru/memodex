@@ -4,12 +4,15 @@ public class MediaPathProvider
 {
     private readonly IConfiguration _configuration;
 
-    public MediaPathProvider(IConfiguration configuration)
+    public MediaPathProvider(
+        IConfiguration configuration)
     {
         _configuration = configuration;
     }
 
-    public string GetAvatarThumbnailPath(string avatarFilename)
+
+    public string GetAvatarThumbnailPath(
+        string avatarFilename)
     {
         string? avatarPath = _configuration.GetSection("Media")
             .GetSection("Avatars")
@@ -22,8 +25,9 @@ public class MediaPathProvider
 
         return Path.Combine("media", avatarPath, $"t_{avatarFilename}");
     }
-    
-    public string GetCategoryThumbnailPath(string categoryThumbnailFilename)
+
+    public string GetCategoryThumbnailPath(
+        string categoryThumbnailFilename)
     {
         string? categoryPath = _configuration.GetSection("Media")
             .GetSection("Categories")

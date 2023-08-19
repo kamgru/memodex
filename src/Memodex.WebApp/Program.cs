@@ -15,6 +15,8 @@ builder.Services.AddSession();
 builder.Services.AddScoped<IProfileProvider, ProfileProvider>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<MediaPathProvider>();
+builder.Services.AddSingleton<StaticFilesPathProvider>();
+builder.Services.AddSingleton<Thumbnailer>();
 
 if (builder.Environment.IsDevelopment())
 {
