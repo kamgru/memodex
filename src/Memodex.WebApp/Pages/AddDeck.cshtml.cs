@@ -5,66 +5,71 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Memodex.WebApp.Pages;
 
-public class AddCategory : PageModel
+public class AddDeck : PageModel
 {
     private readonly IMediator _mediator;
 
-    public AddCategory(
+    public AddDeck(
         IMediator mediator)
     {
         _mediator = mediator;
     }
 
-    public IActionResult OnGet()
+    [BindProperty]
+    public DeckItem Deck { get; set; } = new();
+
+    
+    public IActionResult OnGetAsync(
+        int categoryId)
     {
-        Category = new CategoryItem();
+        Deck.CategoryId = categoryId;
         return Page();
     }
-    
+
     public async Task<IActionResult> OnPostAsync()
     {
-        int categoryId = await _mediator.Send(new AddCategoryRequest(
-            Category!.Name));
-        TempData["Notification"] = $"Category {Category.Name} added.";
-        return RedirectToPage("EditCategory", new { categoryId });
+        int deckId = await _mediator.Send(new AddDeckRequest(
+            Deck.CategoryId,
+            Deck.Name));
+        return RedirectToPage("EditDeck", new { deckId });
     }
     
-    [BindProperty]
-    public CategoryItem? Category { get; set; }
-    
-    public class CategoryItem
+    public class DeckItem
     {
+        public int CategoryId { get; set; }
         public string Name { get; set; } = string.Empty;
     }
-    
-    public record AddCategoryRequest(
+
+    public record AddDeckRequest(
+        int CategoryId,
         string Name) : IRequest<int>;
     
-    public class AddCategoryHandler : IRequestHandler<AddCategoryRequest, int>
+    public class AddDeckHandler : IRequestHandler<AddDeckRequest, int>
     {
         private readonly MemodexContext _memodexContext;
 
-        public AddCategoryHandler(
+        public AddDeckHandler(
             MemodexContext memodexContext)
         {
             _memodexContext = memodexContext;
         }
 
         public async Task<int> Handle(
-            AddCategoryRequest request,
+            AddDeckRequest request,
             CancellationToken cancellationToken)
         {
-            Category category = new()
+            Deck deck = new()
             {
+                CategoryId = request.CategoryId,
                 Name = request.Name,
                 Description = string.Empty,
-                ImageFilename = "default.png",
-                Decks = new List<Deck>()
+                Flashcards = new List<Flashcard>()
             };
             
-            _memodexContext.Categories.Add(category);
+            _memodexContext.Decks.Add(deck);
             await _memodexContext.SaveChangesAsync(cancellationToken);
-            return category.Id;
+
+            return deck.Id;
         }
     }
 }
