@@ -4,28 +4,32 @@
 @{
     Layout = "Shared/_Layout";
 }
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold mb-2">Browse Categories</h1>
-        <p class="text-gray-600 mb-4">
-            Explore various decks by choosing a category. Each category contains a curated collection of flashcards to enhance your learning.
-        </p>
-        
-        <!-- Add New Category Button (aligned to the right and less obnoxious) -->
-        <div class="text-right">
-            <a href="@Url.Page("AddCategory")" 
-               class="text-sm text-blue-600 dark:text-slate-400 border border-blue-600 dark:border-slate-400 px-4 py-2 rounded hover:bg-blue-100 dark:hover:bg-slate-900">
-                + New Category
-            </a>
-        </div>
+<div class="mb-6">
+    <h1 class="text-3xl font-bold mb-2">Browse Categories</h1>
+    <p class="text-gray-600 mb-4">
+        Explore various decks by choosing a category. Each category contains a curated collection of flashcards to enhance your learning.
+    </p>
+
+    <div class="text-right">
+        <a href="@Url.Page("AddCategory")"
+           class="text-sm text-blue-600 dark:text-slate-400 border border-blue-600 dark:border-slate-400 px-4 py-2 rounded hover:bg-blue-100 dark:hover:bg-slate-900">
+            + New Category
+        </a>
     </div>
+</div>
 <ul role="list" class="divide-y divide-gray-100 dark:divide-slate-600">
     @foreach (CategoryItem category in Model.Categories)
     {
         <li class="flex justify-between gap-x-4 py-5">
-            <div class="flex min-w-0 gap-x-4">
-                <img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="@category.ImagePath" alt="@category.Name Image">
+            <div class="flex items-center min-w-0 gap-x-4">
+                <a href="@Url.Page("BrowseDecks", new { categoryId = category.Id })"
+                   class="h-12 w-12 flex-none bg-gray-50 rounded-full">
+                    <img class="rounded-full" src="@category.ImagePath" alt="@category.Name Image">
+                </a>
                 <div class="min-w-0 flex-auto">
-                    <h2>@category.Name</h2>
+                    <a href="@Url.Page("BrowseDecks", new { categoryId = category.Id })">
+                        <h2 class="hover:text-slate-500">@category.Name</h2>
+                    </a>
                     <p class="mt-1 truncate text-xs" id="description_@category.Id">@category.Description</p>
                 </div>
             </div>

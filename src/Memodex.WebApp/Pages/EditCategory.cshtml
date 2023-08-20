@@ -8,20 +8,9 @@
         Response.Redirect("/Error");
     }
 }
-@if (TempData.TryGetValue("Notification", out object? value))
-{
-    string? notification = value?.ToString();
-    if (notification is null)
-    {
-        Response.Redirect("/Error");
-    }
-    
-    <div class="fixed bottom-4 right-4 bg-green-700 text-white px-6 py-4 rounded-md shadow-lg" id="notificationPopup">
-        @notification
-        <button class="ml-4 close-popup">&times;</button>
-    </div>
 
-}
+<partial name="_Notification"/>
+
 <form method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="Category!.Id" value="@Model.Category!.Id" />
     <div class="space-y-12">
