@@ -15,6 +15,8 @@
     <title>Memodex</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <meta name="AntiForgeryToken" content="@Xrsf.GetAndStoreTokens(Context).RequestToken"/>
+    <script src="lib/htmx.min.js"></script>
+    <script src="lib/_hyperscript.min.js"></script>
 </head>
 
 <body>
@@ -24,6 +26,7 @@
 }
 
 <main role="main" class="flex flex-grow items-center">
+    <partial name="_Notification"/>
     <div class="container mx-auto">
         <div class="px-5 lg:w-1/2 mx-auto">
             @RenderBody()
@@ -34,8 +37,16 @@
 <script src="~/js/site.js" asp-append-version="true"></script>
 
 @await RenderSectionAsync("Scripts", required: false)
+
 <footer class="text-center p-2 text-zinc-500 dark:text-slate-700 text-sm bg-zinc-400 dark:bg-slate-900">
     © 2023 Memodex Kamil Grudzień. Licensed under the GPLv3
 </footer>
+
+<script>
+    document.querySelector('.close-popup').addEventListener('click', function(event) {
+        document.querySelector('#notificationPopup').style.display = 'none';
+    });
+</script>
+
 </body>
 </html>

@@ -38,6 +38,15 @@ public class EditCategory : PageModel
         return RedirectToPage("EditCategory", new { categoryId = Category.Id });
     }
 
+    public async Task<IActionResult> OnPostDeleteCategoryAsync(
+        [FromQuery]
+        int categoryId)
+    {
+        await _mediator.Send(new DeleteCategoryRequest(categoryId));
+        TempData["Notification"] = $"Category {Category!.Name} deleted.";
+        return RedirectToPage("BrowseCategories");
+    }
+
     [BindProperty]
     public CategoryItem? Category { get; set; }
 
@@ -57,6 +66,9 @@ public class EditCategory : PageModel
         string Name,
         string? Description,
         IFormFile? FormFile) : IRequest;
+
+    public record DeleteCategoryRequest(
+        int CategoryId) : IRequest;
 
     public class GetCategoryHandler : IRequestHandler<GetCategoryRequest, CategoryItem>
     {
@@ -140,6 +152,34 @@ public class EditCategory : PageModel
             category.ImageFilename = newFilename ?? category.ImageFilename;
 
             await _memodexContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public class DeleteCategoryHandler : IRequestHandler<DeleteCategoryRequest>
+        {
+            private readonly MemodexContext _memodexContext;
+
+            public DeleteCategoryHandler(
+                MemodexContext memodexContext)
+            {
+                _memodexContext = memodexContext;
+            }
+
+            public async Task Handle(
+                DeleteCategoryRequest request,
+                CancellationToken cancellationToken)
+            {
+                Category? category = await _memodexContext.Categories
+                    .Where(item => item.Id == request.CategoryId)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                if (category is null)
+                {
+                    throw new InvalidOperationException($"Category with id {request.CategoryId} not found.");
+                }
+
+                _memodexContext.Categories.Remove(category);
+                await _memodexContext.SaveChangesAsync(cancellationToken);
+            }
         }
     }
 }

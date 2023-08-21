@@ -5,13 +5,21 @@
     Layout = "Shared/_Layout";
 }
 
-<partial name="_Notification"/>
 <form method="post" enctype="multipart/form-data">
-    <input type="hidden" asp-for="Deck!.Id" value="@Model.Deck!.Id" />
+    <input type="hidden" asp-for="Deck!.Id" value="@Model.Deck!.Id"/>
     <div class="space-y-12">
         <div class="border-b border-gray-900/10 pb-12">
-            <h2>Edit Deck</h2>
-            <p>Make changes to the deck details below.</p>
+            <div class="flex items-center justify-between space-x-4">
+                <div>
+                    <h2>Edit Deck</h2>
+                    <p>Make changes to the deck details below.</p>
+                </div>
+                <a href="@Url.Page("EditFlashcards", new { deckId = Model.Deck!.Id })"
+                   class="text-sm text-blue-600 dark:text-slate-400 border border-blue-600 dark:border-slate-400 px-4 py-2 rounded hover:bg-blue-100 dark:hover:bg-slate-900">
+                    Edit Flashcards
+                </a>
+            </div>
+
 
             <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div class="sm:col-span-4">
@@ -38,7 +46,8 @@
 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
             Update Deck
         </button>
-        <button type="submit" formaction="./OnPostDeleteAsync" onclick="return confirm('Are you sure you want to delete this deck?');"
+        <button type="submit" formaction="editdeck?handler=deletedeck&deckid=@Model.Deck.Id" 
+                onclick="return confirm('Are you sure you want to delete this deck? This will also delete any challenges associated with it.');"
                 class="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 
 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
             Delete Deck

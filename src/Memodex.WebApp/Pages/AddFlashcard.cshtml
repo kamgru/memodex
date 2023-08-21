@@ -1,0 +1,43 @@
+@page
+@model Memodex.WebApp.Pages.AddFlashcard
+
+@{
+    Layout = "Shared/_Layout";
+}
+
+<h1 class="text-3xl font-bold mb-2">Add Flashcard</h1>
+<p class="text-gray-600 mb-4">
+    Add a new flashcard to the deck.
+</p>
+
+<form method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="@Model.Input!.DeckId" value="@Model.Input!.DeckId">
+    <div class="space-y-12">
+        <div class="border-b border-gray-900/10 pb-12">
+            <h2>Add Flashcard</h2>
+            <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div class="sm:col-span-4">
+                    <label>Question</label>
+                    <div class="mt-2">
+                        <textarea type="text" asp-for="Input!.Question" required></textarea>
+                    </div>
+                </div>
+                
+                <div class="sm:col-span-4">
+                    <label>Answer</label>
+                    <div class="mt-2">
+                        <textarea type="text" asp-for="Input!.Answer" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-6 flex items-center justify-end gap-x-6">
+        <a href="@Url.Page("EditFlashcards", new { deckId = Model.Input.DeckId })" class="">Cancel</a>
+        <button type="submit"
+                class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            Submit
+        </button>
+    </div>
+</form>

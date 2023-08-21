@@ -1,0 +1,12 @@
+@model Memodex.WebApp.Pages.EditFlashcards.PageInfo
+
+<div hx-get="/editflashcards?handler=flashcards&deckId=@Model.DeckId&pageNumber=@(Model.Data.Page + 1)&itemsPerPage=@Model.ItemsPerPage"
+     hx-trigger="revealed"
+     hx-swap="afterend"
+     class="divide-y divide-slate-400 dark:divide-slate-600">
+
+    @foreach (EditFlashcards.FlashcardItem flashcard in Model.Data.Items)
+    {
+        <partial name="_FlashcardItemPartial" model="flashcard" />
+    }
+</div>
