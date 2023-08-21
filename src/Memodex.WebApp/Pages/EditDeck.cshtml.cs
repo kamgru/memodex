@@ -142,6 +142,11 @@ public class EditDeck : PageModel
                 throw new InvalidOperationException($"Deck with id {request.Id} not found.");
             }
 
+            List<Challenge> challenges = await _memodexContext.Challenges
+                .Where(item => item.DeckId == request.Id)
+                .ToListAsync(cancellationToken);
+            
+            _memodexContext.Challenges.RemoveRange(challenges); 
             _memodexContext.Decks.Remove(deck);
             await _memodexContext.SaveChangesAsync(cancellationToken);
             return deck.CategoryId;

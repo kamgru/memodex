@@ -169,6 +169,8 @@ public class EditCategory : PageModel
                 CancellationToken cancellationToken)
             {
                 Category? category = await _memodexContext.Categories
+                    .Include(item => item.Decks)
+                    .ThenInclude(item => item.Flashcards)
                     .Where(item => item.Id == request.CategoryId)
                     .FirstOrDefaultAsync(cancellationToken);
 
@@ -177,6 +179,16 @@ public class EditCategory : PageModel
                     throw new InvalidOperationException($"Category with id {request.CategoryId} not found.");
                 }
 
+                List<int> deckIds = await _memodexContext.Decks
+                    .Where(item => item.CategoryId == request.CategoryId)
+                    .Select(item => item.Id)
+                    .ToListAsync(cancellationToken);
+                
+                List<Challenge> challenges = await _memodexContext.Challenges
+                    .Where(item => deckIds.Contains(item.DeckId))
+                    .ToListAsync(cancellationToken);
+                
+                _memodexContext.Challenges.RemoveRange(challenges);
                 _memodexContext.Categories.Remove(category);
                 await _memodexContext.SaveChangesAsync(cancellationToken);
             }
