@@ -1,14 +1,18 @@
-@if (TempData.TryGetValue("Notification", out object? value))
-{
-    string? notification = value?.ToString();
-    if (notification is null)
+@using Memodex.WebApp.Common
+
+@{
+    if (TempData.TryGetValue("Notification", out object? value)
+        && Notification.TryDeserialize(value?.ToString(), out Notification? notification))
     {
-        return;
+        <div id="notification"
+             data-message="@notification.Message"
+             data-notification-type="@notification.Type"
+             class="hidden">
+        </div>
     }
-    
-    <div class="fixed bottom-4 right-4 bg-green-700 text-white px-6 py-4 rounded-md shadow-lg" id="notificationPopup">
-        @notification
+    <div id="notificationPopup"
+         class="notification hidden">
+        <span id="notificationMessage"></span>
         <button class="ml-4 close-popup">&times;</button>
     </div>
-
 }

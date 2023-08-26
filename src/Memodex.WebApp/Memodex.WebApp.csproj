@@ -74,4 +74,14 @@
       <_ContentIncludedByDefault Remove="wwwroot\img\avatars\woman_5.png" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <TypeScriptCompile Update="Pages\Shared\Notification.ts">
+        <DependentUpon>_Notification.cshtml</DependentUpon>
+      </TypeScriptCompile>
+      <TypeScriptCompile Update="Pages\ImportDeck.ts">
+        <DependentUpon>ImportDeck.cshtml</DependentUpon>
+      </TypeScriptCompile>
+    </ItemGroup>
+
 </Project>

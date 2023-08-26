@@ -1,5 +1,6 @@
 using MediatR;
 using Memodex.DataAccess;
+using Memodex.WebApp.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +30,9 @@ public class EditDeck : PageModel
             Deck!.Id,
             Deck.Name,
             Deck.Description));
-        TempData["Notification"] = $"Deck {Deck.Name} updated.";
+
+        this.AddNotification(NotificationType.Success, $"Deck {Deck.Name} updated.");
+
         return RedirectToPage("EditDeck", new { deckId = Deck.Id });
     }
 
@@ -38,7 +41,9 @@ public class EditDeck : PageModel
         int deckId)
     {
         int categoryId = await _mediator.Send(new DeleteDeckRequest(deckId));
-        TempData["Notification"] = $"Deck {Deck!.Name} deleted.";
+
+        this.AddNotification(NotificationType.Success, $"Deck {Deck!.Name} deleted.");
+
         return RedirectToPage("BrowseDecks", new { categoryId });
     }
 
@@ -145,8 +150,8 @@ public class EditDeck : PageModel
             List<Challenge> challenges = await _memodexContext.Challenges
                 .Where(item => item.DeckId == request.Id)
                 .ToListAsync(cancellationToken);
-            
-            _memodexContext.Challenges.RemoveRange(challenges); 
+
+            _memodexContext.Challenges.RemoveRange(challenges);
             _memodexContext.Decks.Remove(deck);
             await _memodexContext.SaveChangesAsync(cancellationToken);
             return deck.CategoryId;

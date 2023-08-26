@@ -1,0 +1,70 @@
+@page
+@model Memodex.WebApp.Pages.ImportDeck
+
+@{
+    Layout = "Shared/_Layout";
+}
+
+<h1>Import Deck</h1>
+<form id="form-import-deck" 
+      hx-target="#deck-import-confirmation"
+      hx-swap="innerHTML"
+      hx-post="importdeck" 
+      enctype="multipart/form-data"
+      hx-trigger="submit"
+      hx-headers="javascript:{'RequestVerificationToken': document.querySelector('input[name=__RequestVerificationToken]').value}">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+    <div class="my-2 flex items-center gap-x-3">
+        <label class="rounded-md bg-white px-2.5 py-1.5 text-sm text-slate-600 shadow-sm ring-1 ring-inset 
+ring-gray-300 dark:ring-slate-600 dark:bg-slate-800 hover:bg-gray-50 cursor-pointer">
+            Choose File
+            <input id="input-import-deck" accept=".json" name="formFile" type="file" class="sr-only">
+        </label>
+    </div>
+</form>
+<div id="deck-import-confirmation">
+    
+</div>
+<p>
+    To import a deck of flashcards into Memodex, you'll need to create a file in the specific format that
+    the application recognizes. Here's a guide to help you through the process:
+</p>
+<p>
+    1. File Format: The file must be a JSON file. You can create this using any text editor.
+</p>
+<p>
+    2. Deck Information: At the beginning of the file, define the deck's name and description.<br/>
+    Example:
+</p>
+<pre>
+    <code>
+  "name": "Ancient Art & Architecture",
+  "description": "Journey through time to uncover the wonders of the ancient world."
+    </code>
+</pre>
+<p>
+    3. Flashcards: Next, you'll define the flashcards within a "flashcards" array. Each flashcard
+    must have a "question" and an "answer" field.<br/>
+    Example:
+</p>
+<pre>
+<code>
+{
+    "name": "Your Deck Name",
+    "description": "Your Deck Description",
+    "flashcards": [
+        {
+            "question": "Your Question Here",
+            "answer": "Your Answer Here"
+        },
+        ...
+    ]
+}
+</code>
+</pre>
+
+@section Scripts
+{
+    <script src="js/ImportDeck.js"></script>
+}

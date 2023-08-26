@@ -1,5 +1,6 @@
 using MediatR;
 using Memodex.DataAccess;
+using Memodex.WebApp.Common;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -34,7 +35,9 @@ public class EditCategory : PageModel
             Category.Name,
             Category.Description,
             formFile));
-        TempData["Notification"] = $"Category {Category.Name} updated.";
+
+        this.AddNotification(NotificationType.Success, $"Category {Category.Name} updated.");
+
         return RedirectToPage("EditCategory", new { categoryId = Category.Id });
     }
 
@@ -43,7 +46,9 @@ public class EditCategory : PageModel
         int categoryId)
     {
         await _mediator.Send(new DeleteCategoryRequest(categoryId));
-        TempData["Notification"] = $"Category {Category!.Name} deleted.";
+
+        this.AddNotification(NotificationType.Success, $"Category {Category!.Name} deleted.");
+
         return RedirectToPage("BrowseCategories");
     }
 
@@ -183,11 +188,11 @@ public class EditCategory : PageModel
                     .Where(item => item.CategoryId == request.CategoryId)
                     .Select(item => item.Id)
                     .ToListAsync(cancellationToken);
-                
+
                 List<Challenge> challenges = await _memodexContext.Challenges
                     .Where(item => deckIds.Contains(item.DeckId))
                     .ToListAsync(cancellationToken);
-                
+
                 _memodexContext.Challenges.RemoveRange(challenges);
                 _memodexContext.Categories.Remove(category);
                 await _memodexContext.SaveChangesAsync(cancellationToken);
