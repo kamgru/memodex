@@ -1,4 +1,5 @@
 @page
+@using Memodex.WebApp.Pages.Shared
 @model Memodex.WebApp.Pages.EditCategory
 
 @{
@@ -7,9 +8,13 @@
     {
         Response.Redirect("/Error");
     }
+    
+    BackButton backButton = new(Url.Page("BrowseCategories"));
 }
 
-<form method="post" enctype="multipart/form-data">
+<partial name="Shared/_BackButtonPartial" model="@backButton"/>
+
+<form method="post" enctype="multipart/form-data" class="mt-4">
     <input type="hidden" asp-for="Category!.Id" value="@Model.Category!.Id"/>
     <div class="space-y-12">
         <div class="border-b border-gray-900/10 pb-12">

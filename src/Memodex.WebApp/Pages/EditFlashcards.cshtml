@@ -1,9 +1,14 @@
 @page
+@using Memodex.WebApp.Pages.Shared
 @model Memodex.WebApp.Pages.EditFlashcards
 
 @{
     Layout = "Shared/_Layout";
+    BackButton backButton = new(Url.Page("EditDeck", new { deckId = Model.CurrentPageInfo!.DeckId }));
 }
+
+<partial name="Shared/_BackButtonPartial" model="@backButton"/>
+
 <div class="mb-6">
     <h1>Manage Your Flashcards</h1>
     <p class="pb-2">

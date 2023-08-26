@@ -1,19 +1,26 @@
 @page
+@using Memodex.WebApp.Pages.Shared
 @model Memodex.WebApp.Pages.BrowseDecks
 
 @{
     Layout = "Shared/_Layout";
+    BackButton backButton = new(Url.Page("BrowseCategories"));
 }
+<partial name="Shared/_BackButtonPartial" model="@backButton"/>
 <div class="mb-6">
     <h1 class="text-3xl font-bold mb-2">Browse Decks</h1>
     <p class="text-gray-600 mb-4">
         Pick a Deck and start your challenge. Each deck contains a curated collection of flashcards to enhance your learning.
     </p>
 
-    <div class="text-right">
+    <div class="flex items-end space-x-4">
         <a href="@Url.Page("AddDeck", new { categoryId = Model.CurrentCategoryId })"
            class="btn-outline">
             + New Deck
+        </a>
+        <a href="@Url.Page("ImportDeck", new { categoryId = Model.CurrentCategoryId })"
+           class="btn-outline">
+            + Import Deck
         </a>
     </div>
 </div>

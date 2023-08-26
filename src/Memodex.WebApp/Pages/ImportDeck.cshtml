@@ -1,20 +1,24 @@
 @page
+@using Memodex.WebApp.Pages.Shared
 @model Memodex.WebApp.Pages.ImportDeck
 
 @{
     Layout = "Shared/_Layout";
+    
+    BackButton backButton = new(Url.Page("BrowseDecks", new { categoryId = Model.CategoryId }));
+    <partial name="Shared/_BackButtonPartial" model="@backButton"/>
 }
 
 <h1>Import Deck</h1>
-<form id="form-import-deck" 
+<form id="form-import-deck"
       hx-target="#deck-import-confirmation"
       hx-swap="innerHTML"
-      hx-post="importdeck" 
+      hx-post="importdeck"
       enctype="multipart/form-data"
       hx-trigger="submit"
       hx-headers="javascript:{'RequestVerificationToken': document.querySelector('input[name=__RequestVerificationToken]').value}">
     @Html.AntiForgeryToken()
-    <input type="hidden" name="categoryId" value="@Model.CategoryId" />
+    <input type="hidden" name="categoryId" value="@Model.CategoryId"/>
     <div class="my-2 flex items-center gap-x-3">
         <label class="rounded-md bg-white px-2.5 py-1.5 text-sm text-slate-600 shadow-sm ring-1 ring-inset 
 ring-gray-300 dark:ring-slate-600 dark:bg-slate-800 hover:bg-gray-50 cursor-pointer">
@@ -24,7 +28,7 @@ ring-gray-300 dark:ring-slate-600 dark:bg-slate-800 hover:bg-gray-50 cursor-poin
     </div>
 </form>
 <div id="deck-import-confirmation">
-    
+
 </div>
 <p>
     To import a deck of flashcards into Memodex, you'll need to create a file in the specific format that
