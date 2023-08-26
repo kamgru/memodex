@@ -82,6 +82,21 @@
       <TypeScriptCompile Update="Pages\ImportDeck.ts">
         <DependentUpon>ImportDeck.cshtml</DependentUpon>
       </TypeScriptCompile>
+      <TypeScriptCompile Update="Pages\Shared\ThemeToggle.ts">
+        <DependentUpon>_ThemeTogglePartial.cshtml</DependentUpon>
+      </TypeScriptCompile>
+      <TypeScriptCompile Update="Pages\CreateProfile.ts">
+        <DependentUpon>CreateProfile.cshtml</DependentUpon>
+      </TypeScriptCompile>
+      <TypeScriptCompile Update="Pages\Engage.ts">
+        <DependentUpon>Engage.cshtml</DependentUpon>
+      </TypeScriptCompile>
+      <TypeScriptCompile Update="Pages\Review.ts">
+        <DependentUpon>Review.cshtml</DependentUpon>
+      </TypeScriptCompile>
+      <TypeScriptCompile Update="Pages\EditCategory.ts">
+        <DependentUpon>EditCategory.cshtml</DependentUpon>
+      </TypeScriptCompile>
     </ItemGroup>
 
 </Project>

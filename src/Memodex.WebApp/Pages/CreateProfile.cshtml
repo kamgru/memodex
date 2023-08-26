@@ -1,5 +1,6 @@
 @page
 @model Memodex.WebApp.Pages.CreateProfile
+
 <h1>Almost there!</h1>
 <p class="pb-4">
     Create your profile and get started. Exciting challenges await!
@@ -10,12 +11,13 @@
         <input type="text" asp-for="FormData.Name" required class="mt-1 p-2 w-full border rounded-md">
     </div>
 
-    <div id="selectedAvatar" class="my-4 cursor-pointer flex items-center space-x-2">
+    <div id="selected-avatar-container" class="my-4 cursor-pointer flex items-center space-x-2">
         <label class="text-sm font-medium pr-2">Avatar</label>
         <img src="/media/img/avatars/default.png" alt="Selected Avatar" class="w-20 h-20 rounded-full">
+        <input id="default-avatar-placeholder" type="hidden" asp-for="FormData.Image"/>
     </div>
 
-    <div id="avatarSelection" class="hidden flex flex-wrap justify-start mt-2 space-x-2 space-y-2">
+    <div id="available-avatars-container" class="hidden flex flex-wrap justify-start mt-2 space-x-2 space-y-2">
         @foreach (CreateProfile.AvatarImage avatar in Model.Avatars)
         {
             <label class="cursor-pointer border-4 p-1 rounded-full hover:border-blue-500 transition">
@@ -33,18 +35,5 @@
 </form>
 
 @section Scripts {
-    <script>
-    document.getElementById('selectedAvatar').addEventListener('click', function() {
-        document.getElementById('avatarSelection').classList.toggle('hidden');
-    });
-
-    document.getElementById('avatarSelection').addEventListener('change', function(event) {
-        if (event.target.checked) {
-            this.classList.add('hidden');
-            let selectedAvatarDiv = document.getElementById('selectedAvatar');
-            selectedAvatarDiv.querySelector('img').src = event.target.nextElementSibling.src;
-            selectedAvatarDiv.classList.remove('hidden');
-        }
-    });
-    </script>
+    <script src="js/CreateProfile.js"></script>
 }

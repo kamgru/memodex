@@ -31,13 +31,7 @@ public class CreateProfile : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (!ModelState.IsValid)
-        {
-            return Page();
-        }
-
         await _mediator.Send(FormData);
-
         return RedirectToPage("SelectProfile");
     }
 

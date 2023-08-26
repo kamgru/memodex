@@ -29,7 +29,7 @@
                         <label class="rounded-md bg-white px-2.5 py-1.5 text-sm text-slate-600 shadow-sm ring-1 ring-inset 
 ring-gray-300 dark:ring-slate-600 dark:bg-slate-800 hover:bg-gray-50 cursor-pointer">
                             Change
-                            <input id="UploadedImage" name="formFile" type="file" class="sr-only">
+                            <input id="UploadedImage" name="formFile" type="file" accept="image/*" class="sr-only">
                         </label>
                     </div>
                 </div>
@@ -68,16 +68,5 @@ ring-gray-300 dark:ring-slate-600 dark:bg-slate-800 hover:bg-gray-50 cursor-poin
 
 @section Scripts
 {
-    <script>
-    document.getElementById('UploadedImage').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.querySelector('#current-image').src = e.target.result;
-            }
-            reader.readAsDataURL(file);
-        }
-    });
-    </script>
+    <script src="js/EditCategory.js"> </script>
 }

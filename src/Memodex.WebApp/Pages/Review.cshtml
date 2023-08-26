@@ -60,27 +60,5 @@ else
 }
 
 @section Scripts {
-    <script>
-        document.getElementById("reveal-btn").addEventListener("click", function () {
-            document.getElementById("answer-container").style.display = "block";
-        });
-        
-            let revealBtn = document.querySelector('#reveal-btn');
-            let hideBtn = document.querySelector('#hide-btn');
-            let answer = document.querySelector('#answer');
-        
-            revealBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                answer.classList.toggle('hidden');
-                revealBtn.classList.toggle('hidden');
-                hideBtn.classList.toggle('hidden')
-            });
-        
-            hideBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                answer.classList.toggle('hidden');
-                revealBtn.classList.toggle('hidden');
-                hideBtn.classList.toggle('hidden')
-            });
-    </script>
+    <script src="js/Review.js"></script>
 }
