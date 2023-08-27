@@ -9,12 +9,7 @@ public class DbWipeCommandFactory
     {
         Command command = new("wipe", "Wipe the database");
         
-        command.SetHandler(() =>
-        {
-            MemodexContext memodexContext = MemodexContextFactory.Create();
-            memodexContext.Database.EnsureDeleted();
-            memodexContext.Database.EnsureCreated();
-        });
+        command.SetHandler(DbCommandHandler.HandleDbWipe);
         
         return command;
     }

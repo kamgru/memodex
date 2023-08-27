@@ -17,8 +17,7 @@ public static class AvatarImportCommandFactory
             pathOption
         };
 
-        command.SetHandler((
-            path) =>
+        command.SetHandler(path =>
         {
             string[] files = Directory.GetFiles(path);
             MemodexContext memodexContext = MemodexContextFactory.Create();

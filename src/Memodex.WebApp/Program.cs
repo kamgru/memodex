@@ -5,10 +5,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile("appsettings.Development.json", true);
 
 builder.Services.AddRazorPages();
+
+string? connectionString = builder.Configuration.GetConnectionString("MemodexDb");
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    connectionString = Environment.GetEnvironmentVariable("MemodexDbConnectionString")
+                       ?? throw new InvalidOperationException("Missing connection string for MemodexDb.");
+}
+
 builder.Services.AddDbContext<MemodexContext>(
-    opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("MemodexDb")));
+    opt => opt.UseSqlServer(connectionString));
 builder.Services.AddMediatR(opt => opt.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();

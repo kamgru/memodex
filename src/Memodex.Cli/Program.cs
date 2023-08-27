@@ -5,6 +5,7 @@ Command dbCommand = new("db");
 dbCommand.AddCommand(DbSetCommandFactory.Create());
 dbCommand.AddCommand(DbShowCommandFactory.Create());
 dbCommand.AddCommand(DbWipeCommandFactory.Create());
+dbCommand.AddCommand(DbInitCommandFactory.Create());
 
 Command categoryCommand = new("category");
 categoryCommand.AddCommand(CategoryAddCommandFactory.Create(CategoryAddDefaultCommandFactory.Create()));
@@ -25,6 +26,8 @@ avatarCommand.AddCommand(AvatarImportCommandFactory.Create());
 Command profileCommand = new("profile");
 profileCommand.AddCommand(ProfileCreateDefaultCommandFactory.Create());
 
+Command initCommand = new("init");
+
 Command rootCommand = new RootCommand();
 rootCommand.AddCommand(dbCommand);
 rootCommand.AddCommand(categoryCommand);
@@ -32,4 +35,5 @@ rootCommand.AddCommand(deckCommand);
 rootCommand.AddCommand(flashcardCommand);
 rootCommand.AddCommand(avatarCommand);
 rootCommand.AddCommand(profileCommand);
+rootCommand.AddCommand(initCommand);
 await rootCommand.InvokeAsync(args);

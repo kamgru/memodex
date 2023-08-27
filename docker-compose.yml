@@ -1,9 +1,13 @@
 services:
   
   app:
-    build: ./src
+    image: kamgru/memodex:latest
     ports:
       - "5000:80"
+    environment:
+      - MemodexDbConnectionString=Server=${MEMODEX_DB_HOST};Database=${MEMODEX_DB_NAME};User Id=${MEMODEX_DB_USER};Password=${MEMODEX_DB_PASS};TrustServerCertificate=True
+    volumes:
+      - memodex:/app/data
 
   db:
     image: "mcr.microsoft.com/mssql/server:2022-CU4-ubuntu-20.04"
@@ -12,13 +16,15 @@ services:
     environment:
       - ACCEPT_EULA=y
       - MSSQL_PID=express
-      - MSSQL_SA_PASSWORD=${admin_password}
+      - MSSQL_SA_PASSWORD=${MEMODEX_DB_PASS}
     ports:
       - "1433:1433"
+  cli:
+    image: kamgru/memodex-cli:latest
+    command: mdx db set --host ${MEMODEX_DB_HOST} --user ${MEMODEX_DB_USER} --password ${MEMODEX_DB_PASS} --database ${MEMODEX_DB_NAME} --init true
+    volumes:
+      - memodex:/app/data
 
 volumes:
+  memodex:
   mssql:
-
-secrets:
-  db_password:
-    file: ./db_password.txt

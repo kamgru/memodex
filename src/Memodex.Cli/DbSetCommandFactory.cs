@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.CommandLine.Invocation;
 
 namespace Memodex.Cli;
 
@@ -7,46 +6,51 @@ public static class DbSetCommandFactory
 {
     public static Command Create()
     {
-        Option<string> hostOption = new Option<string>(
+        Option<string> hostOption = new(
             "--host",
             description: "The host to connect to.",
             getDefaultValue: () => "localhost"
         );
 
-        Option<string> userOption = new Option<string>(
+        Option<string> userOption = new(
             "--user",
             description: "The user to connect as.",
             getDefaultValue: () => "sa"
         );
 
-        Option<string> passwordOption = new Option<string>(
+        Option<string> passwordOption = new(
             "--password",
             description: "The password to use."
         );
 
-        Option<string> databaseOption = new Option<string>(
+        Option<string> databaseOption = new(
             "--database",
             description: "The database to connect to.",
             getDefaultValue: () => "MemodexDb"
         );
+        
+        Option<bool> initOption = new(
+            "--init",
+            description: "Initialize the database."
+        );
 
-        Command dbSetCommand = new Command("set")
+        Command dbSetCommand = new("set")
         {
             hostOption,
             databaseOption,
             userOption,
-            passwordOption
+            passwordOption,
+            initOption
         };
 
-        dbSetCommand.SetHandler(Handle, hostOption, databaseOption, userOption, passwordOption);
+        dbSetCommand.SetHandler(
+            DbCommandHandler.HandleDbSet, 
+            hostOption, 
+            databaseOption, 
+            userOption, 
+            passwordOption, 
+            initOption);
 
         return dbSetCommand;
-    }
-
-    private static void Handle(string host, string db, string user, string password)
-    {
-        string connectionString = $"Server={host};Database={db};User Id={user};Password={password};TrustServerCertificate=True";
-
-        ConnectionStringManager.SetConnectionString(new ConnectionString(connectionString));
     }
 }

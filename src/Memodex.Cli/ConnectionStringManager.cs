@@ -11,8 +11,7 @@ public static class ConnectionStringManager
 
     static ConnectionStringManager()
     {
-        string homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        MemodexDirectory = Path.Combine(homeDirectory, ".memodex");
+        MemodexDirectory = Path.Combine("/app/data", ".memodex");
         ConfigFilename = Path.Combine(MemodexDirectory, ".config");
     }
 
