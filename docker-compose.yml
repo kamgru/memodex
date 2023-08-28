@@ -1,7 +1,7 @@
 services:
   
   app:
-    image: kamgru/memodex:latest
+    image: kamgru/memodex:0.9.4
     ports:
       - "5000:80"
     environment:
@@ -20,7 +20,7 @@ services:
     ports:
       - "1433:1433"
   cli:
-    image: kamgru/memodex-cli:latest
+    image: kamgru/memodex-cli:0.9.4
     command: mdx db set --host ${MEMODEX_DB_HOST} --user ${MEMODEX_DB_USER} --password ${MEMODEX_DB_PASS} --database ${MEMODEX_DB_NAME} --init true
     volumes:
       - memodex:/app/data

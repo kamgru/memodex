@@ -1,0 +1,46 @@
+{
+    "name": "Chemical Elements",
+    "description": "A deck about Chemical Elements",
+    "flashcards": [
+        {
+            "question": "What is the chemical symbol for gold?",
+            "answer": "Au"
+        },
+        {
+            "question": "What is the chemical symbol for silver?",
+            "answer": "Ag"
+        },
+        {
+            "question": "What is the chemical symbol for iron?",
+            "answer": "Fe"
+        },
+        {
+            "question": "What is the chemical symbol for mercury?",
+            "answer": "Hg"
+        },
+        {
+            "question": "What is the chemical symbol for oxygen?",
+            "answer": "O"
+        },
+        {
+            "question": "What is the chemical symbol for hydrogen?",
+            "answer": "H"
+        },
+        {
+            "question": "What is the chemical symbol for carbon?",
+            "answer": "C"
+        },
+        {
+            "question": "What is the chemical symbol for nitrogen?",
+            "answer": "N"
+        },
+        {
+            "question": "What is the chemical symbol for chlorine?",
+            "answer": "Cl"
+        },
+        {
+            "question": "What is the chemical symbol for sodium?",
+            "answer": "Na"
+        }
+    ]
+}

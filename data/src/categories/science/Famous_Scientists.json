@@ -1,0 +1,46 @@
+{
+    "name": "Famous Scientists",
+    "description": "Learn about the great minds that have shaped the field of science.",
+    "flashcards": [
+        {
+            "question": "Who developed the theory of general relativity?",
+            "answer": "Albert Einstein"
+        },
+        {
+            "question": "Who is known for the laws of motion?",
+            "answer": "Isaac Newton"
+        },
+        {
+            "question": "Who discovered the structure of DNA?",
+            "answer": "Watson and Crick"
+        },
+        {
+            "question": "Who is known for the periodic table?",
+            "answer": "Dmitri Mendeleev"
+        },
+        {
+            "question": "Who discovered penicillin?",
+            "answer": "Alexander Fleming"
+        },
+        {
+            "question": "Who proposed the theory of evolution?",
+            "answer": "Charles Darwin"
+        },
+        {
+            "question": "Who is known for the uncertainty principle?",
+            "answer": "Werner Heisenberg"
+        },
+        {
+            "question": "Who discovered radium?",
+            "answer": "Marie Curie"
+        },
+        {
+            "question": "Who is the father of modern chemistry?",
+            "answer": "Antoine Lavoisier"
+        },
+        {
+            "question": "Who is known for the Bohr model?",
+            "answer": "Niels Bohr"
+        }
+    ]
+}

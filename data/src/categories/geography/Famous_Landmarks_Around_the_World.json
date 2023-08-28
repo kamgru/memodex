@@ -1,0 +1,106 @@
+{
+    "name": "Famous Landmarks Around the World",
+    "description": "This deck contains flashcards about famous landmarks around the world.",
+    "flashcards": [
+        {
+            "question": "Where is the Eiffel Tower located?",
+            "answer": "Paris, France"
+        },
+        {
+            "question": "Where is the Statue of Liberty located?",
+            "answer": "New York, USA"
+        },
+        {
+            "question": "Where is the Great Wall of China located?",
+            "answer": "China"
+        },
+        {
+            "question": "Where is Christ the Redeemer located?",
+            "answer": "Rio de Janeiro, Brazil"
+        },
+        {
+            "question": "Where is the Taj Mahal located?",
+            "answer": "Agra, India"
+        },
+        {
+            "question": "Where is the Colosseum located?",
+            "answer": "Rome, Italy"
+        },
+        {
+            "question": "Where is the Sydney Opera House located?",
+            "answer": "Sydney, Australia"
+        },
+        {
+            "question": "Where is the Leaning Tower of Pisa located?",
+            "answer": "Pisa, Italy"
+        },
+        {
+            "question": "Where is Mount Rushmore located?",
+            "answer": "South Dakota, USA"
+        },
+        {
+            "question": "Where is the Burj Khalifa located?",
+            "answer": "Dubai, UAE"
+        },
+        {
+            "question": "Where is the Pyramids of Giza located?",
+            "answer": "Giza, Egypt"
+        },
+        {
+            "question": "Where is the Golden Gate Bridge located?",
+            "answer": "San Francisco, USA"
+        },
+        {
+            "question": "Where is the Machu Picchu located?",
+            "answer": "Cusco Region, Peru"
+        },
+        {
+            "question": "Where is the Petra located?",
+            "answer": "Ma'an Governorate, Jordan"
+        },
+        {
+            "question": "Where is the Stonehenge located?",
+            "answer": "Wiltshire, England"
+        },
+        {
+            "question": "Where is the Big Ben located?",
+            "answer": "London, England"
+        },
+        {
+            "question": "Where is the Chichen Itza located?",
+            "answer": "Yucat\u00e1n, Mexico"
+        },
+        {
+            "question": "Where is the Tower Bridge located?",
+            "answer": "London, England"
+        },
+        {
+            "question": "Where is the Brandenburg Gate located?",
+            "answer": "Berlin, Germany"
+        },
+        {
+            "question": "Where is the Angkor Wat located?",
+            "answer": "Siem Reap, Cambodia"
+        },
+        {
+            "question": "Where is the Buckingham Palace located?",
+            "answer": "London, England"
+        },
+        {
+            "question": "Where is the Sistine Chapel located?",
+            "answer": "Vatican City"
+        },
+        {
+            "question": "Where is the Notre Dame Cathedral located?",
+            "answer": "Paris, France"
+        },
+        {
+            "question": "Where is the Alhambra located?",
+            "answer": "Granada, Spain"
+        },
+        {
+            "question": "Where is the Rialto Bridge located?",
+            "answer": "Venice, Italy"
+        }
+    ]
+}

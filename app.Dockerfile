@@ -16,8 +16,7 @@ RUN dotnet publish "Memodex.WebApp.csproj" -c Release -o /app/publish /p:UseAppH
 
 FROM base AS data
 WORKDIR /app
-RUN mkdir -p /app/data
-COPY data/ /app/data/
+COPY data/ /app/data
 
 FROM base AS final
 WORKDIR /app

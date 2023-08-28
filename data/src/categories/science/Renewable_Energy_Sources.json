@@ -1,0 +1,46 @@
+{
+    "name": "Renewable Energy Sources",
+    "description": "Explore the types of renewable energy that are changing the way we power our world.",
+    "flashcards": [
+        {
+            "question": "What is the most commonly used form of renewable energy?",
+            "answer": "Hydropower"
+        },
+        {
+            "question": "Which type of renewable energy uses the Sun's rays?",
+            "answer": "Solar energy"
+        },
+        {
+            "question": "Which renewable energy source is derived from the Earth\u2019s internal heat?",
+            "answer": "Geothermal energy"
+        },
+        {
+            "question": "Which renewable energy source is created by harnessing wind?",
+            "answer": "Wind energy"
+        },
+        {
+            "question": "What type of energy is produced from organic material?",
+            "answer": "Biomass energy"
+        },
+        {
+            "question": "Which renewable source converts tidal energy into electricity?",
+            "answer": "Tidal energy"
+        },
+        {
+            "question": "What is the term for the process of capturing waste heat to produce more energy?",
+            "answer": "Cogeneration"
+        },
+        {
+            "question": "What renewable source uses the movement of waves to generate electricity?",
+            "answer": "Wave energy"
+        },
+        {
+            "question": "What is the main disadvantage of solar energy?",
+            "answer": "Intermittency"
+        },
+        {
+            "question": "Which renewable source uses falling or fast-running water?",
+            "answer": "Hydropower"
+        }
+    ]
+}

@@ -1,0 +1,106 @@
+{
+    "name": "Capitals of European Countries",
+    "description": "Learn the capital cities of 25 European countries.",
+    "flashcards": [
+        {
+            "question": "What is the capital of Germany?",
+            "answer": "Berlin"
+        },
+        {
+            "question": "What is the capital of France?",
+            "answer": "Paris"
+        },
+        {
+            "question": "What is the capital of Spain?",
+            "answer": "Madrid"
+        },
+        {
+            "question": "What is the capital of Italy?",
+            "answer": "Rome"
+        },
+        {
+            "question": "What is the capital of United Kingdom?",
+            "answer": "London"
+        },
+        {
+            "question": "What is the capital of Russia?",
+            "answer": "Moscow"
+        },
+        {
+            "question": "What is the capital of Ukraine?",
+            "answer": "Kyiv"
+        },
+        {
+            "question": "What is the capital of Poland?",
+            "answer": "Warsaw"
+        },
+        {
+            "question": "What is the capital of Sweden?",
+            "answer": "Stockholm"
+        },
+        {
+            "question": "What is the capital of Norway?",
+            "answer": "Oslo"
+        },
+        {
+            "question": "What is the capital of Denmark?",
+            "answer": "Copenhagen"
+        },
+        {
+            "question": "What is the capital of Finland?",
+            "answer": "Helsinki"
+        },
+        {
+            "question": "What is the capital of Switzerland?",
+            "answer": "Bern"
+        },
+        {
+            "question": "What is the capital of Austria?",
+            "answer": "Vienna"
+        },
+        {
+            "question": "What is the capital of Belgium?",
+            "answer": "Brussels"
+        },
+        {
+            "question": "What is the capital of Greece?",
+            "answer": "Athens"
+        },
+        {
+            "question": "What is the capital of Czech Republic?",
+            "answer": "Prague"
+        },
+        {
+            "question": "What is the capital of Portugal?",
+            "answer": "Lisbon"
+        },
+        {
+            "question": "What is the capital of Netherlands?",
+            "answer": "Amsterdam"
+        },
+        {
+            "question": "What is the capital of Ireland?",
+            "answer": "Dublin"
+        },
+        {
+            "question": "What is the capital of Hungary?",
+            "answer": "Budapest"
+        },
+        {
+            "question": "What is the capital of Slovakia?",
+            "answer": "Bratislava"
+        },
+        {
+            "question": "What is the capital of Slovenia?",
+            "answer": "Ljubljana"
+        },
+        {
+            "question": "What is the capital of Romania?",
+            "answer": "Bucharest"
+        },
+        {
+            "question": "What is the capital of Croatia?",
+            "answer": "Zagreb"
+        }
+    ]
+}

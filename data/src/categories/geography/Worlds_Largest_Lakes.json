@@ -1,0 +1,106 @@
+{
+    "name": "World's Largest Lakes",
+    "description": "This deck contains flashcards about the world's largest lakes by surface area.",
+    "flashcards": [
+        {
+            "question": "What is the largest lake in the world by surface area?",
+            "answer": "Caspian Sea"
+        },
+        {
+            "question": "Which lake is the largest freshwater lake in the world by surface area?",
+            "answer": "Lake Superior"
+        },
+        {
+            "question": "Which lake is the second largest in North America?",
+            "answer": "Lake Huron"
+        },
+        {
+            "question": "What is Africa's largest lake?",
+            "answer": "Lake Victoria"
+        },
+        {
+            "question": "Which lake is shared by Peru and Bolivia?",
+            "answer": "Lake Titicaca"
+        },
+        {
+            "question": "Which lake is the deepest in the United States?",
+            "answer": "Crater Lake"
+        },
+        {
+            "question": "Which lake is the world's highest navigable lake?",
+            "answer": "Lake Titicaca"
+        },
+        {
+            "question": "What is the largest lake in South America?",
+            "answer": "Lake Maracaibo"
+        },
+        {
+            "question": "What is the largest lake in Central America?",
+            "answer": "Lake Nicaragua"
+        },
+        {
+            "question": "Which lake in Russia is the deepest lake in the world?",
+            "answer": "Lake Baikal"
+        },
+        {
+            "question": "What is the largest lake in Australia?",
+            "answer": "Lake Eyre"
+        },
+        {
+            "question": "What is the largest lake entirely in Canada?",
+            "answer": "Great Bear Lake"
+        },
+        {
+            "question": "Which lake is the largest in the Middle East?",
+            "answer": "Lake Urmia"
+        },
+        {
+            "question": "What is the largest lake in the British Isles?",
+            "answer": "Lough Neagh"
+        },
+        {
+            "question": "Which lake is the largest in the Himalayas?",
+            "answer": "Vular Lake"
+        },
+        {
+            "question": "What is the largest lake in China?",
+            "answer": "Qinghai Lake"
+        },
+        {
+            "question": "What is the largest saltwater lake in the United States?",
+            "answer": "Great Salt Lake"
+        },
+        {
+            "question": "Which lake is the largest in the Balkans?",
+            "answer": "Lake Skadar"
+        },
+        {
+            "question": "What is the largest lake in Japan?",
+            "answer": "Lake Biwa"
+        },
+        {
+            "question": "Which lake is the largest in Sweden?",
+            "answer": "Lake V\u00e4nern"
+        },
+        {
+            "question": "What is the largest lake in Iceland?",
+            "answer": "Lake Thingvallavatn"
+        },
+        {
+            "question": "What is the largest lake in New Zealand?",
+            "answer": "Lake Taupo"
+        },
+        {
+            "question": "What is the largest lake in Finland?",
+            "answer": "Lake Inari"
+        },
+        {
+            "question": "Which lake is the largest in the Alps?",
+            "answer": "Lake Geneva"
+        },
+        {
+            "question": "What is the largest lake in the Andes?",
+            "answer": "Lake Titicaca"
+        }
+    ]
+}

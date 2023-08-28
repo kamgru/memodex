@@ -1,0 +1,46 @@
+{
+    "name": "The Renaissance",
+    "description": "Explore the rebirth of art, culture, and knowledge.",
+    "flashcards": [
+        {
+            "question": "Where did the Renaissance originate?",
+            "answer": "Italy"
+        },
+        {
+            "question": "Who painted the Mona Lisa?",
+            "answer": "Leonardo da Vinci"
+        },
+        {
+            "question": "What is humanism?",
+            "answer": "A focus on human potential and achievements"
+        },
+        {
+            "question": "Who wrote 'The Prince'?",
+            "answer": "Niccolo Machiavelli"
+        },
+        {
+            "question": "Who was a famous playwright during the Renaissance?",
+            "answer": "William Shakespeare"
+        },
+        {
+            "question": "What was the significance of the printing press?",
+            "answer": "It made books more accessible"
+        },
+        {
+            "question": "Who painted the Sistine Chapel?",
+            "answer": "Michelangelo"
+        },
+        {
+            "question": "What was the Medicis' role?",
+            "answer": "They were patrons of the arts"
+        },
+        {
+            "question": "Who translated the New Testament into German?",
+            "answer": "Martin Luther"
+        },
+        {
+            "question": "What is perspective in art?",
+            "answer": "A technique used to represent three-dimensional objects on a two-dimensional surface"
+        }
+    ]
+}

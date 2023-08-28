@@ -1,0 +1,46 @@
+{
+    "name": "The Cold War",
+    "description": "The political and military tension between the USA and the USSR.",
+    "flashcards": [
+        {
+            "question": "What were the two superpowers?",
+            "answer": "USA and USSR"
+        },
+        {
+            "question": "What does the term 'Iron Curtain' refer to?",
+            "answer": "The division between Eastern and Western Europe"
+        },
+        {
+            "question": "What was the space race?",
+            "answer": "Competition between the USA and USSR to explore outer space"
+        },
+        {
+            "question": "What was the Cuban Missile Crisis?",
+            "answer": "A 13-day confrontation between the USA and the USSR over Soviet ballistic missiles in Cuba"
+        },
+        {
+            "question": "What was the Marshall Plan?",
+            "answer": "A plan to help rebuild Western Europe after WWII"
+        },
+        {
+            "question": "What was the Berlin Wall?",
+            "answer": "A wall dividing East and West Berlin"
+        },
+        {
+            "question": "What is 'Mutually Assured Destruction'?",
+            "answer": "A military strategy where both sides would suffer unacceptable damage"
+        },
+        {
+            "question": "What was the Korean War?",
+            "answer": "A war between North Korea (with the support of China and the Soviet Union) and South Korea (with the support of the United States)"
+        },
+        {
+            "question": "Who was the first human to travel into space?",
+            "answer": "Yuri Gagarin"
+        },
+        {
+            "question": "What led to the end of the Cold War?",
+            "answer": "The collapse of the Soviet Union"
+        }
+    ]
+}

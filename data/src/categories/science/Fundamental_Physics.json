@@ -1,0 +1,46 @@
+{
+    "name": "Fundamental Physics",
+    "description": "A deck about Fundamental Physics",
+    "flashcards": [
+        {
+            "question": "What is Newton's first law?",
+            "answer": "An object in motion stays in motion, an object at rest stays at rest unless acted upon by an external force."
+        },
+        {
+            "question": "Who is known for the equation E=mc^2?",
+            "answer": "Albert Einstein"
+        },
+        {
+            "question": "What is the speed of light?",
+            "answer": "299,792,458 meters per second"
+        },
+        {
+            "question": "What does the law of conservation of energy state?",
+            "answer": "Energy cannot be created or destroyed, only transformed."
+        },
+        {
+            "question": "What does the law of conservation of momentum state?",
+            "answer": "The total momentum of an isolated system remains constant if no external forces act upon it."
+        },
+        {
+            "question": "What is the atomic number of Hydrogen?",
+            "answer": "1"
+        },
+        {
+            "question": "What is the force of gravity on Earth?",
+            "answer": "9.81 m/s^2"
+        },
+        {
+            "question": "What is the smallest particle of an element that retains all the properties of the element?",
+            "answer": "Atom"
+        },
+        {
+            "question": "What is the Heisenberg Uncertainty Principle?",
+            "answer": "It's impossible to know both the exact position and the exact velocity of a particle at the same time."
+        },
+        {
+            "question": "What does the second law of thermodynamics state?",
+            "answer": "Entropy of an isolated system will tend to increase over time."
+        }
+    ]
+}

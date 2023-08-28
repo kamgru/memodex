@@ -1,0 +1,46 @@
+{
+    "name": "The Solar System",
+    "description": "A deck about The Solar System",
+    "flashcards": [
+        {
+            "question": "What is the largest planet in our solar system?",
+            "answer": "Jupiter"
+        },
+        {
+            "question": "What is the closest planet to the Sun?",
+            "answer": "Mercury"
+        },
+        {
+            "question": "Which planet is known as the Red Planet?",
+            "answer": "Mars"
+        },
+        {
+            "question": "What is the fifth planet from the sun?",
+            "answer": "Jupiter"
+        },
+        {
+            "question": "Which planet has the most moons?",
+            "answer": "Jupiter"
+        },
+        {
+            "question": "What is the smallest planet in our solar system?",
+            "answer": "Mercury"
+        },
+        {
+            "question": "Which planet is known for its rings?",
+            "answer": "Saturn"
+        },
+        {
+            "question": "What planet is known as the Earth's twin?",
+            "answer": "Venus"
+        },
+        {
+            "question": "Which planet rotates on its side?",
+            "answer": "Uranus"
+        },
+        {
+            "question": "Which planet takes the longest to orbit the sun?",
+            "answer": "Neptune"
+        }
+    ]
+}

@@ -1,0 +1,106 @@
+{
+    "name": "Countries by Continent",
+    "description": "This deck quizzes you on which countries belong to which continent.",
+    "flashcards": [
+        {
+            "question": "Which continent does Russia belong to?",
+            "answer": "Europe & Asia"
+        },
+        {
+            "question": "Which continent does Brazil belong to?",
+            "answer": "South America"
+        },
+        {
+            "question": "Which continent does Australia belong to?",
+            "answer": "Australia"
+        },
+        {
+            "question": "Which continent does China belong to?",
+            "answer": "Asia"
+        },
+        {
+            "question": "Which continent does Canada belong to?",
+            "answer": "North America"
+        },
+        {
+            "question": "Which continent does France belong to?",
+            "answer": "Europe"
+        },
+        {
+            "question": "Which continent does Argentina belong to?",
+            "answer": "South America"
+        },
+        {
+            "question": "Which continent does Egypt belong to?",
+            "answer": "Africa"
+        },
+        {
+            "question": "Which continent does India belong to?",
+            "answer": "Asia"
+        },
+        {
+            "question": "Which continent does Mexico belong to?",
+            "answer": "North America"
+        },
+        {
+            "question": "Which continent does South Africa belong to?",
+            "answer": "Africa"
+        },
+        {
+            "question": "Which continent does Japan belong to?",
+            "answer": "Asia"
+        },
+        {
+            "question": "Which continent does Germany belong to?",
+            "answer": "Europe"
+        },
+        {
+            "question": "Which continent does Indonesia belong to?",
+            "answer": "Asia"
+        },
+        {
+            "question": "Which continent does Italy belong to?",
+            "answer": "Europe"
+        },
+        {
+            "question": "Which continent does Saudi Arabia belong to?",
+            "answer": "Asia"
+        },
+        {
+            "question": "Which continent does Spain belong to?",
+            "answer": "Europe"
+        },
+        {
+            "question": "Which continent does Turkey belong to?",
+            "answer": "Europe & Asia"
+        },
+        {
+            "question": "Which continent does Pakistan belong to?",
+            "answer": "Asia"
+        },
+        {
+            "question": "Which continent does United Kingdom belong to?",
+            "answer": "Europe"
+        },
+        {
+            "question": "Which continent does Nigeria belong to?",
+            "answer": "Africa"
+        },
+        {
+            "question": "Which continent does Iran belong to?",
+            "answer": "Asia"
+        },
+        {
+            "question": "Which continent does Sweden belong to?",
+            "answer": "Europe"
+        },
+        {
+            "question": "Which continent does Poland belong to?",
+            "answer": "Europe"
+        },
+        {
+            "question": "Which continent does Norway belong to?",
+            "answer": "Europe"
+        }
+    ]
+}

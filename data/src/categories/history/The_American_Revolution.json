@@ -1,0 +1,46 @@
+{
+    "name": "The American Revolution",
+    "description": "The war for independence from British rule.",
+    "flashcards": [
+        {
+            "question": "What was the Boston Tea Party?",
+            "answer": "A protest against the British tax on tea"
+        },
+        {
+            "question": "Who was the first President of the United States?",
+            "answer": "George Washington"
+        },
+        {
+            "question": "What is the Declaration of Independence?",
+            "answer": "The statement adopted by the Continental Congress declaring independence from Britain"
+        },
+        {
+            "question": "What were the Intolerable Acts?",
+            "answer": "A series of punitive laws passed by the British Parliament"
+        },
+        {
+            "question": "What was the significance of the Battle of Saratoga?",
+            "answer": "It was a turning point in the American Revolution"
+        },
+        {
+            "question": "Who was Paul Revere?",
+            "answer": "An American silversmith and patriot"
+        },
+        {
+            "question": "What were the Federalist Papers?",
+            "answer": "A collection of 85 articles and essays promoting the ratification of the United States Constitution"
+        },
+        {
+            "question": "Who was Thomas Paine?",
+            "answer": "Author of 'Common Sense'"
+        },
+        {
+            "question": "What was the Treaty of Paris?",
+            "answer": "The agreement that ended the American Revolutionary War"
+        },
+        {
+            "question": "Who were the Loyalists?",
+            "answer": "Colonists who remained loyal to Britain"
+        }
+    ]
+}

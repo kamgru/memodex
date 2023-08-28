@@ -1,0 +1,46 @@
+{
+    "name": "World War II",
+    "description": "Key events, figures, and battles of World War II.",
+    "flashcards": [
+        {
+            "question": "What event sparked World War II?",
+            "answer": "Invasion of Poland by Germany"
+        },
+        {
+            "question": "Who were the Axis Powers?",
+            "answer": "Germany, Italy, Japan"
+        },
+        {
+            "question": "What was the Holocaust?",
+            "answer": "The genocide of six million Jews"
+        },
+        {
+            "question": "What is D-Day?",
+            "answer": "Allied invasion of Normandy"
+        },
+        {
+            "question": "When did World War II end?",
+            "answer": "September 2, 1945"
+        },
+        {
+            "question": "What was the Manhattan Project?",
+            "answer": "The project to develop the atomic bomb"
+        },
+        {
+            "question": "Who was the leader of Nazi Germany?",
+            "answer": "Adolf Hitler"
+        },
+        {
+            "question": "Who was the British Prime Minister?",
+            "answer": "Winston Churchill"
+        },
+        {
+            "question": "What was the Battle of Stalingrad?",
+            "answer": "A significant turning point in favor of the Allies on the Eastern Front"
+        },
+        {
+            "question": "What is V-E Day?",
+            "answer": "Victory in Europe Day"
+        }
+    ]
+}

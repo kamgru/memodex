@@ -1,0 +1,46 @@
+{
+    "name": "Civil Rights Movement",
+    "description": "The struggle for social justice and equality in the United States.",
+    "flashcards": [
+        {
+            "question": "Who was Martin Luther King Jr.?",
+            "answer": "Civil rights leader who advocated for nonviolent protests"
+        },
+        {
+            "question": "What was Brown v. Board of Education?",
+            "answer": "Supreme Court case that declared state laws establishing separate public schools for black and white students unconstitutional"
+        },
+        {
+            "question": "What is the Civil Rights Act of 1964?",
+            "answer": "Legislation outlawing discrimination based on race, color, religion, sex, or national origin"
+        },
+        {
+            "question": "Who was Rosa Parks?",
+            "answer": "Civil rights activist known for refusing to give up her seat on a bus"
+        },
+        {
+            "question": "What was the Montgomery Bus Boycott?",
+            "answer": "A political and social protest campaign against the policy of racial segregation on public transit"
+        },
+        {
+            "question": "What is 'I Have a Dream'?",
+            "answer": "A public speech delivered by Martin Luther King Jr. during the March on Washington"
+        },
+        {
+            "question": "What was the Voting Rights Act of 1965?",
+            "answer": "Legislation aimed to overcome legal barriers at the state and local levels that prevented African Americans from exercising their right to vote"
+        },
+        {
+            "question": "Who were the Freedom Riders?",
+            "answer": "Civil rights activists who rode interstate buses into the segregated southern United States"
+        },
+        {
+            "question": "What was the Black Power Movement?",
+            "answer": "A movement emphasizing racial pride and the creation of black political and cultural institutions"
+        },
+        {
+            "question": "Who was Malcolm X?",
+            "answer": "Civil rights leader who advocated for racial justice and black empowerment"
+        }
+    ]
+}
