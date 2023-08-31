@@ -1,0 +1,10 @@
+global using System.CommandLine;
+global using System.CommandLine.Binding;
+global using Microsoft.EntityFrameworkCore;
+global using Memodex.DataAccess;
+global using System.CommandLine.Builder;
+global using System.CommandLine.Parsing;
+global using Memodex.Cli;
+global using System.CommandLine.Invocation;
+global using System.Text.RegularExpressions;
+global using System.Text.Json;

@@ -99,4 +99,23 @@
       </TypeScriptCompile>
     </ItemGroup>
 
+
+    <ItemGroup>
+      <None Update="Pages\CreateProfile.ts">
+        <DependentUpon>CreateProfile.cshtml</DependentUpon>
+      </None>
+      <None Update="Pages\EditCategory.ts">
+        <DependentUpon>EditCategory.cshtml.cs</DependentUpon>
+      </None>
+      <None Update="Pages\Engage.ts">
+        <DependentUpon>Engage.cshtml</DependentUpon>
+      </None>
+      <None Update="Pages\ImportDeck.ts">
+        <DependentUpon>ImportDeck.cshtml</DependentUpon>
+      </None>
+      <None Update="Pages\Review.ts">
+        <DependentUpon>Review.cshtml</DependentUpon>
+      </None>
+    </ItemGroup>
+
 </Project>

@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memodex.WebApp", "Memodex.WebApp\Memodex.WebApp.csproj", "{96DC3886-29D8-4CDF-A74E-B2FDBFAD77C3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{82914A21-D77A-4499-86A5-123F806910DD}"
+	ProjectSection(SolutionItems) = preProject
+		..\.env = ..\.env
+		..\docker-compose.yml = ..\docker-compose.yml
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memodex.Cli", "Memodex.Cli\Memodex.Cli.csproj", "{BEDCCF85-5086-4694-826B-EDB620B734ED}"
 EndProject

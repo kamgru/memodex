@@ -5,7 +5,7 @@ services:
     ports:
       - "5000:80"
     environment:
-      - MemodexDbConnectionString=Server=${MEMODEX_DB_HOST};Database=${MEMODEX_DB_NAME};User Id=${MEMODEX_DB_USER};Password=${MEMODEX_DB_PASS};TrustServerCertificate=True
+      - ConnectionStrings__MemodexDb=Server=${MEMODEX_DB_HOST};Database=${MEMODEX_DB_NAME};User Id=${MEMODEX_DB_USER};Password=${MEMODEX_DB_PASS};TrustServerCertificate=true
     volumes:
       - memodex:/app/data
 
@@ -21,9 +21,13 @@ services:
       - "1433:1433"
   cli:
     image: kamgru/memodex-cli:0.9.4
-    command: mdx db set --host ${MEMODEX_DB_HOST} --user ${MEMODEX_DB_USER} --password ${MEMODEX_DB_PASS} --database ${MEMODEX_DB_NAME} --init true
+    command: mdx init
     volumes:
       - memodex:/app/data
+    environment:
+      - ConnectionStrings__MemodexDb=Server=${MEMODEX_DB_HOST};Database=${MEMODEX_DB_NAME};User Id=${MEMODEX_DB_USER};Password=${MEMODEX_DB_PASS};TrustServerCertificate=true
+    env_file:
+      - .env 
 
 volumes:
   memodex:

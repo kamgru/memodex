@@ -5,16 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddJsonFile("appsettings.Development.json", true);
 
 builder.Services.AddRazorPages();
 
-string? connectionString = builder.Configuration.GetConnectionString("MemodexDb");
-if (string.IsNullOrWhiteSpace(connectionString))
-{
-    connectionString = Environment.GetEnvironmentVariable("MemodexDbConnectionString")
-                       ?? throw new InvalidOperationException("Missing connection string for MemodexDb.");
-}
+string connectionString = builder.Configuration.GetConnectionString("MemodexDb")
+                           ?? throw new InvalidOperationException("Missing connection string for MemodexDb.");
 
 builder.Services.AddDbContext<MemodexContext>(
     opt => opt.UseSqlServer(connectionString));
@@ -46,8 +41,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-string mediaRootPath = app.Configuration.GetSection("Media").GetValue<string>("Path")
-    ?? throw new InvalidOperationException("Missing configuration for Media:Path.");
+string mediaRootPath = app.Configuration.GetSection("Media")
+                           .GetValue<string>("Path")
+                       ?? throw new InvalidOperationException("Missing configuration for Media:Path.");
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(mediaRootPath),

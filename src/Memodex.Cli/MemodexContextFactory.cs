@@ -1,25 +1,26 @@
-using Memodex.DataAccess;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Memodex.Cli;
 
-public static class MemodexContextFactory
+public class MemodexContextFactory
 {
-    private static MemodexContext? _memodexContext;
-    
-    public static MemodexContext Create(string? connectionString = null)
+    private readonly IConfiguration _configuration;
+
+    public MemodexContextFactory(
+        IConfiguration configuration)
     {
-        if (_memodexContext is not null)
-        {
-            return _memodexContext;
-        }
-        
-        connectionString ??= ConnectionStringManager.GetConnectionString().Value;
+        _configuration = configuration;
+    }
+
+    public MemodexContext Create()
+    {
+        string connectionString = _configuration.GetConnectionString("MemodexDb")
+            ?? throw new InvalidOperationException("Missing configuration for MemodexDb.");
         
         DbContextOptionsBuilder<MemodexContext> optionsBuilder = new();
         optionsBuilder.UseSqlServer(connectionString);
-            
-        _memodexContext = new MemodexContext(optionsBuilder.Options);
-        return _memodexContext;
+
+        MemodexContext memodexContext = new(optionsBuilder.Options);
+        return memodexContext;
     }
 }
