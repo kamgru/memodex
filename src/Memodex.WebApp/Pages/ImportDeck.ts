@@ -24,11 +24,6 @@ class DeckImporter {
     }
 
     private handleFileInputChanged = (event: Event): void => {
-        const earlierConfirmation = document.querySelector('#deck-import-confirmation') as HTMLInputElement;
-
-        if (earlierConfirmation) {
-        }
-        
         const file = (event.target as HTMLInputElement).files?.[0];
         if (!file) {
             return;

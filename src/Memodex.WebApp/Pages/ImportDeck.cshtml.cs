@@ -1,25 +1,16 @@
+using System.Data.Common;
 using System.Text.Json;
-using MediatR;
-using Memodex.DataAccess;
 using Memodex.WebApp.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class ImportDeck : PageModel
 {
-    private readonly IMediator _mediator;
-
-    public ImportDeck(
-        IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [BindProperty]
     public int CategoryId { get; set; }
 
@@ -27,7 +18,13 @@ public class ImportDeck : PageModel
         int categoryId)
     {
         CategoryId = categoryId;
-        bool categoryExists = await _mediator.Send(new CheckCategoryExistsRequest(categoryId));
+        await using SqliteConnection connection = new("Data Source=memodex_test.sqlite");
+        await connection.OpenAsync();
+        const string sql = "SELECT EXISTS(SELECT 1 FROM categories WHERE Id = @categoryId)";
+        await using SqliteCommand command = new(sql, connection);
+        command.Parameters.AddWithValue("@categoryId", categoryId);
+
+        bool categoryExists = Convert.ToInt32(await command.ExecuteScalarAsync() ?? 0) == 1;
 
         if (!categoryExists)
         {
@@ -46,9 +43,62 @@ public class ImportDeck : PageModel
             return Page();
         }
 
-        int deckId = await _mediator.Send(new ImportDeckRequest(CategoryId, formFile));
+        await using Stream stream = formFile.OpenReadStream();
 
-        return new PartialViewResult()
+        DeckItem deckItem = await JsonSerializer.DeserializeAsync<DeckItem>(
+                                stream,
+                                new JsonSerializerOptions
+                                {
+                                    PropertyNameCaseInsensitive = true
+                                })
+                            ?? throw new InvalidOperationException("Invalid JSON file");
+
+
+        SqliteConnectionStringBuilder connectionStringBuilder = new()
+        {
+            DataSource = "memodex_test.sqlite",
+            ForeignKeys = true
+        };
+        await using SqliteConnection connection = new(connectionStringBuilder.ToString());
+        await connection.OpenAsync();
+        await using DbTransaction transaction = await connection.BeginTransactionAsync();
+        const string insertDeckSql =
+            """
+            INSERT INTO decks (name, description, flashcardCount, categoryId)
+            VALUES (@name, @description, @flashcardCount, @categoryId)
+            """;
+
+        SqliteCommand insertDeckCommand = connection.CreateCommand();
+        insertDeckCommand.CommandText = insertDeckSql;
+        insertDeckCommand.Parameters.AddWithValue("name", deckItem.Name);
+        insertDeckCommand.Parameters.AddWithValue("description",
+            deckItem.Description is null ? DBNull.Value : deckItem.Description);
+        insertDeckCommand.Parameters.AddWithValue("flashcardCount", deckItem.Flashcards.Count());
+        insertDeckCommand.Parameters.AddWithValue("categoryId", CategoryId);
+
+        await insertDeckCommand.ExecuteNonQueryAsync();
+        const string selectLastIdSql = "SELECT last_insert_rowid();";
+        SqliteCommand commandLastId = connection.CreateCommand();
+        commandLastId.CommandText = selectLastIdSql;
+
+        int deckId = Convert.ToInt32(await commandLastId.ExecuteScalarAsync());
+
+        SqliteCommand insertFlashcardCommand = connection.CreateCommand();
+        insertFlashcardCommand.CommandText =
+            "INSERT INTO flashcards (question, answer, deckId) VALUES (@question, @answer, @deckId)";
+        foreach (FlashcardItem flashcardItem in deckItem.Flashcards)
+        {
+            insertFlashcardCommand.Parameters.Clear();
+            insertFlashcardCommand.Parameters.AddWithValue("question", flashcardItem.Question);
+            insertFlashcardCommand.Parameters.AddWithValue("answer", flashcardItem.Answer);
+            insertFlashcardCommand.Parameters.AddWithValue("deckId", deckId);
+
+            await insertFlashcardCommand.ExecuteNonQueryAsync();
+        }
+
+        await transaction.CommitAsync();
+
+        return new PartialViewResult
         {
             ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
             {
@@ -62,87 +112,10 @@ public class ImportDeck : PageModel
         string Question,
         string Answer);
 
-    public record DeckItem(
-        string Name,
-        string Description,
-        IEnumerable<FlashcardItem> Flashcards);
-
-    public record CheckCategoryExistsRequest(
-        int CategoryId) : IRequest<bool>;
-
-    public record ImportDeckRequest(
-        int CategoryId,
-        IFormFile FormFile) : IRequest<int>;
-
-    public class CheckCategoryExistsHandler : IRequestHandler<CheckCategoryExistsRequest, bool>
+    public class DeckItem
     {
-        private readonly MemodexContext _memodexContext;
-
-        public CheckCategoryExistsHandler(
-            MemodexContext memodexContext)
-        {
-            _memodexContext = memodexContext;
-        }
-
-        public async Task<bool> Handle(
-            CheckCategoryExistsRequest request,
-            CancellationToken cancellationToken)
-        {
-            bool categoryExists = await _memodexContext.Categories
-                .AnyAsync(category => category.Id == request.CategoryId, cancellationToken);
-
-            return categoryExists;
-        }
-    }
-
-    public class ImportDeckHandler : IRequestHandler<ImportDeckRequest, int>
-    {
-        private readonly MemodexContext _memodexContext;
-
-        public ImportDeckHandler(
-            MemodexContext memodexContext)
-        {
-            _memodexContext = memodexContext;
-        }
-
-        public async Task<int> Handle(
-            ImportDeckRequest request,
-            CancellationToken cancellationToken)
-        {
-            await using Stream stream = request.FormFile.OpenReadStream();
-
-            DeckItem deckItem =
-                await JsonSerializer.DeserializeAsync<DeckItem>(
-                    stream,
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    },
-                    cancellationToken: cancellationToken)
-                ?? throw new InvalidOperationException("Invalid JSON file");
-
-
-            Category category = await _memodexContext.Categories
-                                    .FirstOrDefaultAsync(item => item.Id == request.CategoryId, cancellationToken)
-                                ?? throw new InvalidOperationException($"Category {request.CategoryId} not found");
-
-            Deck deck = new Deck
-            {
-                Description = deckItem.Description,
-                Name = deckItem.Name,
-                Flashcards = deckItem.Flashcards.Select(flashcard => new Flashcard
-                    {
-                        Answer = flashcard.Answer,
-                        Question = flashcard.Question
-                    })
-                    .ToList(),
-                CategoryId = category.Id
-            };
-
-            _memodexContext.Decks.Add(deck);
-            await _memodexContext.SaveChangesAsync(cancellationToken);
-
-            return deck.Id;
-        }
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public IEnumerable<FlashcardItem> Flashcards { get; set; } = new List<FlashcardItem>();
     }
 }

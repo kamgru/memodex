@@ -1,35 +1,70 @@
-using MediatR;
-using Memodex.DataAccess;
+using System.ComponentModel.DataAnnotations;
 using Memodex.WebApp.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class EditDeck : PageModel
 {
-    private readonly IMediator _mediator;
-
-    public EditDeck(
-        IMediator mediator)
+    public class DeckItem
     {
-        _mediator = mediator;
+        public int Id { get; set; }
+        public int CategoryId { get; set; }
+        [Required]
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
     }
+
+    [BindProperty]
+    public DeckItem Deck { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(
         int deckId)
     {
-        Deck = await _mediator.Send(new GetDeckRequest(deckId));
+        await using SqliteConnection connection = new($"Data Source=memodex_test.sqlite");
+        const string sql = "SELECT `id`, `categoryId`, `name`, `description` FROM `decks` WHERE `id` = @deckId";
+        SqliteCommand command = new(sql, connection);
+        command.Parameters.AddWithValue("@deckId", deckId);
+        await connection.OpenAsync();
+        SqliteDataReader reader = await command.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+        {
+            return RedirectToPage("Index");
+        }
+
+        Deck = new DeckItem
+        {
+            Id = reader.GetInt32(0),
+            CategoryId = reader.GetInt32(1),
+            Name = reader.GetString(2),
+            Description = reader.GetValue(3) as string ?? string.Empty
+        };
+        
         return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
-        await _mediator.Send(new UpdateDeckRequest(
-            Deck!.Id,
-            Deck.Name,
-            Deck.Description));
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
+        SqliteConnectionStringBuilder connectionStringBuilder = new()
+        {
+            DataSource = "memodex_test.sqlite",
+            ForeignKeys = true
+        };
+        await using SqliteConnection connection = new(connectionStringBuilder.ToString());
+        const string sql = "UPDATE `decks` SET `name` = @name, `description` = @description WHERE `id` = @id";
+        SqliteCommand command = new(sql, connection);
+        command.Parameters.AddWithValue("@id", Deck.Id);
+        command.Parameters.AddWithValue("@name", Deck.Name);
+        command.Parameters.AddWithValue("@description", Deck.Description is null ? DBNull.Value : Deck.Description);
+        await connection.OpenAsync();
+        await command.ExecuteNonQueryAsync();
 
         this.AddNotification(NotificationType.Success, $"Deck {Deck.Name} updated.");
 
@@ -40,121 +75,20 @@ public class EditDeck : PageModel
         [FromQuery]
         int deckId)
     {
-        int categoryId = await _mediator.Send(new DeleteDeckRequest(deckId));
-
-        this.AddNotification(NotificationType.Success, $"Deck {Deck!.Name} deleted.");
-
-        return RedirectToPage("BrowseDecks", new { categoryId });
-    }
-
-    [BindProperty]
-    public DeckItem? Deck { get; set; }
-
-    public record DeckItem(
-        int Id,
-        int CategoryId,
-        string Name,
-        string Description);
-
-    public record GetDeckRequest(
-        int DeckId) : IRequest<DeckItem?>;
-
-    public record UpdateDeckRequest(
-        int Id,
-        string Name,
-        string Description) : IRequest;
-
-    public record DeleteDeckRequest(
-        int Id) : IRequest<int>;
-
-    public class GetDeckHandler : IRequestHandler<GetDeckRequest, DeckItem?>
-    {
-        private readonly MemodexContext _memodexContext;
-
-        public GetDeckHandler(
-            MemodexContext memodexContext)
+        SqliteConnectionStringBuilder connectionStringBuilder = new()
         {
-            _memodexContext = memodexContext;
-        }
+            DataSource = "memodex_test.sqlite",
+            ForeignKeys = true
+        };
+        await using SqliteConnection connection = new(connectionStringBuilder.ToString());
+        const string sql = "DELETE FROM `decks` WHERE `id` = @id";
+        SqliteCommand command = new(sql, connection);
+        command.Parameters.AddWithValue("@id", deckId);
+        await connection.OpenAsync();
+        await command.ExecuteNonQueryAsync();
+        
+        this.AddNotification(NotificationType.Success, $"Deck {Deck.Name} deleted.");
 
-        public async Task<DeckItem?> Handle(
-            GetDeckRequest request,
-            CancellationToken cancellationToken)
-        {
-            DeckItem? deck = await _memodexContext.Decks
-                .Where(item => item.Id == request.DeckId)
-                .Select(item => new DeckItem(
-                    item.Id,
-                    item.CategoryId,
-                    item.Name,
-                    item.Description))
-                .FirstOrDefaultAsync(cancellationToken);
-
-            return deck;
-        }
-    }
-
-    public class UpdateDeckHandler : IRequestHandler<UpdateDeckRequest>
-    {
-        private readonly MemodexContext _memodexContext;
-
-        public UpdateDeckHandler(
-            MemodexContext memodexContext)
-        {
-            _memodexContext = memodexContext;
-        }
-
-        public async Task Handle(
-            UpdateDeckRequest request,
-            CancellationToken cancellationToken)
-        {
-            Deck? deck = await _memodexContext.Decks
-                .Where(item => item.Id == request.Id)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (deck is null)
-            {
-                throw new InvalidOperationException($"Deck with id {request.Id} not found.");
-            }
-
-            deck.Name = request.Name;
-            deck.Description = request.Description;
-
-            await _memodexContext.SaveChangesAsync(cancellationToken);
-        }
-    }
-
-    public class DeleteDeckHandler : IRequestHandler<DeleteDeckRequest, int>
-    {
-        private readonly MemodexContext _memodexContext;
-
-        public DeleteDeckHandler(
-            MemodexContext memodexContext)
-        {
-            _memodexContext = memodexContext;
-        }
-
-        public async Task<int> Handle(
-            DeleteDeckRequest request,
-            CancellationToken cancellationToken)
-        {
-            Deck? deck = await _memodexContext.Decks
-                .Where(item => item.Id == request.Id)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (deck is null)
-            {
-                throw new InvalidOperationException($"Deck with id {request.Id} not found.");
-            }
-
-            List<Challenge> challenges = await _memodexContext.Challenges
-                .Where(item => item.DeckId == request.Id)
-                .ToListAsync(cancellationToken);
-
-            _memodexContext.Challenges.RemoveRange(challenges);
-            _memodexContext.Decks.Remove(deck);
-            await _memodexContext.SaveChangesAsync(cancellationToken);
-            return deck.CategoryId;
-        }
+        return RedirectToPage("BrowseDecks", new { categoryId = Deck.CategoryId });
     }
 }

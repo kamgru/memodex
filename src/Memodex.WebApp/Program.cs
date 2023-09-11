@@ -55,5 +55,5 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
-app.UseMiddleware<ProfileSessionMiddleware>();
+//app.UseMiddleware<ProfileSessionMiddleware>();
 app.Run();

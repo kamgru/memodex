@@ -1,47 +1,93 @@
-using MediatR;
-using Memodex.DataAccess;
-using Memodex.WebApp.Infrastructure;
+using System.Data.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class StartChallenge : PageModel
 {
-    private readonly IMediator _mediator;
-
-    public StartChallenge(
-        IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     public IEnumerable<CategoryItem> Categories { get; set; } = new List<CategoryItem>();
     public IEnumerable<DeckItem> Decks { get; set; } = new List<DeckItem>();
     public int? SelectedCategoryId { get; set; }
 
-    public async Task<IActionResult> OnGetAsync(
-        int? categoryId,
-        int? deckId)
-    {
-        if (categoryId is null)
-        {
-            Categories = await _mediator.Send(new GetCategoryItems());
-        }
-        else
-        {
-            SelectedCategoryId = categoryId;
-            Decks = await _mediator.Send(new GetDeckItems(categoryId.Value));
-        }
-
-        return Page();
-    }
-
     public async Task<IActionResult> OnPostAsync(
         int deckId)
     {
-        int challengeId = await _mediator.Send(new CreateChallenge(deckId));
+        SqliteConnectionStringBuilder connectionStringBuilder = new()
+        {
+            DataSource = "memodex_test.sqlite",
+            ForeignKeys = true
+        };
+        await using SqliteConnection connection = new(connectionStringBuilder.ConnectionString);
+        await connection.OpenAsync();
+        await using DbTransaction transaction = await connection.BeginTransactionAsync();
+        
+        //check if deck exists
+        const string sqlDeckExists =
+            """
+            SELECT EXISTS(SELECT 1 FROM decks WHERE id = @deckId);
+            """;
+        SqliteCommand deckExistsCommand = connection.CreateCommand();
+        deckExistsCommand.CommandText = sqlDeckExists;
+        deckExistsCommand.Parameters.AddWithValue("@deckId", deckId);
+        bool deckExists = Convert.ToBoolean(await deckExistsCommand.ExecuteScalarAsync());
+        if (!deckExists)
+        {
+            return NotFound();
+        }
+
+        //get flashcards
+        const string sqlFlashcards = "SELECT id FROM flashcards WHERE deckId = @deckId;";
+        SqliteCommand getFlashcardsCommand = connection.CreateCommand();
+        getFlashcardsCommand.CommandText = sqlFlashcards;
+        getFlashcardsCommand.Parameters.AddWithValue("@deckId", deckId);
+        await using DbDataReader reader = await getFlashcardsCommand.ExecuteReaderAsync();
+        List<int> flashcardIds = new();
+        while (await reader.ReadAsync())
+        {
+            flashcardIds.Add(reader.GetInt32(0));
+        }
+
+        //create challenge
+        const string sqlChallenge =
+            """
+            INSERT INTO main.challenges (`deckId`, `stepCount`) VALUES (@deckId, @stepCount);
+            """;
+        SqliteCommand createChallengeCommand = connection.CreateCommand();
+        createChallengeCommand.CommandText = sqlChallenge;
+        createChallengeCommand.Parameters.AddWithValue("@deckId", deckId);
+        createChallengeCommand.Parameters.AddWithValue("@stepCount", flashcardIds.Count);
+        await createChallengeCommand.ExecuteNonQueryAsync();
+        
+        //get last inserted challenge id
+        const string sqlLastInsertedChallengeId =
+            """
+            SELECT last_insert_rowid();
+            """;
+        SqliteCommand getLastInsertedChallengeIdCommand = connection.CreateCommand();
+        getLastInsertedChallengeIdCommand.CommandText = sqlLastInsertedChallengeId;
+        int challengeId = Convert.ToInt32(await getLastInsertedChallengeIdCommand.ExecuteScalarAsync());
+        
+        //create challenge steps
+        const string sqlChallengeSteps =
+            """
+            INSERT INTO main.steps (`challengeId`, `flashcardId`, `stepIndex`) 
+            VALUES (@challengeId, @flashcardId, @stepIndex);
+            """;
+        SqliteCommand createChallengeStepsCommand = connection.CreateCommand();
+        createChallengeStepsCommand.CommandText = sqlChallengeSteps;
+        for (int i = 0; i < flashcardIds.Count; i++)
+        {
+            createChallengeStepsCommand.Parameters.Clear();
+            createChallengeStepsCommand.Parameters.AddWithValue("@challengeId", challengeId);
+            createChallengeStepsCommand.Parameters.AddWithValue("@flashcardId", flashcardIds[i]);
+            createChallengeStepsCommand.Parameters.AddWithValue("@stepIndex", i);
+            await createChallengeStepsCommand.ExecuteNonQueryAsync();
+        }
+
+        await transaction.CommitAsync();
+
         return RedirectToPage("Engage", new { challengeId });
     }
 
@@ -56,124 +102,4 @@ public class StartChallenge : PageModel
         string Name,
         string Description,
         int ItemCount);
-
-    public record GetCategoryItems : IRequest<IEnumerable<CategoryItem>>;
-
-    public record GetDeckItems(
-        int CategoryId) : IRequest<IEnumerable<DeckItem>>;
-
-    public record CreateChallenge(
-        int DeckId) : IRequest<int>;
-
-    public class GetCategoryItemsHandler : IRequestHandler<GetCategoryItems, IEnumerable<CategoryItem>>
-    {
-        private readonly MemodexContext _memodexContext;
-        private readonly MediaPathProvider _mediaPathProvider;
-
-        public GetCategoryItemsHandler(
-            MemodexContext memodexContext,
-            MediaPathProvider mediaPathProvider)
-        {
-            _memodexContext = memodexContext;
-            _mediaPathProvider = mediaPathProvider;
-        }
-
-        public async Task<IEnumerable<CategoryItem>> Handle(
-            GetCategoryItems request,
-            CancellationToken cancellationToken)
-        {
-            List<CategoryItem> result = await _memodexContext.Categories
-                .Include(category => category.Decks)
-                .ThenInclude(deck => deck.Flashcards)
-                .Select(category => new CategoryItem(
-                    category.Id,
-                    category.Name,
-                    category.Description,
-                    _mediaPathProvider.GetCategoryThumbnailPath(category.ImageFilename)))
-                .ToListAsync(cancellationToken);
-
-            return result;
-        }
-    }
-
-    public class GetDeckItemsHandler : IRequestHandler<GetDeckItems, IEnumerable<DeckItem>>
-    {
-        private readonly MemodexContext _memodexContext;
-
-        public GetDeckItemsHandler(
-            MemodexContext memodexContext)
-        {
-            _memodexContext = memodexContext;
-        }
-
-        public async Task<IEnumerable<DeckItem>> Handle(
-            GetDeckItems request,
-            CancellationToken cancellationToken)
-        {
-            List<DeckItem> deckItems = await _memodexContext.Decks
-                .Include(deck => deck.Flashcards)
-                .Where(deck => deck.CategoryId == request.CategoryId)
-                .Select(deck => new DeckItem(
-                    deck.Id,
-                    deck.Name,
-                    deck.Description,
-                    deck.Flashcards.Count))
-                .ToListAsync(cancellationToken);
-
-            return deckItems;
-        }
-    }
-
-    public class CreateChallengeHandler : IRequestHandler<CreateChallenge, int>
-    {
-        private readonly MemodexContext _memodexContext;
-        private readonly IProfileProvider _profileProvider;
-
-        public CreateChallengeHandler(
-            MemodexContext memodexContext,
-            IProfileProvider profileProvider)
-        {
-            _memodexContext = memodexContext;
-            _profileProvider = profileProvider;
-        }
-
-        public async Task<int> Handle(
-            CreateChallenge request,
-            CancellationToken cancellationToken)
-        {
-            List<Flashcard> flashcards = await _memodexContext.Flashcards
-                .Where(x => x.DeckId == request.DeckId)
-                .ToListAsync(cancellationToken);
-
-            if (!flashcards.Any())
-            {
-                throw new InvalidOperationException("Cannot create a challenge with no flashcards.");
-            }
-
-            Challenge challenge = new()
-            {
-                DeckId = request.DeckId,
-                ProfileId = _profileProvider.GetCurrentProfileId() ??
-                            throw new InvalidOperationException("Cannot create a challenge without a profile."),
-                CurrentStepIndex = 0,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                State = ChallengeState.InProgress
-            };
-
-            challenge.ChallengeSteps = flashcards.Select((
-                flashcard,
-                index) => new ChallengeStep
-            {
-                Index = index,
-                FlashcardId = flashcard.Id,
-                Challenge = challenge
-            }).ToList();
-
-            _memodexContext.Challenges.Add(challenge);
-            await _memodexContext.SaveChangesAsync(cancellationToken);
-
-            return challenge.Id;
-        }
-    }
 }

@@ -1,73 +1,41 @@
-using MediatR;
-using Memodex.DataAccess;
 using Memodex.WebApp.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class AddCategory : PageModel
 {
-    private readonly IMediator _mediator;
+    public record CategoryItem(
+        string Name = "");
 
-    public AddCategory(
-        IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
-    public IActionResult OnGet()
-    {
-        Category = new CategoryItem();
-        return Page();
-    }
+    [BindProperty]
+    public CategoryItem Category { get; set; } = new();
 
     public async Task<IActionResult> OnPostAsync()
     {
-        int categoryId = await _mediator.Send(new AddCategoryRequest(
-            Category!.Name));
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
+        await using SqliteConnection connection = new($"Data Source=memodex_test.sqlite");
+        const string sql =
+            "INSERT INTO categories (`name`, `description`, `imageFilename`) VALUES (@name, @description, @imageFilename);";
+        SqliteCommand command = new(sql, connection);
+        command.Parameters.AddWithValue("@name", Category.Name);
+        command.Parameters.AddWithValue("@description", string.Empty);
+        command.Parameters.AddWithValue("@imageFilename", "default.png");
+        await connection.OpenAsync();
+        await command.ExecuteScalarAsync();
+
+        const string sqlLastId = "SELECT last_insert_rowid();";
+        SqliteCommand commandLastId = new(sqlLastId, connection);
+        int categoryId = Convert.ToInt32(await commandLastId.ExecuteScalarAsync());
 
         this.AddNotification(NotificationType.Success, $"Category {Category.Name} added.");
-        
+
         return RedirectToPage("EditCategory", new { categoryId });
-    }
-
-    [BindProperty]
-    public CategoryItem? Category { get; set; }
-
-    public class CategoryItem
-    {
-        public string Name { get; set; } = string.Empty;
-    }
-
-    public record AddCategoryRequest(
-        string Name) : IRequest<int>;
-
-    public class AddCategoryHandler : IRequestHandler<AddCategoryRequest, int>
-    {
-        private readonly MemodexContext _memodexContext;
-
-        public AddCategoryHandler(
-            MemodexContext memodexContext)
-        {
-            _memodexContext = memodexContext;
-        }
-
-        public async Task<int> Handle(
-            AddCategoryRequest request,
-            CancellationToken cancellationToken)
-        {
-            Category category = new()
-            {
-                Name = request.Name,
-                Description = string.Empty,
-                ImageFilename = "default.png",
-                Decks = new List<Deck>()
-            };
-
-            _memodexContext.Categories.Add(category);
-            await _memodexContext.SaveChangesAsync(cancellationToken);
-            return category.Id;
-        }
     }
 }

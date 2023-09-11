@@ -22,10 +22,11 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnGet()
     {
-        int? profileId = _profileProvider.GetCurrentProfileId()
-            ?? throw new InvalidOperationException("No profile is currently selected.");
-        
-        Challenges = await _mediator.Send(new GetPastChallenges(profileId.Value));
+        // int? profileId = _profileProvider.GetCurrentProfileId()
+        //     ?? throw new InvalidOperationException("No profile is currently selected.");
+        //
+        // Challenges = await _mediator.Send(new GetPastChallenges(profileId.Value));
+        Challenges = new PastChallenges(new List<UnfinishedChallenge>(), new List<InReviewChallenge>());
         return Page();
     }
 

@@ -11,6 +11,7 @@
     <ItemGroup>
       <PackageReference Include="MediatR" Version="12.0.1" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.9" />
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.10" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.8">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -117,5 +118,7 @@
         <DependentUpon>Review.cshtml</DependentUpon>
       </None>
     </ItemGroup>
+
+
 
 </Project>

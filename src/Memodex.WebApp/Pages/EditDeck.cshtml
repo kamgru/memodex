@@ -5,12 +5,13 @@
 @{
     Layout = "Shared/_Layout";
 
-    BackButton backButton = new(Url.Page("BrowseDecks", new { categoryId = Model.Deck!.CategoryId }));
+    BackButton backButton = new(Url.Page("BrowseDecks", new { categoryId = Model.Deck.CategoryId }));
     <partial name="Shared/_BackButtonPartial" model="@backButton"/>
 }
 
 <form method="post" enctype="multipart/form-data" class="mt-4">
-    <input type="hidden" asp-for="Deck!.Id" value="@Model.Deck!.Id"/>
+    <input type="hidden" asp-for="Deck.Id" value="@Model.Deck.Id"/>
+    <input type="hidden" asp-for="Deck.CategoryId" value="@Model.Deck.CategoryId"/>
     <div class="space-y-12">
         <div class="border-b border-gray-900/10 pb-12">
             <div class="flex items-center justify-between space-x-4">
@@ -19,11 +20,11 @@
                     <p>Make changes to the deck details below.</p>
                 </div>
                 <div class="flex space-x-2">
-                    <a href="@Url.Page("EditFlashcards", new { deckId = Model.Deck!.Id })"
+                    <a href="@Url.Page("EditFlashcards", new { deckId = Model.Deck.Id })"
                        class="btn-outline">
                         Edit Flashcards
                     </a>
-                    <a href="@Url.Page("ExportDeck", new { deckId = Model.Deck!.Id })"
+                    <a href="@Url.Page("ExportDeck", new { deckId = Model.Deck.Id })"
                        class="btn-outline">
                         Export Deck
                     </a>
@@ -35,14 +36,14 @@
                 <div class="sm:col-span-4">
                     <label for="name">Deck Name</label>
                     <div class="mt-2">
-                        <input type="text" id="name" name="Deck.Name" value="@Model.Deck!.Name" required>
+                        <input type="text" id="name" name="Deck.Name" value="@Model.Deck.Name" required>
                     </div>
                 </div>
 
                 <div class="col-span-full">
                     <label for="description">Description</label>
                     <div class="mt-2">
-                        <textarea id="description" name="Deck.Description" rows="3">@Model.Deck!.Description</textarea>
+                        <textarea id="description" name="Deck.Description" rows="3">@Model.Deck.Description</textarea>
                     </div>
                 </div>
             </div>

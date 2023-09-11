@@ -3,9 +3,6 @@ class DeckImporter {
     constructor() {
         this.handleFileInputChanged = (event) => {
             var _a;
-            const earlierConfirmation = document.querySelector('#deck-import-confirmation');
-            if (earlierConfirmation) {
-            }
             const file = (_a = event.target.files) === null || _a === void 0 ? void 0 : _a[0];
             if (!file) {
                 return;

@@ -1,24 +1,20 @@
-using MediatR;
-using Memodex.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class AddDeck : PageModel
 {
-    private readonly IMediator _mediator;
-
-    public AddDeck(
-        IMediator mediator)
+    public class DeckItem
     {
-        _mediator = mediator;
+        public int CategoryId { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 
     [BindProperty]
     public DeckItem Deck { get; set; } = new();
 
-    
     public IActionResult OnGetAsync(
         int categoryId)
     {
@@ -28,48 +24,28 @@ public class AddDeck : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        int deckId = await _mediator.Send(new AddDeckRequest(
-            Deck.CategoryId,
-            Deck.Name));
-        return RedirectToPage("EditDeck", new { deckId });
-    }
-    
-    public class DeckItem
-    {
-        public int CategoryId { get; set; }
-        public string Name { get; set; } = string.Empty;
-    }
-
-    public record AddDeckRequest(
-        int CategoryId,
-        string Name) : IRequest<int>;
-    
-    public class AddDeckHandler : IRequestHandler<AddDeckRequest, int>
-    {
-        private readonly MemodexContext _memodexContext;
-
-        public AddDeckHandler(
-            MemodexContext memodexContext)
+        SqliteConnectionStringBuilder connectionStringBuilder = new()
         {
-            _memodexContext = memodexContext;
+            DataSource = "memodex_test.sqlite",
+            ForeignKeys = true
+        };
+        await using SqliteConnection connection = new(connectionStringBuilder.ToString());
+        const string sql = "INSERT INTO `decks` (`categoryId`, `name`) VALUES (@categoryId, @name)";
+        SqliteCommand command = new(sql, connection);
+        command.Parameters.AddWithValue("@categoryId", Deck.CategoryId);
+        command.Parameters.AddWithValue("@name", Deck.Name);
+        await connection.OpenAsync();
+        await command.ExecuteNonQueryAsync();
+
+        const string getLastIdSql = "SELECT last_insert_rowid()";
+        SqliteCommand getLastIdCommand = new(getLastIdSql, connection);
+        object? lastId = await getLastIdCommand.ExecuteScalarAsync();
+
+        if (lastId is null)
+        {
+            throw new InvalidOperationException("Unable to retrieve last insert row ID.");
         }
 
-        public async Task<int> Handle(
-            AddDeckRequest request,
-            CancellationToken cancellationToken)
-        {
-            Deck deck = new()
-            {
-                CategoryId = request.CategoryId,
-                Name = request.Name,
-                Description = string.Empty,
-                Flashcards = new List<Flashcard>()
-            };
-            
-            _memodexContext.Decks.Add(deck);
-            await _memodexContext.SaveChangesAsync(cancellationToken);
-
-            return deck.Id;
-        }
+        return RedirectToPage("EditDeck", new { deckId = Convert.ToInt32(lastId) });
     }
 }

@@ -1,27 +1,45 @@
-using MediatR;
 using Memodex.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class CompleteChallenge : PageModel
 {
-    private readonly IMediator _mediator;
-
-    public CompleteChallenge(
-        IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     public ChallengeItem? CompletedChallenge { get; set; }
 
     public async Task<IActionResult> OnGetAsync(
         int challengeId)
     {
-        CompletedChallenge = await _mediator.Send(new GetChallenge(challengeId));
+        await using SqliteConnection connection = new("Data Source=memodex_test.sqlite");
+        await connection.OpenAsync();
+        const string sql =
+            """
+            SELECT challenge.`id`, deck.`name`, challenge.`state` FROM `challenges` challenge
+            JOIN main.decks deck on deck.id = challenge.deckId
+            WHERE challenge.`id` = @id
+            LIMIT 1;
+            """;
+        await using SqliteCommand command = connection.CreateCommand();
+        command.CommandText = sql;
+        command.Parameters.AddWithValue("@id", challengeId);
+        await using SqliteDataReader reader = await command.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+        {
+            throw new InvalidOperationException($"Challenge {challengeId} not found");
+        }
+
+        if (reader.GetInt32(2) == (int)ChallengeState.InProgress)
+        {
+            throw new InvalidOperationException($"Challenge {challengeId} is in progress");
+        }
+
+        CompletedChallenge = new ChallengeItem(
+            challengeId,
+            reader.GetString(1),
+            (ChallengeState)reader.GetInt32(2));
+
         return Page();
     }
 
@@ -29,42 +47,4 @@ public class CompleteChallenge : PageModel
         int Id,
         string Title,
         ChallengeState State);
-
-    public record GetChallenge(
-        int Id) : IRequest<ChallengeItem>;
-
-    public class GetChallengeHandler : IRequestHandler<GetChallenge, ChallengeItem>
-    {
-        private readonly MemodexContext _memodexContext;
-
-        public GetChallengeHandler(
-            MemodexContext memodexContext)
-        {
-            _memodexContext = memodexContext;
-        }
-
-        public async Task<ChallengeItem> Handle(
-            GetChallenge request,
-            CancellationToken cancellationToken)
-        {
-            Challenge? challenge = await _memodexContext.Challenges
-                .Include(item => item.Deck)
-                .FirstOrDefaultAsync(item => item.Id == request.Id, cancellationToken: cancellationToken);
-
-            if (challenge is null)
-            {
-                throw new InvalidOperationException($"Challenge {request.Id} not found");
-            }
-
-            if (challenge.State == ChallengeState.InProgress)
-            {
-                throw new InvalidOperationException($"Challenge {request.Id} is in progress");
-            }
-
-            return new ChallengeItem(
-                challenge.Id,
-                challenge.Deck.Name,
-                challenge.State);
-        }
-    }
 }

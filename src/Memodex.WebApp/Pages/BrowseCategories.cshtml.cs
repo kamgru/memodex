@@ -1,69 +1,52 @@
-using MediatR;
-using Memodex.DataAccess;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class BrowseCategories : PageModel
 {
-    private readonly IMediator _mediator;
+    public record CategoryItem(
+        int Id,
+        string Name,
+        string? Description,
+        string ImagePath,
+        int DeckCount);
 
-    public BrowseCategories(
-        IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
-    public IEnumerable<CategoryItem> Categories { get; set; } = Enumerable.Empty<CategoryItem>();
-    
-    public async Task<IActionResult>  OnGetAsync()
-    {
-        Categories = await _mediator.Send(new GetCategoriesRequest());
-
-        return Page();    
-    }
-}
-
-public record CategoryItem(
-    int Id,
-    string Name,
-    string Description,
-    string ImagePath,
-    int DeckCount);
-
-public record GetCategoriesRequest : IRequest<IEnumerable<CategoryItem>>;
-
-public class GetCategoriesHandler : IRequestHandler<GetCategoriesRequest, IEnumerable<CategoryItem>>
-{
-    private readonly MemodexContext _memodexContext;
     private readonly MediaPathProvider _mediaPathProvider;
 
-    public GetCategoriesHandler(
-        MemodexContext memodexContext,
+    public BrowseCategories(
         MediaPathProvider mediaPathProvider)
     {
-        _memodexContext = memodexContext;
         _mediaPathProvider = mediaPathProvider;
     }
 
-    public async Task<IEnumerable<CategoryItem>> Handle(
-        GetCategoriesRequest request,
-        CancellationToken cancellationToken)
-    {
-        IEnumerable<CategoryItem> categoryItems = await _memodexContext
-            .Categories
-            .Include(category => category.Decks)
-            .Select(category => new CategoryItem(
-                category.Id,
-                category.Name,
-                category.Description,
-                _mediaPathProvider.GetCategoryThumbnailPath(category.ImageFilename),
-                category.Decks.Count))
-            .ToListAsync(cancellationToken);
+    public List<CategoryItem> Categories { get; set; } = new();
 
-        return categoryItems;
+    public async Task<IActionResult> OnGetAsync()
+    {
+        //TODO: remove hardcoded user name
+
+        await using SqliteConnection connection = new($"Data Source=memodex_test.sqlite");
+        const string sql = "SELECT `id`, `name`, `description`, `imageFilename`, `deckCount` FROM categories;";
+
+        await using SqliteCommand command = new(sql, connection);
+        await connection.OpenAsync();
+        await using SqliteDataReader reader = await command.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            CategoryItem categoryItem = new(
+                Id: reader.GetInt32(0),
+                Name: reader.GetString(1),
+                Description: reader[2] as string, 
+                ImagePath: _mediaPathProvider.GetCategoryThumbnailPath(reader.GetString(3)),
+                DeckCount: reader.GetInt32(4));
+
+            Categories.Add(categoryItem);
+        }
+
+        return Page();
     }
 }

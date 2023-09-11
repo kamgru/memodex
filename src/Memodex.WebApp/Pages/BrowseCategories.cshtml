@@ -4,6 +4,7 @@
 @{
     Layout = "Shared/_Layout";
 }
+
 <div class="mb-6">
     <h1 class="text-3xl font-bold mb-2">Browse Categories</h1>
     <p class="text-gray-600 mb-4">
@@ -18,7 +19,7 @@
     </div>
 </div>
 <ul role="list" class="divide-y divide-gray-100 dark:divide-slate-600">
-    @foreach (CategoryItem category in Model.Categories)
+    @foreach (BrowseCategories.CategoryItem category in Model.Categories)
     {
         <li class="flex justify-between gap-x-4 py-5">
             <div class="flex items-center min-w-0 gap-x-4">
@@ -30,13 +31,13 @@
                     <a href="@Url.Page("BrowseDecks", new { categoryId = category.Id })">
                         <h2 class="hover:text-slate-500">@category.Name</h2>
                     </a>
-                    <p class="mt-1 truncate text-xs" id="description_@category.Id">@category.Description</p>
+                    <p class="mt-1 truncate text-xs" id="description_@category.Id">@category?.Description</p>
                 </div>
             </div>
 
             <div class="flex flex-col items-end justify-center px-2">
                 <p class="text-sm whitespace-nowrap flex items-center">
-                    @category.DeckCount
+                    @category!.DeckCount
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ml-2 w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3"/>
                     </svg>
