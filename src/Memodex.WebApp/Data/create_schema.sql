@@ -56,3 +56,22 @@ create table main.steps
     challengeId integer not null
         constraint step_challenges_id_fk references challenges(id) on delete cascade
 );
+
+create table main.profiles
+(
+    id             integer not null
+        constraint profiles_pk
+            primary key autoincrement,
+    userId         text    not null,
+    name           text    not null,
+    avatar         text    not null default 'default.png',
+    preferredTheme text    not null default 'light'
+);
+
+create table main.avatars
+(
+    id   integer not null
+        constraint avatars_pk
+            primary key autoincrement,
+    name text    not null
+);

@@ -1,27 +1,53 @@
+using System.Data.Common;
 using System.Text;
 using System.Text.Json;
-using System.Text.Unicode;
-using MediatR;
-using Memodex.DataAccess;
+using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class ExportDeck : PageModel
 {
-    private readonly IMediator _mediator;
-
-    public ExportDeck(
-        IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     public async Task<IActionResult>  OnGetAsync(int deckId)
     {
-        DeckItem deckItem = await _mediator.Send(new GetDeckRequest(deckId));
+        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await connection.OpenAsync();
+        await using DbTransaction transaction = await connection.BeginTransactionAsync();
+        await using SqliteCommand command = connection.CreateCommand(
+            """
+            SELECT `name`, `description` 
+            FROM `decks` 
+            WHERE `id` = @deckId
+            LIMIT 1;
+            """);
+
+        command.Parameters.AddWithValue("@deckId", deckId);
+        await using SqliteDataReader reader = await command.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+        {
+            throw new InvalidOperationException($"Deck {deckId} not found");
+        }
+        string deckName = reader.GetString(0);
+        string deckDescription = reader.GetString(1);
+
+        await using SqliteCommand flashcardsCommand = connection.CreateCommand(
+            """
+            SELECT `question`, `answer` 
+            FROM `flashcards` 
+            WHERE `deckId` = @deckId;
+            """);
+        flashcardsCommand.Parameters.AddWithValue("@deckId", deckId);
+        await using SqliteDataReader flashcardsReader = await flashcardsCommand.ExecuteReaderAsync();
+        List<FlashcardItem> flashcards = new();
+        while (await flashcardsReader.ReadAsync())
+        {
+            flashcards.Add(new FlashcardItem(
+                flashcardsReader.GetString(0),
+                flashcardsReader.GetString(1)));
+        }
+        DeckItem deckItem = new(deckName, deckDescription, flashcards);
 
         string content = JsonSerializer.Serialize(deckItem, new JsonSerializerOptions()
         {
@@ -40,37 +66,4 @@ public class ExportDeck : PageModel
         string Name,
         string Description,
         IEnumerable<FlashcardItem> Flashcards);
-
-    public record GetDeckRequest(
-        int DeckId) : IRequest<DeckItem>;
-    
-    public class GetDeckHandler : IRequestHandler<GetDeckRequest, DeckItem>
-    {
-        private readonly MemodexContext _memodexContext;
-
-        public GetDeckHandler(
-            MemodexContext memodexContext)
-        {
-            _memodexContext = memodexContext;
-        }
-
-        public async Task<DeckItem> Handle(
-            GetDeckRequest request,
-            CancellationToken cancellationToken)
-        {
-            Deck deck = await _memodexContext.Decks
-                            .Include(item => item.Flashcards)
-                            .FirstOrDefaultAsync(item => item.Id == request.DeckId, cancellationToken)
-                        ?? throw new InvalidOperationException("Deck not found.");
-
-            DeckItem deckItem = new(
-                deck.Name,
-                deck.Description,
-                deck.Flashcards.Select(flashcard => new FlashcardItem(
-                    flashcard.Question,
-                    flashcard.Answer)));
-
-            return deckItem;
-        }
-    }
 }

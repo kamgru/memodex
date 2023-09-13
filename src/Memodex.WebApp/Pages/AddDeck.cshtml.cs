@@ -1,3 +1,4 @@
+using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.Sqlite;
@@ -24,28 +25,23 @@ public class AddDeck : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        SqliteConnectionStringBuilder connectionStringBuilder = new()
-        {
-            DataSource = "memodex_test.sqlite",
-            ForeignKeys = true
-        };
-        await using SqliteConnection connection = new(connectionStringBuilder.ToString());
-        const string sql = "INSERT INTO `decks` (`categoryId`, `name`) VALUES (@categoryId, @name)";
-        SqliteCommand command = new(sql, connection);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite", true);
+        await connection.OpenAsync();
+
+        SqliteCommand command = connection.CreateCommand(
+            """
+            INSERT INTO `decks` (`categoryId`, `name`) 
+            VALUES (@categoryId, @name)
+            RETURNING `id`
+            """);
+        
         command.Parameters.AddWithValue("@categoryId", Deck.CategoryId);
         command.Parameters.AddWithValue("@name", Deck.Name);
-        await connection.OpenAsync();
-        await command.ExecuteNonQueryAsync();
 
-        const string getLastIdSql = "SELECT last_insert_rowid()";
-        SqliteCommand getLastIdCommand = new(getLastIdSql, connection);
-        object? lastId = await getLastIdCommand.ExecuteScalarAsync();
-
-        if (lastId is null)
-        {
-            throw new InvalidOperationException("Unable to retrieve last insert row ID.");
-        }
-
-        return RedirectToPage("EditDeck", new { deckId = Convert.ToInt32(lastId) });
+        object scalar = await command.ExecuteScalarAsync()
+                        ?? throw new InvalidOperationException("Scalar result was null.");
+        int deckId = Convert.ToInt32(scalar);
+        
+        return RedirectToPage("EditDeck", new { deckId });
     }
 }

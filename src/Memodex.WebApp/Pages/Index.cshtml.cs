@@ -1,41 +1,78 @@
-﻿using MediatR;
-using Memodex.DataAccess;
+﻿using System.Data.Common;
+using Memodex.WebApp.Data;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly IMediator _mediator;
-    private readonly IProfileProvider _profileProvider;
-
-    public IndexModel(
-        IMediator mediator,
-        IProfileProvider profileProvider)
-    {
-        _mediator = mediator;
-        _profileProvider = profileProvider;
-    }
-
     public async Task<IActionResult> OnGet()
     {
-        // int? profileId = _profileProvider.GetCurrentProfileId()
-        //     ?? throw new InvalidOperationException("No profile is currently selected.");
-        //
-        // Challenges = await _mediator.Send(new GetPastChallenges(profileId.Value));
-        Challenges = new PastChallenges(new List<UnfinishedChallenge>(), new List<InReviewChallenge>());
+        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await connection.OpenAsync();
+        await using DbTransaction transaction = await connection.BeginTransactionAsync();
+        await using SqliteCommand getUnfinishedChallengeStepsCommand = connection.CreateCommand(
+            """
+            SELECT challenges.id, createdAt, updatedAt, name, currentStepIndex, flashcardCount
+            FROM challenges
+            JOIN decks ON decks.id = challenges.deckId
+            JOIN steps ON steps.challengeId = challenges.id
+            WHERE challenges.state = @state
+            GROUP BY challenges.id, createdAt, updatedAt, name, currentStepIndex, flashcardCount;
+            """);
+        getUnfinishedChallengeStepsCommand.Parameters.AddWithValue("@state", ChallengeState.InProgress);
+        await using SqliteDataReader reader = await getUnfinishedChallengeStepsCommand.ExecuteReaderAsync();
+        List<UnfinishedChallenge> unfinishedChallenges = new();
+        while (await reader.ReadAsync())
+        {
+            unfinishedChallenges.Add(new UnfinishedChallenge(
+                reader.GetInt32(0),
+                reader.GetDateTime(1),
+                reader.GetDateTime(2),
+                reader.GetString(3),
+                reader.GetInt32(4) + 1,
+                reader.GetInt32(5)));
+        }
+
+        await using SqliteCommand getInReviewChallenges = connection.CreateCommand(
+            """
+            SELECT challenges.id, createdAt, name, COUNT(steps.id)
+            FROM challenges
+            JOIN decks ON decks.id = challenges.deckId
+            JOIN steps ON steps.challengeId = challenges.id
+            WHERE challenges.state = 1
+            AND steps.needsReview = 1
+            GROUP BY challenges.id, createdAt, name
+            HAVING COUNT(steps.id) > 0;
+            """);
+        getInReviewChallenges.Parameters.AddWithValue("@state", ChallengeState.InReview);
+        await using SqliteDataReader needsReviewReader = await getInReviewChallenges.ExecuteReaderAsync();
+
+        List<InReviewChallenge> inReviewChallenges = new();
+        while (await needsReviewReader.ReadAsync())
+        {
+            inReviewChallenges.Add(new InReviewChallenge(
+                needsReviewReader.GetInt32(0),
+                needsReviewReader.GetDateTime(1),
+                needsReviewReader.GetString(2),
+                needsReviewReader.GetInt32(3)));
+        }
+
+        await transaction.CommitAsync();
+
+        Challenges = new PastChallenges(unfinishedChallenges, inReviewChallenges);
         return Page();
     }
 
     public PastChallenges? Challenges { get; set; }
-    
+
     public record PastChallenges(
         List<UnfinishedChallenge> UnfinishedChallenges,
         List<InReviewChallenge> InReviewChallenges);
-    
+
     public record UnfinishedChallenge(
         int Id,
         DateTime CreatedAt,
@@ -43,59 +80,10 @@ public class IndexModel : PageModel
         string DeckName,
         int CurrentStep,
         int TotalSteps);
-    
+
     public record InReviewChallenge(
         int Id,
         DateTime CreatedOn,
         string DeckName,
         int StepsToReview);
-    
-    public record GetPastChallenges(
-        int ProfileId) : IRequest<PastChallenges>;
-    
-    public class GetPastChallengesHandler : IRequestHandler<GetPastChallenges, PastChallenges>
-    {
-        private readonly MemodexContext _memodexContext;
-
-        public GetPastChallengesHandler(
-            MemodexContext memodexContext)
-        {
-            _memodexContext = memodexContext;
-        }
-
-        public async Task<PastChallenges> Handle(
-            GetPastChallenges request,
-            CancellationToken cancellationToken)
-        {
-            List<UnfinishedChallenge> unfinishedChallenges = await _memodexContext.Challenges
-                .Include(challenge => challenge.ChallengeSteps)
-                .Include(challenge => challenge.Deck)
-                .Where(challenge => challenge.ProfileId == request.ProfileId)
-                .Where(challenge => challenge.State == ChallengeState.InProgress)
-                .Select(challenge => new UnfinishedChallenge(
-                    challenge.Id,
-                    challenge.CreatedAt,
-                    challenge.UpdatedAt,
-                    challenge.Deck.Name,
-                    challenge.CurrentStepIndex.HasValue ? challenge.CurrentStepIndex.Value + 1 : 0,
-                    challenge.ChallengeSteps.Count))
-                .ToListAsync(cancellationToken);
-
-            List<InReviewChallenge> inReviewChallenges = await _memodexContext.Challenges
-                .Include(challenge => challenge.ChallengeSteps)
-                .Include(challenge => challenge.Deck)
-                .Where(challenge => challenge.ProfileId == request.ProfileId)
-                .Where(challenge => challenge.State == ChallengeState.InReview)
-                .Select(challenge => new InReviewChallenge(
-                    challenge.Id,
-                    challenge.CreatedAt,
-                    challenge.Deck.Name,
-                    challenge.ChallengeSteps.Count(step => step.NeedsReview)))
-                .ToListAsync(cancellationToken);
-
-            return new PastChallenges(
-                unfinishedChallenges,
-                inReviewChallenges);
-        }
-    }
 }

@@ -1,26 +1,16 @@
-using System.Reflection;
-using Memodex.DataAccess;
 using Memodex.WebApp.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 
-string connectionString = builder.Configuration.GetConnectionString("MemodexDb")
-                           ?? throw new InvalidOperationException("Missing connection string for MemodexDb.");
-
-builder.Services.AddDbContext<MemodexContext>(
-    opt => opt.UseSqlServer(connectionString));
-builder.Services.AddMediatR(opt => opt.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 builder.Services.AddScoped<IProfileProvider, ProfileProvider>();
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<MediaPathProvider>();
 builder.Services.AddSingleton<StaticFilesPathProvider>();
 builder.Services.AddSingleton<Thumbnailer>();
+builder.Services.AddHttpContextAccessor();
 
 if (builder.Environment.IsDevelopment())
 {
@@ -55,5 +45,5 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
-//app.UseMiddleware<ProfileSessionMiddleware>();
+app.UseMiddleware<ProfileSessionMiddleware>();
 app.Run();

@@ -1,24 +1,26 @@
-using MediatR;
-using Memodex.DataAccess;
+using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class AddFlashcard : PageModel
 {
-    private readonly IMediator _mediator;
-
-    public AddFlashcard(
-        IMediator mediator)
+    public class FormInput
     {
-        _mediator = mediator;
+        public int DeckId { get; init; }
+        public required string Question { get; set; }
+        public required string Answer { get; set; }
     }
+
+    [BindProperty]
+    public FormInput? Input { get; set; }
 
     public IActionResult OnGet(
         int deckId)
     {
-        Input = new AddFlashcardRequest
+        Input = new FormInput
         {
             DeckId = deckId,
             Question = string.Empty,
@@ -27,7 +29,7 @@ public class AddFlashcard : PageModel
 
         return Page();
     }
-    
+
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
@@ -35,44 +37,18 @@ public class AddFlashcard : PageModel
             return Page();
         }
 
-        await _mediator.Send(Input!);
-
+        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite", true);
+        await connection.OpenAsync();
+        SqliteCommand command = connection.CreateCommand(
+            """
+            INSERT INTO `flashcards` (`deckId`, `question`, `answer`) 
+            VALUES (@deckId, @question, @answer)
+            """);
+        command.Parameters.AddWithValue("@deckId", Input!.DeckId);
+        command.Parameters.AddWithValue("@question", Input!.Question);
+        command.Parameters.AddWithValue("@answer", Input!.Answer);
+        await command.ExecuteNonQueryAsync();
+        
         return RedirectToPage("EditFlashcards", new { deckId = Input!.DeckId });
-    }
-    
-    [BindProperty]
-    public AddFlashcardRequest? Input { get; set; }
-    
-    public class AddFlashcardRequest : IRequest
-    {
-        public int DeckId { get; init; }
-        public required string Question { get; set; }
-        public required string Answer { get; set; }
-    }
-
-    public class AddFlashcardHandler : IRequestHandler<AddFlashcardRequest>
-    {
-        private readonly MemodexContext _memodexContext;
-
-        public AddFlashcardHandler(
-            MemodexContext memodexContext)
-        {
-            _memodexContext = memodexContext;
-        }
-
-        public async Task Handle(
-            AddFlashcardRequest request,
-            CancellationToken cancellationToken)
-        {
-            Flashcard flashcard = new()
-            {
-                DeckId = request.DeckId,
-                Question = request.Question,
-                Answer = request.Answer
-            };
-
-            _memodexContext.Flashcards.Add(flashcard);
-            await _memodexContext.SaveChangesAsync(cancellationToken);
-        }
     }
 }

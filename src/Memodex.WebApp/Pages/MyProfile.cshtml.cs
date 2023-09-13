@@ -1,56 +1,30 @@
-using MediatR;
-using Memodex.DataAccess;
+using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class MyProfile : PageModel
 {
-    private readonly IMediator _mediator;
+    public async Task<IActionResult> OnPostUpdateThemeAsync(
+        [FromBody]
+        UpdateTheme updateTheme)
+    {
+        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await connection.OpenAsync();
+        await using SqliteCommand command = connection.CreateCommand(
+            """
+            UPDATE profiles SET preferredTheme = @theme WHERE id = @id;
+            """);
+        command.Parameters.AddWithValue("@id", updateTheme.ProfileId);
+        command.Parameters.AddWithValue("@theme", updateTheme.Theme);
+        await command.ExecuteNonQueryAsync();
 
-    public MyProfile(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
-    public void OnGet()
-    {
-        
-    }
-    
-    public async Task<IActionResult> OnPostUpdateThemeAsync([FromBody] UpdateTheme updateTheme)
-    {
-        await _mediator.Send(updateTheme);
         return new OkResult();
     }
 
-    public record UpdateTheme(int ProfileId, string Theme) : IRequest;
-    
-    public class UpdateThemeHandler : IRequestHandler<UpdateTheme>
-    {
-        private readonly MemodexContext _memodexContext;
-        
-        public UpdateThemeHandler(MemodexContext memodexContext)
-        {
-            _memodexContext = memodexContext;
-        }
-        
-        public async Task Handle(UpdateTheme request, CancellationToken cancellationToken)
-        {
-            Profile? profile = await _memodexContext.Profiles.FirstOrDefaultAsync(
-                item => item.Id == request.ProfileId,
-                cancellationToken);
-            
-            if (profile == null)
-            {
-                throw new InvalidOperationException("Profile not found.");
-            }
-            
-            profile.PreferredTheme = request.Theme;
-            
-            await _memodexContext.SaveChangesAsync(cancellationToken);
-        }
-    }
+    public record UpdateTheme(
+        int ProfileId,
+        string Theme);
 }

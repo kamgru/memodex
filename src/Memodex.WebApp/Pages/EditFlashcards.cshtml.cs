@@ -1,32 +1,68 @@
-using MediatR;
-using Memodex.DataAccess;
+using System.Data.Common;
 using Memodex.WebApp.Common;
+using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class EditFlashcards : PageModel
 {
-    private readonly IMediator _mediator;
-
-    public EditFlashcards(
-        IMediator mediator)
+    private async Task<PagedData<FlashcardItem>> GetFlashcardsAsync(
+        int deckId,
+        int pageNumber,
+        int itemsPerPage)
     {
-        _mediator = mediator;
+        pageNumber = Math.Max(1, pageNumber);
+        itemsPerPage = Math.Max(10, itemsPerPage);
+
+        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await connection.OpenAsync();
+        await using SqliteCommand command = connection.CreateCommand(
+            """
+            SELECT flashcard.`id`, flashcard.`question`, flashcard.`answer` FROM `flashcards` flashcard
+            WHERE flashcard.`deckId` = @deckId
+            ORDER BY flashcard.`id`
+            LIMIT @limit
+            OFFSET @offset;
+            """);
+        command.Parameters.AddWithValue("@deckId", deckId);
+        command.Parameters.AddWithValue("@limit", itemsPerPage);
+        command.Parameters.AddWithValue("@offset", (pageNumber - 1) * itemsPerPage);
+        await using SqliteDataReader reader = await command.ExecuteReaderAsync();
+
+        List<FlashcardItem> items = new();
+        while (await reader.ReadAsync())
+        {
+            items.Add(new FlashcardItem(
+                reader.GetInt32(0),
+                reader.GetString(1),
+                reader.GetString(2)));
+        }
+
+        SqliteCommand countSqliteCommand = connection.CreateCommand(
+            "SELECT COUNT(`id`) FROM `flashcards` WHERE `deckId` = @deckId;");
+        countSqliteCommand.Parameters.AddWithValue("@deckId", deckId);
+        long totalCount = Convert.ToInt64(await countSqliteCommand.ExecuteScalarAsync());
+        int totalPages = (int)Math.Ceiling((double)totalCount / itemsPerPage);
+
+        return new PagedData<FlashcardItem>
+        {
+            ItemCount = totalCount,
+            Page = pageNumber,
+            TotalPages = totalPages,
+            Items = items
+        };
     }
 
     public async Task<IActionResult> OnGetAsync(
         int deckId,
         int itemsPerPage = 25)
     {
-        PagedData<FlashcardItem> data = await _mediator.Send(new GetFlashcardsRequest(
-            deckId,
-            1,
-            itemsPerPage));
+        PagedData<FlashcardItem> data = await GetFlashcardsAsync(deckId, 1, itemsPerPage);
 
         CurrentPageInfo = new PageInfo(
             deckId,
@@ -41,10 +77,10 @@ public class EditFlashcards : PageModel
         int pageNumber,
         int itemsPerPage)
     {
-        PagedData<FlashcardItem> data = await _mediator.Send(new GetFlashcardsRequest(
+        PagedData<FlashcardItem> data = await GetFlashcardsAsync(
             deckId,
             pageNumber,
-            itemsPerPage));
+            itemsPerPage);
 
         return data.Items.Any()
             ? new PartialViewResult
@@ -64,7 +100,25 @@ public class EditFlashcards : PageModel
     public async Task<IActionResult> OnGetSingleFlashcardAsync(
         int flashcardId)
     {
-        FlashcardItem flashcard = await _mediator.Send(new GetSingleFlashcardRequest(flashcardId));
+        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await connection.OpenAsync();
+        await using SqliteCommand command = connection.CreateCommand(
+            """
+            SELECT flashcard.`id`, flashcard.`question`, flashcard.`answer` FROM `flashcards` flashcard
+            WHERE flashcard.`id` = @flashcardId
+            LIMIT 1;
+            """);
+        command.Parameters.AddWithValue("@flashcardId", flashcardId);
+        await using SqliteDataReader reader = await command.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+        {
+            throw new InvalidOperationException($"Flashcard {flashcardId} not found");
+        }
+
+        FlashcardItem flashcard = new(
+            reader.GetInt32(0),
+            reader.GetString(1),
+            reader.GetString(2));
 
         return new PartialViewResult
         {
@@ -79,8 +133,29 @@ public class EditFlashcards : PageModel
     public async Task<IActionResult> OnGetEditAsync(
         int flashcardId)
     {
-        EditFlashcardItem flashcard = await _mediator.Send(new GetEditFlashcardRequest(
-            flashcardId));
+        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await connection.OpenAsync();
+        await using SqliteCommand command = connection.CreateCommand(
+            """
+            SELECT flashcard.`id`, flashcard.`deckId`, flashcard.`question`, flashcard.`answer`
+            FROM `flashcards` flashcard
+            WHERE flashcard.`id` = @flashcardId
+            LIMIT 1;
+            """);
+
+        command.Parameters.AddWithValue("@flashcardId", flashcardId);
+        await using SqliteDataReader reader = await command.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync())
+        {
+            throw new InvalidOperationException($"Flashcard {flashcardId} not found");
+        }
+
+        EditFlashcardItem flashcard = new(
+            reader.GetInt32(0),
+            reader.GetInt32(1),
+            reader.GetString(2),
+            reader.GetString(3));
 
         return new PartialViewResult
         {
@@ -96,7 +171,16 @@ public class EditFlashcards : PageModel
         [FromForm]
         UpdateFlashcardRequest request)
     {
-        FlashcardItem flashcard = await _mediator.Send(request);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await connection.OpenAsync();
+        await using SqliteCommand command = connection.CreateCommand(
+            "UPDATE `flashcards` SET `question` = @question, `answer` = @answer WHERE `id` = @id;");
+        command.Parameters.AddWithValue("@question", request.Question);
+        command.Parameters.AddWithValue("@answer", request.Answer);
+        command.Parameters.AddWithValue("@id", request.FlashcardId);
+        await command.ExecuteNonQueryAsync();
+
+        FlashcardItem flashcard = new(request.FlashcardId, request.Question, request.Answer);
 
         return new PartialViewResult
         {
@@ -109,9 +193,31 @@ public class EditFlashcards : PageModel
     }
 
     public async Task<IActionResult> OnPostDeleteFlashcardAsync(
-        [FromQuery] DeleteFlashcardRequest request)
+        [FromQuery]
+        DeleteFlashcardRequest request)
     {
-        await _mediator.Send(request);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite", true);
+        await connection.OpenAsync();
+        await using DbTransaction transaction = await connection.BeginTransactionAsync();
+        await using SqliteCommand command = connection.CreateCommand(
+            "DELETE FROM `flashcards` WHERE `id` = @id RETURNING `deckId`;");
+        command.Parameters.AddWithValue("@id", request.FlashcardId);
+        int deckId = Convert.ToInt32(await command.ExecuteNonQueryAsync());
+
+        //reduce deck flashcard count
+        SqliteCommand updateDeckCommand = connection.CreateCommand(
+            "UPDATE `decks` SET `flashcardCount` = `flashcardCount` - 1 WHERE `id` = @id;");
+        updateDeckCommand.Parameters.AddWithValue("@id", deckId);
+        await updateDeckCommand.ExecuteNonQueryAsync();
+
+        //delete challenges based on this deck
+        SqliteCommand deleteChallengesCommand = connection.CreateCommand(
+            "DELETE FROM `challenges` WHERE `deckId` = @id;");
+        deleteChallengesCommand.Parameters.AddWithValue("@id", deckId);
+        await deleteChallengesCommand.ExecuteNonQueryAsync();
+
+        await transaction.CommitAsync();
+
         return new EmptyResult();
     }
 
@@ -133,179 +239,11 @@ public class EditFlashcards : PageModel
         string Question,
         string Answer);
 
-    public record GetFlashcardsRequest(
-        int DeckId,
-        int Page,
-        int Count) : IRequest<PagedData<FlashcardItem>>;
-
-    public record GetSingleFlashcardRequest(
-        int FlashcardId) : IRequest<FlashcardItem>;
-
-    public record GetEditFlashcardRequest(
-        int FlashcardId) : IRequest<EditFlashcardItem>;
-
     public record UpdateFlashcardRequest(
         int FlashcardId,
         string Question,
-        string Answer) : IRequest<FlashcardItem>;
+        string Answer);
 
     public record DeleteFlashcardRequest(
-        int FlashcardId) : IRequest;
-
-    public class GetFlashcardsHandler : IRequestHandler<GetFlashcardsRequest, PagedData<FlashcardItem>>
-    {
-        private readonly MemodexContext _memodexContext;
-
-        public GetFlashcardsHandler(
-            MemodexContext memodexContext)
-        {
-            _memodexContext = memodexContext;
-        }
-
-        public async Task<PagedData<FlashcardItem>> Handle(
-            GetFlashcardsRequest request,
-            CancellationToken cancellationToken)
-        {
-            IQueryable<Flashcard> query = _memodexContext.Flashcards
-                .Where(flashcard => flashcard.DeckId == request.DeckId);
-
-            int totalCount = await query.CountAsync(cancellationToken);
-
-            List<FlashcardItem> items = await query
-                .OrderBy(flashcard => flashcard.Id)
-                .Skip((request.Page - 1) * request.Count)
-                .Take(request.Count)
-                .Select(flashcard => new FlashcardItem(
-                    flashcard.Id,
-                    flashcard.Question,
-                    flashcard.Answer))
-                .ToListAsync(cancellationToken);
-
-            int totalPages = (int)Math.Ceiling((double)totalCount / request.Count);
-
-            return new PagedData<FlashcardItem>
-            {
-                ItemCount = totalCount,
-                Page = request.Page,
-                TotalPages = totalPages,
-                Items = items
-            };
-        }
-
-        public class GetEditFlashcardHandler : IRequestHandler<GetEditFlashcardRequest, EditFlashcardItem>
-        {
-            private readonly MemodexContext _memodexContext;
-
-            public GetEditFlashcardHandler(
-                MemodexContext memodexContext)
-            {
-                _memodexContext = memodexContext;
-            }
-
-            public async Task<EditFlashcardItem> Handle(
-                GetEditFlashcardRequest request,
-                CancellationToken cancellationToken)
-            {
-                EditFlashcardItem flashcard = await _memodexContext.Flashcards
-                                                  .Where(flashcard => flashcard.Id == request.FlashcardId)
-                                                  .Select(flashcard => new EditFlashcardItem(
-                                                      flashcard.Id,
-                                                      flashcard.DeckId,
-                                                      flashcard.Question,
-                                                      flashcard.Answer))
-                                                  .FirstOrDefaultAsync(cancellationToken)
-                                              ?? throw new InvalidOperationException("Flashcard not found.");
-
-                return flashcard;
-            }
-        }
-
-        public class GetSingleFlashcardHandler : IRequestHandler<GetSingleFlashcardRequest, FlashcardItem>
-        {
-            private readonly MemodexContext _memodexContext;
-
-            public GetSingleFlashcardHandler(
-                MemodexContext memodexContext)
-            {
-                _memodexContext = memodexContext;
-            }
-
-            public async Task<FlashcardItem> Handle(
-                GetSingleFlashcardRequest request,
-                CancellationToken cancellationToken)
-            {
-                FlashcardItem flashcard = await _memodexContext.Flashcards
-                                              .Where(flashcard => flashcard.Id == request.FlashcardId)
-                                              .Select(flashcard => new FlashcardItem(
-                                                  flashcard.Id,
-                                                  flashcard.Question,
-                                                  flashcard.Answer))
-                                              .FirstOrDefaultAsync(cancellationToken)
-                                          ?? throw new InvalidOperationException("Flashcard not found.");
-
-                return flashcard;
-            }
-        }
-
-        public class UpdateFlashcardHandler : IRequestHandler<UpdateFlashcardRequest, FlashcardItem>
-        {
-            private readonly MemodexContext _memodexContext;
-
-            public UpdateFlashcardHandler(
-                MemodexContext memodexContext)
-            {
-                _memodexContext = memodexContext;
-            }
-
-            public async Task<FlashcardItem> Handle(
-                UpdateFlashcardRequest request,
-                CancellationToken cancellationToken)
-            {
-                Flashcard flashcard = await _memodexContext.Flashcards
-                                          .Where(flashcard => flashcard.Id == request.FlashcardId)
-                                          .FirstOrDefaultAsync(cancellationToken)
-                                      ?? throw new InvalidOperationException("Flashcard not found.");
-
-                flashcard.Question = request.Question;
-                flashcard.Answer = request.Answer;
-
-                await _memodexContext.SaveChangesAsync(cancellationToken);
-
-                return new FlashcardItem(
-                    flashcard.Id,
-                    flashcard.Question,
-                    flashcard.Answer);
-            }
-        }
-
-        public class DeleteFlashcardHandler : IRequestHandler<DeleteFlashcardRequest>
-        {
-            private readonly MemodexContext _memodexContext;
-
-            public DeleteFlashcardHandler(
-                MemodexContext memodexContext)
-            {
-                _memodexContext = memodexContext;
-            }
-
-            public async Task Handle(
-                DeleteFlashcardRequest request,
-                CancellationToken cancellationToken)
-            {
-                Flashcard flashcard = await _memodexContext.Flashcards
-                                          .Where(flashcard => flashcard.Id == request.FlashcardId)
-                                          .FirstOrDefaultAsync(cancellationToken)
-                                      ?? throw new InvalidOperationException("Flashcard not found.");
-
-                List<ChallengeStep> challengeSteps = await _memodexContext.ChallengeSteps
-                    .Where(challengeStep => challengeStep.FlashcardId == flashcard.Id)
-                    .ToListAsync(cancellationToken);
-
-                _memodexContext.Flashcards.Remove(flashcard);
-                _memodexContext.ChallengeSteps.RemoveRange(challengeSteps);
-
-                await _memodexContext.SaveChangesAsync(cancellationToken);
-            }
-        }
-    }
+        int FlashcardId);
 }

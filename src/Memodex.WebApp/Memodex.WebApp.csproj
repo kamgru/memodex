@@ -9,18 +9,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MediatR" Version="12.0.1" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.9" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.10" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.8">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
       <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Memodex.DataAccess\Memodex.DataAccess.csproj" />
     </ItemGroup>
 
     <ItemGroup>

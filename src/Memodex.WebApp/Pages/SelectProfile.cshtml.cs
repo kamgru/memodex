@@ -1,116 +1,81 @@
-using MediatR;
-using Memodex.DataAccess;
+using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
 public class SelectProfile : PageModel
 {
-    private readonly IMediator _mediator;
-
-    public SelectProfile(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
-    public List<ProfileItem> Profiles { get; set; } = new();
-
-    public async Task<IActionResult> OnGetAsync()
-    {
-        Profiles = await _mediator.Send(new GetProfilesRequest());
-        
-        switch (Profiles.Count)
-        {
-            case 0:
-                return RedirectToPage("CreateProfile");
-            case 1:
-                await _mediator.Send(new SelectProfileRequest(Profiles.First().Id));
-                return RedirectToPage("Index");
-        }
-
-        return Page();
-    }
-
-    public async Task<IActionResult> OnPostAsync(ProfileItem profileItem)
-    {
-        await _mediator.Send(new SelectProfileRequest(profileItem.Id));
-        return RedirectToPage("Index");
-    }
-    
-    public class GetProfilesRequest : IRequest<List<ProfileItem>>
-    {
-    }
-
-    public record SelectProfileRequest(
-        int ProfileId) : IRequest;
-
     public class ProfileItem
     {
         public int Id { get; set; }
         public required string Name { get; set; }
         public required string AvatarPath { get; set; }
     }
-    
-    public class GetProfilesHandler : IRequestHandler<GetProfilesRequest, List<ProfileItem>>
+
+    private readonly IConfiguration _configuration;
+
+    public SelectProfile(
+        IConfiguration configuration)
     {
-        private readonly MemodexContext _memodexContext;
-        private readonly IConfiguration _configuration;
-
-        public GetProfilesHandler(MemodexContext memodexContext, IConfiguration configuration)
-        {
-            _memodexContext = memodexContext;
-            _configuration = configuration;
-        }
-
-        public async Task<List<ProfileItem>> Handle(GetProfilesRequest request, CancellationToken cancellationToken)
-        {
-            string? rootPath = _configuration.GetSection("Media")
-                .GetSection("Avatars")
-                .GetValue<string>("Path");
-
-            if (string.IsNullOrEmpty(rootPath))
-            {
-                throw new InvalidOperationException("Missing configuration for Media:Avatars:Path.");
-            }
-            
-            return await _memodexContext.Profiles
-                .Select(item => new ProfileItem
-                {
-                    Id = item.Id,
-                    Name = item.Name,
-                    AvatarPath = Path.Combine("media", rootPath, $"t_{item.AvatarPath}")
-                })
-                .ToListAsync(cancellationToken);
-        }
+        _configuration = configuration;
     }
-    
-    public class SelectProfileHandler : IRequestHandler<SelectProfileRequest>
+
+    public List<ProfileItem> Profiles { get; set; } = new();
+
+    public async Task<IActionResult> OnGetAsync()
     {
-        private readonly MemodexContext _memodexContext;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        Profiles = new List<ProfileItem>();
 
-        public SelectProfileHandler(MemodexContext memodexContext, IHttpContextAccessor httpContextAccessor)
+        string? rootPath = _configuration.GetSection("Media")
+            .GetSection("Avatars")
+            .GetValue<string>("Path");
+
+        if (string.IsNullOrEmpty(rootPath))
         {
-            _httpContextAccessor = httpContextAccessor;
-            _memodexContext = memodexContext;
+            throw new InvalidOperationException("Missing configuration for Media:Avatars:Path.");
         }
 
-        public async Task Handle(SelectProfileRequest request, CancellationToken cancellationToken)
-        {
-            Profile? profile = await _memodexContext.Profiles.FindAsync(request.ProfileId);
-            if (profile == null)
-            {
-                throw new InvalidOperationException("Profile not found.");
-            }
+        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await connection.OpenAsync();
+        await using SqliteCommand command = connection.CreateCommand(
+            """
+            SELECT `id`, `name`, `avatar` FROM profiles;
+            """);
 
-            if (_httpContextAccessor.HttpContext is null)
+        await using SqliteDataReader reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            int id = reader.GetInt32(0);
+            string name = reader.GetString(1);
+            string avatar = reader.GetString(2);
+
+            Profiles.Add(new ProfileItem
             {
-                throw new InvalidOperationException("Could not access HttpContext.");
-            }
-            
-            _httpContextAccessor.HttpContext.Session.SetInt32(Common.Constants.SelectedProfileSessionKey, profile.Id);
+                Id = id,
+                Name = name,
+                AvatarPath = Path.Combine("media", rootPath, $"t_{avatar}")
+            });
         }
+
+        switch (Profiles.Count)
+        {
+            case 0:
+                return RedirectToPage("CreateProfile");
+            case 1:
+                HttpContext.Session.SetInt32(Common.Constants.SelectedProfileSessionKey, Profiles.First()
+                    .Id);
+                return RedirectToPage("Index");
+        }
+
+        return Page();
+    }
+
+    public IActionResult OnPostAsync(
+        ProfileItem profileItem)
+    {
+        HttpContext.Session.SetInt32(Common.Constants.SelectedProfileSessionKey, profileItem.Id);
+        return RedirectToPage("Index");
     }
 }

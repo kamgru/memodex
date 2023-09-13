@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using MediatR;
 
 namespace Memodex.WebApp.Infrastructure;
 
@@ -17,7 +16,7 @@ public class ProfileSessionMiddleware
         _next = next;
     }
     
-    public async Task InvokeAsync(HttpContext context, IMediator mediator)
+    public async Task InvokeAsync(HttpContext context)
     {
         if (_allowedPaths.Contains(context.Request.Path.ToString().ToLowerInvariant()))
         {

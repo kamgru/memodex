@@ -1,6 +1,6 @@
 using System.Data;
 using System.Data.Common;
-using Memodex.DataAccess;
+using Memodex.WebApp.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.Sqlite;
