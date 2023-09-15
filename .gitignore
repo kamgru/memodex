@@ -5,4 +5,5 @@ db_password.txt
 node_modules/
 appsettings.Development.json
 .env
-
+*.sqlite
+*.db
