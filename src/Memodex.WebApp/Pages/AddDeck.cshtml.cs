@@ -25,7 +25,7 @@ public class AddDeck : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite", true);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
         await connection.OpenAsync();
 
         SqliteCommand command = connection.CreateCommand(

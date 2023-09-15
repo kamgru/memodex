@@ -37,11 +37,12 @@ public class SelectProfile : PageModel
             throw new InvalidOperationException("Missing configuration for Media:Avatars:Path.");
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
-            SELECT `id`, `name`, `avatar` FROM profiles;
+            SELECT id, name, avatar 
+            FROM profiles;
             """);
 
         await using SqliteDataReader reader = await command.ExecuteReaderAsync();

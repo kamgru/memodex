@@ -1,6 +1,7 @@
 using System.Data.Common;
 using System.Text.Json;
 using Memodex.WebApp.Common;
+using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,6 +12,17 @@ namespace Memodex.WebApp.Pages;
 
 public class ImportDeck : PageModel
 {
+    public record FlashcardItem(
+        string Question,
+        string Answer);
+
+    public class DeckItem
+    {
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public IEnumerable<FlashcardItem> Flashcards { get; set; } = new List<FlashcardItem>();
+    }
+
     [BindProperty]
     public int CategoryId { get; set; }
 
@@ -18,14 +30,19 @@ public class ImportDeck : PageModel
         int categoryId)
     {
         CategoryId = categoryId;
-        await using SqliteConnection connection = new("Data Source=memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
-        const string sql = "SELECT EXISTS(SELECT 1 FROM categories WHERE Id = @categoryId)";
-        await using SqliteCommand command = new(sql, connection);
+
+        await using SqliteCommand command = connection.CreateCommand(
+            """
+            SELECT EXISTS(
+                SELECT 1
+                FROM categories
+                WHERE Id = @categoryId)
+            """);
         command.Parameters.AddWithValue("@categoryId", categoryId);
 
-        bool categoryExists = Convert.ToInt32(await command.ExecuteScalarAsync() ?? 0) == 1;
-
+        bool categoryExists = Convert.ToBoolean(await command.ExecuteScalarAsync());
         if (!categoryExists)
         {
             return RedirectToPage("BrowseCategories");
@@ -54,46 +71,38 @@ public class ImportDeck : PageModel
                             ?? throw new InvalidOperationException("Invalid JSON file");
 
 
-        SqliteConnectionStringBuilder connectionStringBuilder = new()
-        {
-            DataSource = "memodex_test.sqlite",
-            ForeignKeys = true
-        };
-        await using SqliteConnection connection = new(connectionStringBuilder.ToString());
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
         await connection.OpenAsync();
+
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
-        const string insertDeckSql =
+
+        await using SqliteCommand addDeckCmd = connection.CreateCommand(
             """
             INSERT INTO decks (name, description, flashcardCount, categoryId)
             VALUES (@name, @description, @flashcardCount, @categoryId)
-            """;
-
-        SqliteCommand insertDeckCommand = connection.CreateCommand();
-        insertDeckCommand.CommandText = insertDeckSql;
-        insertDeckCommand.Parameters.AddWithValue("name", deckItem.Name);
-        insertDeckCommand.Parameters.AddWithValue("description",
+            RETURNING id;
+            """);
+        addDeckCmd.Parameters.AddWithValue("name", deckItem.Name);
+        addDeckCmd.Parameters.AddWithValue("description",
             deckItem.Description is null ? DBNull.Value : deckItem.Description);
-        insertDeckCommand.Parameters.AddWithValue("flashcardCount", deckItem.Flashcards.Count());
-        insertDeckCommand.Parameters.AddWithValue("categoryId", CategoryId);
+        addDeckCmd.Parameters.AddWithValue("flashcardCount", deckItem.Flashcards.Count());
+        addDeckCmd.Parameters.AddWithValue("categoryId", CategoryId);
 
-        await insertDeckCommand.ExecuteNonQueryAsync();
-        const string selectLastIdSql = "SELECT last_insert_rowid();";
-        SqliteCommand commandLastId = connection.CreateCommand();
-        commandLastId.CommandText = selectLastIdSql;
+        int deckId = Convert.ToInt32(await addDeckCmd.ExecuteScalarAsync());
 
-        int deckId = Convert.ToInt32(await commandLastId.ExecuteScalarAsync());
-
-        SqliteCommand insertFlashcardCommand = connection.CreateCommand();
-        insertFlashcardCommand.CommandText =
-            "INSERT INTO flashcards (question, answer, deckId) VALUES (@question, @answer, @deckId)";
+        await using SqliteCommand addFlashcardCmd = connection.CreateCommand(
+            """
+            INSERT INTO flashcards (question, answer, deckId)
+            VALUES (@question, @answer, @deckId);
+            """);
         foreach (FlashcardItem flashcardItem in deckItem.Flashcards)
         {
-            insertFlashcardCommand.Parameters.Clear();
-            insertFlashcardCommand.Parameters.AddWithValue("question", flashcardItem.Question);
-            insertFlashcardCommand.Parameters.AddWithValue("answer", flashcardItem.Answer);
-            insertFlashcardCommand.Parameters.AddWithValue("deckId", deckId);
+            addFlashcardCmd.Parameters.Clear();
+            addFlashcardCmd.Parameters.AddWithValue("question", flashcardItem.Question);
+            addFlashcardCmd.Parameters.AddWithValue("answer", flashcardItem.Answer);
+            addFlashcardCmd.Parameters.AddWithValue("deckId", deckId);
 
-            await insertFlashcardCommand.ExecuteNonQueryAsync();
+            await addFlashcardCmd.ExecuteNonQueryAsync();
         }
 
         await transaction.CommitAsync();
@@ -106,16 +115,5 @@ public class ImportDeck : PageModel
             },
             ViewName = "_ImportDeckSuccessPartial"
         };
-    }
-
-    public record FlashcardItem(
-        string Question,
-        string Answer);
-
-    public class DeckItem
-    {
-        public string Name { get; set; } = string.Empty;
-        public string? Description { get; set; }
-        public IEnumerable<FlashcardItem> Flashcards { get; set; } = new List<FlashcardItem>();
     }
 }

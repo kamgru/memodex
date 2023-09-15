@@ -11,7 +11,7 @@ public class IndexModel : PageModel
 {
     public async Task<IActionResult> OnGet()
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand getUnfinishedChallengeStepsCommand = connection.CreateCommand(

@@ -19,7 +19,7 @@ public class EditFlashcards : PageModel
         pageNumber = Math.Max(1, pageNumber);
         itemsPerPage = Math.Max(10, itemsPerPage);
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
         await using SqliteCommand selectFlashcardsCmd = connection.CreateCommand(
             """
@@ -108,7 +108,7 @@ public class EditFlashcards : PageModel
     public async Task<IActionResult> OnGetSingleFlashcardAsync(
         int flashcardId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
@@ -143,7 +143,7 @@ public class EditFlashcards : PageModel
     public async Task<IActionResult> OnGetEditAsync(
         int flashcardId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
@@ -181,7 +181,7 @@ public class EditFlashcards : PageModel
         [FromForm]
         UpdateFlashcardRequest request)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
@@ -213,7 +213,7 @@ public class EditFlashcards : PageModel
         [FromQuery]
         DeleteFlashcardRequest request)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite", true);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand deleteFlashcardCmd = connection.CreateCommand(

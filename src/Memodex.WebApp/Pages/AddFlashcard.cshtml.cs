@@ -38,7 +38,7 @@ public class AddFlashcard : PageModel
             return Page();
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite", true);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand insertFlashcardCommand = connection.CreateCommand(

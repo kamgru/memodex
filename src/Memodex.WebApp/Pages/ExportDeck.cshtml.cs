@@ -12,7 +12,7 @@ public class ExportDeck : PageModel
 {
     public async Task<IActionResult>  OnGetAsync(int deckId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand command = connection.CreateCommand(

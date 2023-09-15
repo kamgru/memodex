@@ -36,12 +36,16 @@ public class EditCategory : PageModel
     public async Task<IActionResult> OnGetAsync(
         int categoryId)
     {
-        await using SqliteConnection connection = new($"Data Source=memodex_test.sqlite");
-        const string sql =
-            "SELECT `id`, `name`, `description`, `imageFilename` FROM categories WHERE `id` = @id;";
-        SqliteCommand command = new(sql, connection);
-        command.Parameters.AddWithValue("@id", categoryId);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
+
+        SqliteCommand command = connection.CreateCommand(
+            """
+            SELECT id, name, description, imageFilename
+            FROM categories
+            WHERE id = @id;
+            """);
+        command.Parameters.AddWithValue("@id", categoryId);
         await using SqliteDataReader reader = await command.ExecuteReaderAsync();
 
         if (!await reader.ReadAsync())
@@ -79,12 +83,21 @@ public class EditCategory : PageModel
             await _thumbnailer.CreateThumbnailAsync(physicalPath);
         }
 
-        await using SqliteConnection connection = new($"Data Source=memodex_test.sqlite");
-        string sql = newFilename is not null
-            ? "UPDATE categories SET `name` = @name, `description` = @description, `imageFilename` = @imageFilename WHERE `id` = @id;"
-            : "UPDATE categories SET `name` = @name, `description` = @description WHERE `id` = @id;";
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await connection.OpenAsync();
 
-        SqliteCommand command = new(sql, connection);
+        string sql = newFilename is not null
+            ? """
+              UPDATE categories
+              SET name = @name, description = @description, imageFilename = @imageFilename
+              WHERE id = @id;
+              """
+            : """
+              UPDATE categories
+              SET name = @name, description = @description
+              WHERE id = @id;
+              """;
+        SqliteCommand command = connection.CreateCommand(sql);
         command.Parameters.AddWithValue("@name", Category!.Name);
         command.Parameters.AddWithValue("@description",
             Category.Description is null ? DBNull.Value : Category.Description);
@@ -94,7 +107,6 @@ public class EditCategory : PageModel
         }
 
         command.Parameters.AddWithValue("@id", Category.Id);
-        await connection.OpenAsync();
         await command.ExecuteNonQueryAsync();
 
         this.AddNotification(NotificationType.Success, $"Category {Category.Name} updated.");
@@ -106,20 +118,17 @@ public class EditCategory : PageModel
         [FromQuery]
         int categoryId)
     {
-        
-        SqliteConnectionStringBuilder connectionStringBuilder = new()
-        {
-            DataSource = "memodex_test.sqlite",
-            ForeignKeys = true
-        }; 
-        
-        await using SqliteConnection connection = new(connectionStringBuilder.ConnectionString);
-        const string sql = "DELETE FROM categories WHERE `id` = @id;";
-        SqliteCommand command = new(sql, connection);
-        command.Parameters.AddWithValue("@id", categoryId);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
         await connection.OpenAsync();
+
+        SqliteCommand command = connection.CreateCommand(
+            """
+            DELETE FROM categories
+             WHERE id = @id;
+            """);
+        command.Parameters.AddWithValue("@id", categoryId);
         await command.ExecuteNonQueryAsync();
-        
+
         this.AddNotification(NotificationType.Success, $"Category {Category!.Name} deleted.");
 
         return RedirectToPage("BrowseCategories");

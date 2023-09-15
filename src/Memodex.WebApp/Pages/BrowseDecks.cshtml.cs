@@ -1,3 +1,4 @@
+using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.Sqlite;
@@ -6,20 +7,29 @@ namespace Memodex.WebApp.Pages;
 
 public class BrowseDecks : PageModel
 {
+    public record DeckItem(
+        int Id,
+        string Name,
+        string Description,
+        int ItemCount);
+
+    public int CurrentCategoryId { get; set; }
+    public List<DeckItem> Decks { get; set; } = new();
+
     public async Task<IActionResult> OnGetAsync(
         int categoryId)
     {
-        SqliteConnectionStringBuilder builder = new()
-        {
-            DataSource = "memodex_test.sqlite"
-        };
-
-        await using SqliteConnection connection = new(builder.ConnectionString);
-        const string sql =
-            "SELECT `id`, `name`, `description`, `flashcardCount` FROM `decks` WHERE `categoryId` = @categoryId";
-        SqliteCommand command = new(sql, connection);
-        command.Parameters.AddWithValue("@categoryId", categoryId);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
+
+        await using SqliteCommand command = connection.CreateCommand(
+            """
+            SELECT id, name, description, flashcardCount
+            FROM decks
+            WHERE categoryId = @categoryId;
+            """);
+        command.Parameters.AddWithValue("@categoryId", categoryId);
+
         SqliteDataReader reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())
         {
@@ -33,14 +43,4 @@ public class BrowseDecks : PageModel
         CurrentCategoryId = categoryId;
         return Page();
     }
-
-    public int CurrentCategoryId { get; set; }
-
-    public List<DeckItem> Decks { get; set; } = new();
-
-    public record DeckItem(
-        int Id,
-        string Name,
-        string Description,
-        int ItemCount);
 }

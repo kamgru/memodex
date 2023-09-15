@@ -21,7 +21,7 @@ public class AddCategory : PageModel
             return Page();
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
         
         SqliteCommand command = connection.CreateCommand(

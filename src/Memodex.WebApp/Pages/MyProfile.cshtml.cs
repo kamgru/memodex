@@ -7,15 +7,21 @@ namespace Memodex.WebApp.Pages;
 
 public class MyProfile : PageModel
 {
+    public record UpdateTheme(
+        int ProfileId,
+        string Theme);
+
     public async Task<IActionResult> OnPostUpdateThemeAsync(
         [FromBody]
         UpdateTheme updateTheme)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
-            UPDATE profiles SET preferredTheme = @theme WHERE id = @id;
+            UPDATE profiles
+            SET preferredTheme = @theme
+            WHERE id = @id;
             """);
         command.Parameters.AddWithValue("@id", updateTheme.ProfileId);
         command.Parameters.AddWithValue("@theme", updateTheme.Theme);
@@ -23,8 +29,4 @@ public class MyProfile : PageModel
 
         return new OkResult();
     }
-
-    public record UpdateTheme(
-        int ProfileId,
-        string Theme);
 }

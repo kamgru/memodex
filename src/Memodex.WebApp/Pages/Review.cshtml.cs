@@ -17,7 +17,7 @@ public class Review : PageModel
     public async Task<IActionResult> OnGetAsync(
         int challengeId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
 
@@ -119,7 +119,7 @@ public class Review : PageModel
             throw new InvalidOperationException("Input is null");
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite", true);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand getChallengeCommand = connection.CreateCommand(

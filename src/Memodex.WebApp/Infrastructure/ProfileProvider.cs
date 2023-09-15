@@ -47,7 +47,7 @@ public class ProfileProvider : IProfileProvider
             return null;
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = new("data source=memodex.db");
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """

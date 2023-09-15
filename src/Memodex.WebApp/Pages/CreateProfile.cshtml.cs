@@ -24,7 +24,7 @@ public class CreateProfile : PageModel
     public async Task<IActionResult> OnGetAsync()
     {
         Avatars = new List<AvatarImage>();
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
@@ -44,7 +44,7 @@ public class CreateProfile : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """

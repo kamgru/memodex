@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Infrastructure;
@@ -5,9 +6,15 @@ namespace Memodex.WebApp.Infrastructure;
 public static class SqliteConnectionFactory
 {
     public static SqliteConnection Create(
-        string databaseName,
+        ClaimsPrincipal principal,
         bool enableForeignKeys = false)
     {
+        string? databaseName = principal.Identity switch
+        {
+            { IsAuthenticated: true } => $"mdx.{principal.Identity.Name}.db",
+            _ => "anonymous.db"
+        };
+
         string connectionString = new SqliteConnectionStringBuilder
         {
             DataSource = databaseName,

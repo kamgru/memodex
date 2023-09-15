@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Memodex.WebApp.Common;
+using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.Sqlite;
@@ -12,8 +13,10 @@ public class EditDeck : PageModel
     {
         public int Id { get; set; }
         public int CategoryId { get; set; }
+
         [Required]
         public string Name { get; set; } = string.Empty;
+
         public string? Description { get; set; }
     }
 
@@ -23,12 +26,18 @@ public class EditDeck : PageModel
     public async Task<IActionResult> OnGetAsync(
         int deckId)
     {
-        await using SqliteConnection connection = new($"Data Source=memodex_test.sqlite");
-        const string sql = "SELECT `id`, `categoryId`, `name`, `description` FROM `decks` WHERE `id` = @deckId";
-        SqliteCommand command = new(sql, connection);
-        command.Parameters.AddWithValue("@deckId", deckId);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
         await connection.OpenAsync();
+
+        SqliteCommand command = connection.CreateCommand(
+            """
+            SELECT id, categoryId, name, description
+            FROM decks
+            WHERE id = @deckId;
+            """);
+        command.Parameters.AddWithValue("@deckId", deckId);
         SqliteDataReader reader = await command.ExecuteReaderAsync();
+
         if (!await reader.ReadAsync())
         {
             return RedirectToPage("Index");
@@ -41,7 +50,7 @@ public class EditDeck : PageModel
             Name = reader.GetString(2),
             Description = reader.GetValue(3) as string ?? string.Empty
         };
-        
+
         return Page();
     }
 
@@ -52,18 +61,18 @@ public class EditDeck : PageModel
             return Page();
         }
 
-        SqliteConnectionStringBuilder connectionStringBuilder = new()
-        {
-            DataSource = "memodex_test.sqlite",
-            ForeignKeys = true
-        };
-        await using SqliteConnection connection = new(connectionStringBuilder.ToString());
-        const string sql = "UPDATE `decks` SET `name` = @name, `description` = @description WHERE `id` = @id";
-        SqliteCommand command = new(sql, connection);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
+        await connection.OpenAsync();
+
+        SqliteCommand command = connection.CreateCommand(
+            """
+            UPDATE decks
+            SET name = @name, description = @description
+            WHERE id = @id
+            """);
         command.Parameters.AddWithValue("@id", Deck.Id);
         command.Parameters.AddWithValue("@name", Deck.Name);
         command.Parameters.AddWithValue("@description", Deck.Description is null ? DBNull.Value : Deck.Description);
-        await connection.OpenAsync();
         await command.ExecuteNonQueryAsync();
 
         this.AddNotification(NotificationType.Success, $"Deck {Deck.Name} updated.");
@@ -75,18 +84,17 @@ public class EditDeck : PageModel
         [FromQuery]
         int deckId)
     {
-        SqliteConnectionStringBuilder connectionStringBuilder = new()
-        {
-            DataSource = "memodex_test.sqlite",
-            ForeignKeys = true
-        };
-        await using SqliteConnection connection = new(connectionStringBuilder.ToString());
-        const string sql = "DELETE FROM `decks` WHERE `id` = @id";
-        SqliteCommand command = new(sql, connection);
-        command.Parameters.AddWithValue("@id", deckId);
+        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
         await connection.OpenAsync();
+
+        SqliteCommand command = connection.CreateCommand(
+            """
+            DELETE FROM decks 
+            WHERE id = @id;
+            """);
+        command.Parameters.AddWithValue("@id", deckId);
         await command.ExecuteNonQueryAsync();
-        
+
         this.AddNotification(NotificationType.Success, $"Deck {Deck.Name} deleted.");
 
         return RedirectToPage("BrowseDecks", new { categoryId = Deck.CategoryId });
