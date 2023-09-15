@@ -7,13 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\.env = ..\.env
 		..\docker-compose.yml = ..\docker-compose.yml
 		..\app.Dockerfile = ..\app.Dockerfile
-		..\cli.Dockerfile = ..\cli.Dockerfile
 		..\.gitignore = ..\.gitignore
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memodex.Cli", "Memodex.Cli\Memodex.Cli.csproj", "{BEDCCF85-5086-4694-826B-EDB620B734ED}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memodex.DataAccess", "Memodex.DataAccess\Memodex.DataAccess.csproj", "{217CAC95-19F7-486F-A9C4-9E569AF66566}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,13 +20,5 @@ Global
 		{96DC3886-29D8-4CDF-A74E-B2FDBFAD77C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96DC3886-29D8-4CDF-A74E-B2FDBFAD77C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96DC3886-29D8-4CDF-A74E-B2FDBFAD77C3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BEDCCF85-5086-4694-826B-EDB620B734ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BEDCCF85-5086-4694-826B-EDB620B734ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BEDCCF85-5086-4694-826B-EDB620B734ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BEDCCF85-5086-4694-826B-EDB620B734ED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{217CAC95-19F7-486F-A9C4-9E569AF66566}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{217CAC95-19F7-486F-A9C4-9E569AF66566}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{217CAC95-19F7-486F-A9C4-9E569AF66566}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{217CAC95-19F7-486F-A9C4-9E569AF66566}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

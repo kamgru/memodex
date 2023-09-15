@@ -10,25 +10,5 @@ services:
     volumes:
       - memodex:/app/data
 
-  db:
-    image: "mcr.microsoft.com/mssql/server:2022-CU4-ubuntu-20.04"
-    volumes:
-      - "mssql:/app/data"
-    environment:
-      - ACCEPT_EULA=y
-      - MSSQL_PID=express
-      - MSSQL_SA_PASSWORD=${MEMODEX_DB_PASS}
-    ports:
-      - "1433:1433"
-  cli:
-    image: kamgru/memodex-cli:latest
-    command: mdx init
-    volumes:
-      - memodex:/app/data
-    environment:
-      - MEMODEX_DB_PASS=P@ssw0rd!
-      - ConnectionStrings__MemodexDb=Server=${MEMODEX_DB_HOST};Database=${MEMODEX_DB_NAME};User Id=${MEMODEX_DB_USER};Password=${MEMODEX_DB_PASS};TrustServerCertificate=true
-
 volumes:
   memodex:
-  mssql:
