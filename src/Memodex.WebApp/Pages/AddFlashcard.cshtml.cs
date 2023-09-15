@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Data.Common;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,24 +11,23 @@ public class AddFlashcard : PageModel
 {
     public class FormInput
     {
-        public int DeckId { get; init; }
-        public required string Question { get; set; }
-        public required string Answer { get; set; }
+        [Required]
+        public int DeckId { get; set; }
+
+        [Required]
+        public string Question { get; set; } = string.Empty;
+
+        [Required]
+        public string Answer { get; set; } = string.Empty;
     }
 
     [BindProperty]
-    public FormInput? Input { get; set; }
+    public FormInput Input { get; set; } = new();
 
     public IActionResult OnGet(
         int deckId)
     {
-        Input = new FormInput
-        {
-            DeckId = deckId,
-            Question = string.Empty,
-            Answer = string.Empty
-        };
-
+        Input.DeckId = deckId;
         return Page();
     }
 
@@ -39,16 +40,28 @@ public class AddFlashcard : PageModel
 
         await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite", true);
         await connection.OpenAsync();
-        SqliteCommand command = connection.CreateCommand(
+        await using DbTransaction transaction = await connection.BeginTransactionAsync();
+        await using SqliteCommand insertFlashcardCommand = connection.CreateCommand(
             """
             INSERT INTO `flashcards` (`deckId`, `question`, `answer`) 
             VALUES (@deckId, @question, @answer)
             """);
-        command.Parameters.AddWithValue("@deckId", Input!.DeckId);
-        command.Parameters.AddWithValue("@question", Input!.Question);
-        command.Parameters.AddWithValue("@answer", Input!.Answer);
-        await command.ExecuteNonQueryAsync();
+        insertFlashcardCommand.Parameters.AddWithValue("@deckId", Input!.DeckId);
+        insertFlashcardCommand.Parameters.AddWithValue("@question", Input.Question);
+        insertFlashcardCommand.Parameters.AddWithValue("@answer", Input.Answer);
+        await insertFlashcardCommand.ExecuteNonQueryAsync();
+
+        await using SqliteCommand updateDeckCommand = connection.CreateCommand(
+            """
+            UPDATE `decks` 
+            SET `flashcardCount` = `flashcardCount` + 1 
+            WHERE `id` = @deckId
+            """);
+        updateDeckCommand.Parameters.AddWithValue("@deckId", Input.DeckId);
+        await updateDeckCommand.ExecuteNonQueryAsync();
+
+        await transaction.CommitAsync();
         
-        return RedirectToPage("EditFlashcards", new { deckId = Input!.DeckId });
+        return RedirectToPage("EditFlashcards", new { deckId = Input.DeckId });
     }
 }

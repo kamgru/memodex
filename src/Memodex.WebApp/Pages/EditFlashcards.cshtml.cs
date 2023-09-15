@@ -21,40 +21,45 @@ public class EditFlashcards : PageModel
 
         await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
         await connection.OpenAsync();
-        await using SqliteCommand command = connection.CreateCommand(
+        await using SqliteCommand selectFlashcardsCmd = connection.CreateCommand(
             """
-            SELECT flashcard.`id`, flashcard.`question`, flashcard.`answer` FROM `flashcards` flashcard
+            SELECT flashcard.`id`, flashcard.`question`, flashcard.`answer`
+            FROM `flashcards` flashcard
             WHERE flashcard.`deckId` = @deckId
             ORDER BY flashcard.`id`
             LIMIT @limit
             OFFSET @offset;
             """);
-        command.Parameters.AddWithValue("@deckId", deckId);
-        command.Parameters.AddWithValue("@limit", itemsPerPage);
-        command.Parameters.AddWithValue("@offset", (pageNumber - 1) * itemsPerPage);
-        await using SqliteDataReader reader = await command.ExecuteReaderAsync();
+        selectFlashcardsCmd.Parameters.AddWithValue("@deckId", deckId);
+        selectFlashcardsCmd.Parameters.AddWithValue("@limit", itemsPerPage);
+        selectFlashcardsCmd.Parameters.AddWithValue("@offset", (pageNumber - 1) * itemsPerPage);
+        await using SqliteDataReader reader = await selectFlashcardsCmd.ExecuteReaderAsync();
 
-        List<FlashcardItem> items = new();
+        List<FlashcardItem> flashcards = new();
         while (await reader.ReadAsync())
         {
-            items.Add(new FlashcardItem(
+            flashcards.Add(new FlashcardItem(
                 reader.GetInt32(0),
                 reader.GetString(1),
                 reader.GetString(2)));
         }
 
-        SqliteCommand countSqliteCommand = connection.CreateCommand(
-            "SELECT COUNT(`id`) FROM `flashcards` WHERE `deckId` = @deckId;");
-        countSqliteCommand.Parameters.AddWithValue("@deckId", deckId);
-        long totalCount = Convert.ToInt64(await countSqliteCommand.ExecuteScalarAsync());
-        int totalPages = (int)Math.Ceiling((double)totalCount / itemsPerPage);
+        SqliteCommand countFlashcardsCmd = connection.CreateCommand(
+            """
+            SELECT COUNT(`id`)
+            FROM `flashcards`
+            WHERE `deckId` = @deckId;
+            """);
+        countFlashcardsCmd.Parameters.AddWithValue("@deckId", deckId);
+        long totalFlashcardCount = Convert.ToInt64(await countFlashcardsCmd.ExecuteScalarAsync());
+        int totalPageCount = (int)Math.Ceiling((double)totalFlashcardCount / itemsPerPage);
 
         return new PagedData<FlashcardItem>
         {
-            ItemCount = totalCount,
+            ItemCount = totalFlashcardCount,
             Page = pageNumber,
-            TotalPages = totalPages,
-            Items = items
+            TotalPages = totalPageCount,
+            Items = flashcards
         };
     }
 
@@ -62,7 +67,10 @@ public class EditFlashcards : PageModel
         int deckId,
         int itemsPerPage = 25)
     {
-        PagedData<FlashcardItem> data = await GetFlashcardsAsync(deckId, 1, itemsPerPage);
+        PagedData<FlashcardItem> data = await GetFlashcardsAsync(
+            deckId,
+            1,
+            itemsPerPage);
 
         CurrentPageInfo = new PageInfo(
             deckId,
@@ -104,12 +112,14 @@ public class EditFlashcards : PageModel
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
-            SELECT flashcard.`id`, flashcard.`question`, flashcard.`answer` FROM `flashcards` flashcard
+            SELECT flashcard.`id`, flashcard.`question`, flashcard.`answer`
+            FROM `flashcards` flashcard
             WHERE flashcard.`id` = @flashcardId
             LIMIT 1;
             """);
         command.Parameters.AddWithValue("@flashcardId", flashcardId);
         await using SqliteDataReader reader = await command.ExecuteReaderAsync();
+
         if (!await reader.ReadAsync())
         {
             throw new InvalidOperationException($"Flashcard {flashcardId} not found");
@@ -174,13 +184,20 @@ public class EditFlashcards : PageModel
         await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite");
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
-            "UPDATE `flashcards` SET `question` = @question, `answer` = @answer WHERE `id` = @id;");
+            """
+            UPDATE `flashcards`
+            SET `question` = @question, `answer` = @answer
+            WHERE `id` = @id;
+            """);
         command.Parameters.AddWithValue("@question", request.Question);
         command.Parameters.AddWithValue("@answer", request.Answer);
         command.Parameters.AddWithValue("@id", request.FlashcardId);
         await command.ExecuteNonQueryAsync();
 
-        FlashcardItem flashcard = new(request.FlashcardId, request.Question, request.Answer);
+        FlashcardItem flashcard = new(
+            request.FlashcardId,
+            request.Question,
+            request.Answer);
 
         return new PartialViewResult
         {
@@ -199,10 +216,22 @@ public class EditFlashcards : PageModel
         await using SqliteConnection connection = SqliteConnectionFactory.Create("memodex_test.sqlite", true);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
-        await using SqliteCommand command = connection.CreateCommand(
-            "DELETE FROM `flashcards` WHERE `id` = @id RETURNING `deckId`;");
-        command.Parameters.AddWithValue("@id", request.FlashcardId);
-        int deckId = Convert.ToInt32(await command.ExecuteNonQueryAsync());
+        await using SqliteCommand deleteFlashcardCmd = connection.CreateCommand(
+            """
+            DELETE FROM `flashcards`
+            WHERE `id` = @id
+            RETURNING `deckId`;
+            """);
+        deleteFlashcardCmd.Parameters.AddWithValue("@id", request.FlashcardId);
+
+        object? deckIdScalar = await deleteFlashcardCmd.ExecuteScalarAsync();
+        if (deckIdScalar is null)
+        {
+            await transaction.RollbackAsync();
+            return new BadRequestResult();
+        }
+
+        int deckId = Convert.ToInt32(deckIdScalar);
 
         //reduce deck flashcard count
         SqliteCommand updateDeckCommand = connection.CreateCommand(

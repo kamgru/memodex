@@ -34,9 +34,7 @@ public class AddCategory : PageModel
         command.Parameters.AddWithValue("@description", string.Empty);
         command.Parameters.AddWithValue("@imageFilename", "default.png");
 
-        object scalar = await command.ExecuteScalarAsync()
-            ?? throw new InvalidOperationException("Scalar is null.");
-        int categoryId = Convert.ToInt32(scalar);
+        int categoryId = Convert.ToInt32(await command.ExecuteScalarAsync());
 
         this.AddNotification(NotificationType.Success, $"Category {Category.Name} added.");
 
