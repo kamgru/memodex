@@ -3,7 +3,6 @@ using Memodex.WebApp.Data;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -11,7 +10,7 @@ public class IndexModel : PageModel
 {
     public async Task<IActionResult> OnGet()
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand getUnfinishedChallengeStepsCommand = connection.CreateCommand(

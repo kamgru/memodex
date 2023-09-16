@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -30,7 +29,7 @@ public class ImportDeck : PageModel
         int categoryId)
     {
         CategoryId = categoryId;
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
 
         await using SqliteCommand command = connection.CreateCommand(
@@ -71,7 +70,7 @@ public class ImportDeck : PageModel
                             ?? throw new InvalidOperationException("Invalid JSON file");
 
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
 
         await using DbTransaction transaction = await connection.BeginTransactionAsync();

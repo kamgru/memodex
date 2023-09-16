@@ -3,7 +3,6 @@ using Memodex.WebApp.Data;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -17,15 +16,15 @@ public class Review : PageModel
     public async Task<IActionResult> OnGetAsync(
         int challengeId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
 
         await using SqliteCommand getChallengeCommand = connection.CreateCommand(
             """
-            SELECT `currentStepIndex`, `state`
+            SELECT currentStepIndex, state
             FROM challenges
-            WHERE `id` = @challengeId
+            WHERE id = @challengeId
             LIMIT 1;
             """);
 
@@ -51,10 +50,10 @@ public class Review : PageModel
 
         await using SqliteCommand getCurrentStepCommand = connection.CreateCommand(
             """
-            SELECT `flashcardId`, `needsReview`
+            SELECT flashcardId, needsReview
             FROM steps
-            WHERE `challengeId` = @challengeId
-            AND `stepIndex` = @currentStepIndex
+            WHERE challengeId = @challengeId
+            AND stepIndex = @currentStepIndex
             LIMIT 1;
             """);
 
@@ -76,10 +75,10 @@ public class Review : PageModel
 
         await using SqliteCommand getFlashcardCommand = connection.CreateCommand(
             """
-            SELECT `question`, `answer`, `name`, `flashcardCount`
+            SELECT question, answer, name, flashcardCount
             FROM flashcards
-            INNER JOIN decks ON `deckId` = `decks`.`id`
-            WHERE `flashcards`.`id` = @flashcardId
+            INNER JOIN decks ON deckId = decks.id
+            WHERE flashcards.id = @flashcardId
             LIMIT 1;
             """);
 
@@ -119,14 +118,14 @@ public class Review : PageModel
             throw new InvalidOperationException("Input is null");
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand getChallengeCommand = connection.CreateCommand(
             """
-            SELECT `currentStepIndex`, `state`
+            SELECT currentStepIndex, state
             FROM challenges
-            WHERE `id` = @challengeId
+            WHERE id = @challengeId
             LIMIT 1;
             """);
 
@@ -153,12 +152,12 @@ public class Review : PageModel
 
         await using SqliteCommand getNextStepCommand = connection.CreateCommand(
             """
-            SELECT `stepIndex`
+            SELECT stepIndex
             FROM steps
-            WHERE `challengeId` = @challengeId
-            AND `needsReview` = 1
-            AND `stepIndex` > @currentStepIndex
-            ORDER BY `stepIndex`
+            WHERE challengeId = @challengeId
+            AND needsReview = 1
+            AND stepIndex > @currentStepIndex
+            ORDER BY stepIndex
             LIMIT 1;
             """);
         getNextStepCommand.Parameters.AddWithValue("@challengeId", Input.ChallengeId);
@@ -171,8 +170,8 @@ public class Review : PageModel
             await using SqliteCommand completeChallengeCommand = connection.CreateCommand(
                 """
                 UPDATE challenges
-                SET `state` = @state
-                WHERE `id` = @challengeId;
+                SET state = @state
+                WHERE id = @challengeId;
                 """);
             completeChallengeCommand.Parameters.AddWithValue("@challengeId", Input.ChallengeId);
             completeChallengeCommand.Parameters.AddWithValue("@state", (int)state);
@@ -184,8 +183,8 @@ public class Review : PageModel
             await using SqliteCommand updateNextStepCommand = connection.CreateCommand(
                 """
                 UPDATE challenges
-                SET `currentStepIndex` = @nextStepIndex
-                WHERE `id` = @challengeId;
+                SET currentStepIndex = @nextStepIndex
+                WHERE id = @challengeId;
                 """);
             updateNextStepCommand.Parameters.AddWithValue("@challengeId", Input.ChallengeId);
             updateNextStepCommand.Parameters.AddWithValue("@nextStepIndex", nextStepIndex);
@@ -196,8 +195,8 @@ public class Review : PageModel
         await using SqliteCommand updateChallengeCommand = connection.CreateCommand(
             """
             UPDATE challenges
-            SET `updatedAt` = @updatedAt
-            WHERE `id` = @challengeId;
+            SET updatedAt = @updatedAt
+            WHERE id = @challengeId;
             """);
         updateChallengeCommand.Parameters.AddWithValue("@challengeId", Input.ChallengeId);
         updateChallengeCommand.Parameters.AddWithValue("@updatedAt", DateTime.UtcNow);

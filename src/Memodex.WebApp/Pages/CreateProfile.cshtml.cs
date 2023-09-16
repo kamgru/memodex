@@ -1,7 +1,6 @@
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -24,11 +23,11 @@ public class CreateProfile : PageModel
     public async Task<IActionResult> OnGetAsync()
     {
         Avatars = new List<AvatarImage>();
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
-            SELECT `id`, `name` from avatars;
+            SELECT id, name from avatars;
             """);
         await using SqliteDataReader reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())
@@ -44,7 +43,7 @@ public class CreateProfile : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """

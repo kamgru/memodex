@@ -1,7 +1,6 @@
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -25,14 +24,14 @@ public class AddDeck : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
 
         SqliteCommand command = connection.CreateCommand(
             """
-            INSERT INTO `decks` (`categoryId`, `name`) 
+            INSERT INTO decks (categoryId, name) 
             VALUES (@categoryId, @name)
-            RETURNING `id`
+            RETURNING id
             """);
         
         command.Parameters.AddWithValue("@categoryId", Deck.CategoryId);

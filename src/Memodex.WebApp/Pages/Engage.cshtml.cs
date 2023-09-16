@@ -3,7 +3,6 @@ using Memodex.WebApp.Data;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -34,7 +33,7 @@ public class Engage : PageModel
     public async Task<IActionResult> OnGetAsync(
         int challengeId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
 
         SqliteCommand getChallengeCmd = connection.CreateCommand(
@@ -123,7 +122,7 @@ public class Engage : PageModel
             throw new InvalidOperationException("Input is null");
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
 
         await using DbTransaction transaction = await connection.BeginTransactionAsync();

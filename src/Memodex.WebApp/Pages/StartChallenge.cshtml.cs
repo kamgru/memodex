@@ -2,7 +2,6 @@ using System.Data.Common;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -27,7 +26,7 @@ public class StartChallenge : PageModel
     public async Task<IActionResult> OnPostAsync(
         int deckId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
 
         await using DbTransaction transaction = await connection.BeginTransactionAsync();

@@ -2,7 +2,6 @@ using Memodex.WebApp.Common;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -21,14 +20,14 @@ public class AddCategory : PageModel
             return Page();
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         
         SqliteCommand command = connection.CreateCommand(
             """
-            INSERT INTO categories (`name`, `description`, `imageFilename`) 
+            INSERT INTO categories (name, description, imageFilename) 
             VALUES (@name, @description, @imageFilename)
-            RETURNING `id`;
+            RETURNING id;
             """);
         command.Parameters.AddWithValue("@name", Category.Name);
         command.Parameters.AddWithValue("@description", string.Empty);

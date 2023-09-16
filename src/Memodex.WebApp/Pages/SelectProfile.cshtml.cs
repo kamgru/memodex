@@ -1,7 +1,6 @@
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -37,7 +36,7 @@ public class SelectProfile : PageModel
             throw new InvalidOperationException("Missing configuration for Media:Avatars:Path.");
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """

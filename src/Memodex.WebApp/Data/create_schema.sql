@@ -1,4 +1,5 @@
-create table main.categories
+
+create table if not exists main.categories
 (
     id            integer not null
         constraint categories_pk
@@ -9,7 +10,7 @@ create table main.categories
     imageFilename text    not null default 'default.png'
 );
 
-create table main.decks
+create table if not exists main.decks
 (
     id             integer not null
         constraint decks_pk primary key autoincrement,
@@ -20,7 +21,7 @@ create table main.decks
         constraint decks_categories_id_fk references categories (id) on delete cascade
 );
 
-create table main.flashcards
+create table if not exists main.flashcards
 (
     id       integer not null
         constraint flashcards_pk
@@ -31,33 +32,33 @@ create table main.flashcards
         constraint flashcards_decks_id_fk references decks (id) on delete cascade
 );
 
-create table main.challenges
+create table if not exists main.challenges
 (
-    id integer not null
+    id               integer not null
         constraint challenge_pk
             primary key autoincrement,
-    deckId integer not null
-        constraint challenge_decks_id_fk references decks(id) on delete cascade,
-    state integer not null default 0,
+    deckId           integer not null
+        constraint challenge_decks_id_fk references decks (id) on delete cascade,
+    state            integer not null default 0,
     currentStepIndex integer not null default 0,
-    createdAt text not null default CURRENT_TIMESTAMP,
-    updatedAt text not null default CURRENT_TIMESTAMP
+    createdAt        text    not null default CURRENT_TIMESTAMP,
+    updatedAt        text    not null default CURRENT_TIMESTAMP
 );
 
-create table main.steps
+create table if not exists main.steps
 (
-    id integer not null
+    id          integer not null
         constraint step_pk
             primary key autoincrement,
-    stepIndex integer not null,
+    stepIndex   integer not null,
     needsReview integer not null default 0,
     flashcardId integer not null
-        constraint step_flashcards_id_fk references flashcards(id) on delete cascade,
+        constraint step_flashcards_id_fk references flashcards (id) on delete cascade,
     challengeId integer not null
-        constraint step_challenges_id_fk references challenges(id) on delete cascade
+        constraint step_challenges_id_fk references challenges (id) on delete cascade
 );
 
-create table main.profiles
+create table if not exists main.profiles
 (
     id             integer not null
         constraint profiles_pk
@@ -68,7 +69,7 @@ create table main.profiles
     preferredTheme text    not null default 'light'
 );
 
-create table main.avatars
+create table if not exists main.avatars
 (
     id   integer not null
         constraint avatars_pk

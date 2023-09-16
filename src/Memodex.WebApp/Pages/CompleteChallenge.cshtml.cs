@@ -1,7 +1,6 @@
 using Memodex.WebApp.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -16,9 +15,9 @@ public class CompleteChallenge : PageModel
         await connection.OpenAsync();
         const string sql =
             """
-            SELECT challenge.`id`, deck.`name`, challenge.`state` FROM `challenges` challenge
+            SELECT challenge.id, deck.name, challenge.state FROM challenges challenge
             JOIN main.decks deck on deck.id = challenge.deckId
-            WHERE challenge.`id` = @id
+            WHERE challenge.id = @id
             LIMIT 1;
             """;
         await using SqliteCommand command = connection.CreateCommand();

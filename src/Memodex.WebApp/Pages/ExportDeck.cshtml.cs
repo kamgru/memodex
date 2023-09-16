@@ -4,7 +4,6 @@ using System.Text.Json;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -12,14 +11,14 @@ public class ExportDeck : PageModel
 {
     public async Task<IActionResult>  OnGetAsync(int deckId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
-            SELECT `name`, `description` 
-            FROM `decks` 
-            WHERE `id` = @deckId
+            SELECT name, description 
+            FROM decks 
+            WHERE id = @deckId
             LIMIT 1;
             """);
 
@@ -34,9 +33,9 @@ public class ExportDeck : PageModel
 
         await using SqliteCommand flashcardsCommand = connection.CreateCommand(
             """
-            SELECT `question`, `answer` 
-            FROM `flashcards` 
-            WHERE `deckId` = @deckId;
+            SELECT question, answer 
+            FROM flashcards 
+            WHERE deckId = @deckId;
             """);
         flashcardsCommand.Parameters.AddWithValue("@deckId", deckId);
         await using SqliteDataReader flashcardsReader = await flashcardsCommand.ExecuteReaderAsync();

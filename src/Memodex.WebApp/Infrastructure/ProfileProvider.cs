@@ -1,20 +1,10 @@
-using Microsoft.Data.Sqlite;
-
 namespace Memodex.WebApp.Infrastructure;
 
 public record CurrentProfile(
-    int Id,
-    string Name,
     string AvatarPath,
     string PreferredTheme);
 
-public interface IProfileProvider
-{
-    Task<CurrentProfile?> GetSelectedProfileAsync();
-    int? GetCurrentProfileId();
-}
-
-public class ProfileProvider : IProfileProvider
+public class ProfileProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IConfiguration _configuration;
@@ -27,8 +17,13 @@ public class ProfileProvider : IProfileProvider
         _configuration = configuration;
     }
 
-    public async Task<CurrentProfile?> GetSelectedProfileAsync()
+    public async Task<CurrentProfile> GetSelectedProfileAsync()
     {
+        if (_httpContextAccessor.HttpContext is null)
+        {
+            throw new InvalidOperationException("HttpContext is null.");
+        }
+
         string? rootPath = _configuration.GetSection("Media")
             .GetSection("Avatars")
             .GetValue<string>("Path");
@@ -38,42 +33,65 @@ public class ProfileProvider : IProfileProvider
             throw new InvalidOperationException("Missing configuration for Media:Avatars:Path.");
         }
 
-        HttpContext context = _httpContextAccessor.HttpContext
-                              ?? throw new InvalidOperationException("HttpContext is null.");
+        string? avatar = _httpContextAccessor.HttpContext.Session.GetString("avatar");
+        string? preferredTheme = _httpContextAccessor.HttpContext.Session.GetString("preferredTheme");
 
-        int? profileId = context.Session.GetInt32(Common.Constants.SelectedProfileSessionKey);
-        if (profileId == null)
+        if (avatar is null || preferredTheme is null)
         {
-            return null;
-        }
+            await using SqliteConnection mdxDbConnection =
+                SqliteConnectionFactory.CreateForUser(_httpContextAccessor.HttpContext.User);
+            await mdxDbConnection.OpenAsync();
+            await using SqliteCommand getPrefsCmd = mdxDbConnection.CreateCommand(
+                """
+                SELECT key, value
+                FROM preferences;
+                """);
 
-        await using SqliteConnection connection = new("data source=memodex.db");
-        await connection.OpenAsync();
-        await using SqliteCommand command = connection.CreateCommand(
-            """
-            SELECT `id`, `name`, `avatar`, `preferredTheme` from profiles
-            WHERE id = @profileId
-            LIMIT 1;
-            """);
-        command.Parameters.AddWithValue("@profileId", profileId);
-        await using SqliteDataReader reader = await command.ExecuteReaderAsync();
-        if (!await reader.ReadAsync())
-        {
-            throw new InvalidOperationException("Profile not found.");
+            Dictionary<string, string> userPrefs = new();
+            await using SqliteDataReader prefsReader = await getPrefsCmd.ExecuteReaderAsync();
+            while (await prefsReader.ReadAsync())
+            {
+                userPrefs.Add(prefsReader.GetString(0), prefsReader.GetString(1));
+            }
+
+            if (!userPrefs.TryGetValue("avatar", out string? value))
+            {
+                avatar = "default.png";
+                await using SqliteCommand setAvatarCmd = mdxDbConnection.CreateCommand(
+                    """
+                    INSERT INTO preferences (key, value)
+                    VALUES ('avatar', @avatar);
+                    """);
+                setAvatarCmd.Parameters.AddWithValue("@avatar", avatar);
+                await setAvatarCmd.ExecuteNonQueryAsync();
+            }
+            else
+            {
+                avatar = value;
+            }
+
+            if (!userPrefs.TryGetValue("preferredTheme", out value))
+            {
+                preferredTheme = "light";
+                await using SqliteCommand setThemeCmd = mdxDbConnection.CreateCommand(
+                    """
+                    INSERT INTO preferences (key, value)
+                    VALUES ('preferredTheme', @preferredTheme);
+                    """);
+                setThemeCmd.Parameters.AddWithValue("@preferredTheme", preferredTheme);
+                await setThemeCmd.ExecuteNonQueryAsync();
+            }
+            else
+            {
+                preferredTheme = value;
+            }
+
+            _httpContextAccessor.HttpContext.Session.SetString("avatar", avatar);
+            _httpContextAccessor.HttpContext.Session.SetString("preferredTheme", preferredTheme);
         }
 
         return new CurrentProfile(
-            reader.GetInt32(0),
-            reader.GetString(1),
-            Path.Combine("media", rootPath, $"t_{reader.GetString(2)}"),
-            reader.GetString(3));
-    }
-
-    public int? GetCurrentProfileId()
-    {
-        HttpContext context = _httpContextAccessor.HttpContext
-                              ?? throw new InvalidOperationException("HttpContext is null.");
-
-        return context.Session.GetInt32(Common.Constants.SelectedProfileSessionKey);
+            Path.Combine("media", rootPath, avatar),
+            preferredTheme);
     }
 }

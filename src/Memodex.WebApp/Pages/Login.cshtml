@@ -1,0 +1,67 @@
+@page
+@model Memodex.WebApp.Pages.Login
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Memodex</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+</head>
+
+<body>
+<main role="main" class="flex flex-grow items-center">
+    <div class="container mx-auto">
+        <div class="px-5 lg:w-1/2 mx-auto">
+            <div class="flex items-center justify-center mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="fill-slate-600 dark:fill-slate-200 w-16 h-16 " viewBox="0 0 128 128"
+                     preserveAspectRatio="xMidYMid meet">
+                    <path d="M69 120c-24-4-42-22-46-46-2-15 4-31 15-43a52 52 0 0 1 89 37 52 52 0 0 1-58 52zm18-6c21-6 36-25 35-47 0-20-13-38-33-45-7-2-20-2-28 0l-6 2h6c12 2 23 9 28 20 2 4 3 7 3 14 0 8-1 10-3 14a33 33 0 0 1-52 11c-3-2-6-7-7-9-2-4-3-4-3-2 1 17 17 37 36 42 6 2 17 2 24 0zM67 86c1 0 1-1-2-1-5-1-11-6-14-11-7-16 6-33 23-29 4 1 6 2 9 6l5 4-1-3c-3-14-14-23-28-23-11 0-21 6-26 16-3 5-3 15-2 22 3 8 10 16 18 19h18zm7-6c7-3 10-8 10-16 0-9-6-15-15-15-5 0-9 2-13 6-4 6-4 14 2 20 4 6 9 7 16 5z"/>
+                </svg>
+                <span class="ml-4">
+                    Memodex
+                </span>
+            </div>
+
+
+            <form method="post" novalidate autocomplete="off" class="mx-auto lg:w-1/2">
+                <div asp-validation-summary="ModelOnly" class="text-red-600 font-bold py-2">
+                </div>
+                <div>
+                    <label>Username</label>
+                    <input asp-for="Input.Username" autofocus/>
+                    <span asp-validation-for="Input.Username" class="text-red-600 font-bold text-sm"></span>
+                </div>
+                <div class="pt-2">
+                    <label>Password</label>
+                    <input asp-for="Input.Password"/>
+                    <span asp-validation-for="Input.Password" class="text-red-600 font-bold text-sm"></span>
+                </div>
+                <div class="pt-2">
+                    <label>
+                        <input asp-for="Input.RememberMe"/> Remember me
+                    </label>
+                </div>
+                <div class="pt-2">
+                    <button type="submit" class="btn-outline">Login</button>
+                </div>
+
+                <div>
+                    or <a asp-page="./Register">register</a> for an account
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer class="text-center p-2 text-zinc-500 dark:text-slate-700 text-sm bg-zinc-400 dark:bg-slate-900">
+    © 2023 Memodex Kamil Grudzień. Licensed under the GPLv3
+</footer>
+
+</body>
+</html>

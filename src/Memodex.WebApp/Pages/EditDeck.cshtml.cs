@@ -3,7 +3,6 @@ using Memodex.WebApp.Common;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -26,7 +25,7 @@ public class EditDeck : PageModel
     public async Task<IActionResult> OnGetAsync(
         int deckId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
 
         SqliteCommand command = connection.CreateCommand(
@@ -61,7 +60,7 @@ public class EditDeck : PageModel
             return Page();
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
 
         SqliteCommand command = connection.CreateCommand(
@@ -84,7 +83,7 @@ public class EditDeck : PageModel
         [FromQuery]
         int deckId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
 
         SqliteCommand command = connection.CreateCommand(

@@ -3,7 +3,6 @@ using System.Data.Common;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -38,12 +37,12 @@ public class AddFlashcard : PageModel
             return Page();
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand insertFlashcardCommand = connection.CreateCommand(
             """
-            INSERT INTO `flashcards` (`deckId`, `question`, `answer`) 
+            INSERT INTO flashcards (deckId, question, answer) 
             VALUES (@deckId, @question, @answer)
             """);
         insertFlashcardCommand.Parameters.AddWithValue("@deckId", Input!.DeckId);
@@ -53,9 +52,9 @@ public class AddFlashcard : PageModel
 
         await using SqliteCommand updateDeckCommand = connection.CreateCommand(
             """
-            UPDATE `decks` 
-            SET `flashcardCount` = `flashcardCount` + 1 
-            WHERE `id` = @deckId
+            UPDATE decks 
+            SET flashcardCount = flashcardCount + 1 
+            WHERE id = @deckId
             """);
         updateDeckCommand.Parameters.AddWithValue("@deckId", Input.DeckId);
         await updateDeckCommand.ExecuteNonQueryAsync();

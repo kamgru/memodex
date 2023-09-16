@@ -1,5 +1,3 @@
-using Microsoft.Data.Sqlite;
-
 namespace Memodex.WebApp.Infrastructure;
 
 public static class SqliteConnectionExtension

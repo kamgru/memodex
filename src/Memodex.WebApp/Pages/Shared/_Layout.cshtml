@@ -1,29 +1,23 @@
 ﻿@using Memodex.WebApp.Infrastructure
-@using Microsoft.AspNetCore.Antiforgery
-@inject IProfileProvider ProfileProvider
-@inject IAntiforgery Xrsf
+@inject ProfileProvider ProfileProvider
 
 @{
-    CurrentProfile? profile = await ProfileProvider.GetSelectedProfileAsync();
+    CurrentProfile profile = await ProfileProvider.GetSelectedProfileAsync();
 }
 
 <!DOCTYPE html>
-<html lang="en" class="h-full @(profile?.PreferredTheme)" data-profile-id="@profile?.Id">
+<html lang="en" class="h-full @(profile.PreferredTheme)">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Memodex</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
-    <meta name="AntiForgeryToken" content="@Xrsf.GetAndStoreTokens(Context).RequestToken"/>
     <script src="lib/htmx.min.js"></script>
     <script src="lib/_hyperscript.min.js"></script>
 </head>
 
 <body>
-@if (profile is not null)
-{
-    <partial name="_NavBar" model="profile"/>
-}
+<partial name="_NavBar" model="profile"/>
 
 <main role="main" class="flex flex-grow items-center">
     <partial name="_Notification"/>

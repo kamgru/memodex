@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Data.Sqlite;
 
 namespace Memodex.WebApp.Pages;
 
@@ -19,14 +18,14 @@ public class EditFlashcards : PageModel
         pageNumber = Math.Max(1, pageNumber);
         itemsPerPage = Math.Max(10, itemsPerPage);
 
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using SqliteCommand selectFlashcardsCmd = connection.CreateCommand(
             """
-            SELECT flashcard.`id`, flashcard.`question`, flashcard.`answer`
-            FROM `flashcards` flashcard
-            WHERE flashcard.`deckId` = @deckId
-            ORDER BY flashcard.`id`
+            SELECT flashcard.id, flashcard.question, flashcard.answer
+            FROM flashcards flashcard
+            WHERE flashcard.deckId = @deckId
+            ORDER BY flashcard.id
             LIMIT @limit
             OFFSET @offset;
             """);
@@ -46,9 +45,9 @@ public class EditFlashcards : PageModel
 
         SqliteCommand countFlashcardsCmd = connection.CreateCommand(
             """
-            SELECT COUNT(`id`)
-            FROM `flashcards`
-            WHERE `deckId` = @deckId;
+            SELECT COUNT(id)
+            FROM flashcards
+            WHERE deckId = @deckId;
             """);
         countFlashcardsCmd.Parameters.AddWithValue("@deckId", deckId);
         long totalFlashcardCount = Convert.ToInt64(await countFlashcardsCmd.ExecuteScalarAsync());
@@ -108,13 +107,13 @@ public class EditFlashcards : PageModel
     public async Task<IActionResult> OnGetSingleFlashcardAsync(
         int flashcardId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
-            SELECT flashcard.`id`, flashcard.`question`, flashcard.`answer`
-            FROM `flashcards` flashcard
-            WHERE flashcard.`id` = @flashcardId
+            SELECT flashcard.id, flashcard.question, flashcard.answer
+            FROM flashcards flashcard
+            WHERE flashcard.id = @flashcardId
             LIMIT 1;
             """);
         command.Parameters.AddWithValue("@flashcardId", flashcardId);
@@ -143,13 +142,13 @@ public class EditFlashcards : PageModel
     public async Task<IActionResult> OnGetEditAsync(
         int flashcardId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
-            SELECT flashcard.`id`, flashcard.`deckId`, flashcard.`question`, flashcard.`answer`
-            FROM `flashcards` flashcard
-            WHERE flashcard.`id` = @flashcardId
+            SELECT id, deckId, question, answer
+            FROM flashcards
+            WHERE id = @flashcardId
             LIMIT 1;
             """);
 
@@ -181,13 +180,13 @@ public class EditFlashcards : PageModel
         [FromForm]
         UpdateFlashcardRequest request)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
-            UPDATE `flashcards`
-            SET `question` = @question, `answer` = @answer
-            WHERE `id` = @id;
+            UPDATE flashcards
+            SET question = @question, answer = @answer
+            WHERE id = @id;
             """);
         command.Parameters.AddWithValue("@question", request.Question);
         command.Parameters.AddWithValue("@answer", request.Answer);
@@ -213,14 +212,14 @@ public class EditFlashcards : PageModel
         [FromQuery]
         DeleteFlashcardRequest request)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.Create(User, true);
+        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand deleteFlashcardCmd = connection.CreateCommand(
             """
-            DELETE FROM `flashcards`
-            WHERE `id` = @id
-            RETURNING `deckId`;
+            DELETE FROM flashcards
+            WHERE id = @id
+            RETURNING deckId;
             """);
         deleteFlashcardCmd.Parameters.AddWithValue("@id", request.FlashcardId);
 
@@ -235,13 +234,13 @@ public class EditFlashcards : PageModel
 
         //reduce deck flashcard count
         SqliteCommand updateDeckCommand = connection.CreateCommand(
-            "UPDATE `decks` SET `flashcardCount` = `flashcardCount` - 1 WHERE `id` = @id;");
+            "UPDATE decks SET flashcardCount = flashcardCount - 1 WHERE id = @id;");
         updateDeckCommand.Parameters.AddWithValue("@id", deckId);
         await updateDeckCommand.ExecuteNonQueryAsync();
 
         //delete challenges based on this deck
         SqliteCommand deleteChallengesCommand = connection.CreateCommand(
-            "DELETE FROM `challenges` WHERE `deckId` = @id;");
+            "DELETE FROM challenges WHERE deckId = @id;");
         deleteChallengesCommand.Parameters.AddWithValue("@id", deckId);
         await deleteChallengesCommand.ExecuteNonQueryAsync();
 
