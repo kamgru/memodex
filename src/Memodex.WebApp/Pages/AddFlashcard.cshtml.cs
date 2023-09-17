@@ -14,10 +14,10 @@ public class AddFlashcard : PageModel
         public int DeckId { get; set; }
 
         [Required]
-        public string Question { get; set; } = string.Empty;
+        public string Question { get; init; } = string.Empty;
 
         [Required]
-        public string Answer { get; set; } = string.Empty;
+        public string Answer { get; init; } = string.Empty;
     }
 
     [BindProperty]
@@ -45,7 +45,7 @@ public class AddFlashcard : PageModel
             INSERT INTO flashcards (deckId, question, answer) 
             VALUES (@deckId, @question, @answer)
             """);
-        insertFlashcardCommand.Parameters.AddWithValue("@deckId", Input!.DeckId);
+        insertFlashcardCommand.Parameters.AddWithValue("@deckId", Input.DeckId);
         insertFlashcardCommand.Parameters.AddWithValue("@question", Input.Question);
         insertFlashcardCommand.Parameters.AddWithValue("@answer", Input.Answer);
         await insertFlashcardCommand.ExecuteNonQueryAsync();

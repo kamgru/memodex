@@ -17,13 +17,13 @@ public class Login : PageModel
     public class FormInput
     {
         [Required]
-        public string Username { get; set; } = string.Empty;
+        public string Username { get; init; } = string.Empty;
 
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; } = string.Empty;
+        public string Password { get; init; } = string.Empty;
 
-        public bool RememberMe { get; set; }
+        public bool RememberMe { get; init; }
     }
 
     [BindProperty]
@@ -75,7 +75,7 @@ public class Login : PageModel
         List<Claim> claims = new()
         {
             new Claim(ClaimTypes.Name, usernameNormalized),
-            new Claim(ClaimTypes.NameIdentifier, user.UserId),
+            new Claim(ClaimTypes.NameIdentifier, user.UserId)
         };
 
         ClaimsIdentity identity = new(claims, CookieAuthenticationDefaults.AuthenticationScheme);

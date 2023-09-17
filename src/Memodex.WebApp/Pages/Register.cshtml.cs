@@ -20,16 +20,16 @@ public class Register : PageModel
         [Required]
         [RegularExpression("^[a-zA-Z|0-9|_]*$",
              ErrorMessage = "Letters, numbers, underscore. No more than 32 character"), MaxLength(32)]
-        public string Username { get; set; } = string.Empty;
+        public string Username { get; init; } = string.Empty;
 
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; } = string.Empty;
+        public string Password { get; init; } = string.Empty;
 
         [Required]
         [DataType(DataType.Password)]
         [Compare("Password")]
-        public string ConfirmPassword { get; set; } = string.Empty;
+        public string ConfirmPassword { get; init; } = string.Empty;
     }
 
     [BindProperty]
@@ -87,7 +87,7 @@ public class Register : PageModel
         List<Claim> claims = new()
         {
             new Claim(ClaimTypes.Name, usernameNormalized),
-            new Claim(ClaimTypes.NameIdentifier, user.UserId),
+            new Claim(ClaimTypes.NameIdentifier, user.UserId)
         };
 
         ClaimsIdentity identity = new(claims, CookieAuthenticationDefaults.AuthenticationScheme);

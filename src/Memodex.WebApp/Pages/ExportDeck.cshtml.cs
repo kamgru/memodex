@@ -48,7 +48,7 @@ public class ExportDeck : PageModel
         }
         DeckItem deckItem = new(deckName, deckDescription, flashcards);
 
-        string content = JsonSerializer.Serialize(deckItem, new JsonSerializerOptions()
+        string content = JsonSerializer.Serialize(deckItem, new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true

@@ -10,12 +10,12 @@ public class EditDeck : PageModel
 {
     public class FormInput
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
 
         [Required]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; init; } = string.Empty;
 
-        public string? Description { get; set; }
+        public string? Description { get; init; }
     }
 
     [BindProperty]

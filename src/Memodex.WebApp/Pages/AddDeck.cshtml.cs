@@ -11,7 +11,7 @@ public class AddDeck : PageModel
     {
         [Required]
         [MaxLength(256)]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; init; } = string.Empty;
     }
 
     [BindProperty]

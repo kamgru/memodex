@@ -6,35 +6,40 @@
     Layout = "Shared/_Layout";
 }
 
-@if (Model.CompletedChallenge!.State == ChallengeState.Complete)
+@switch (Model.CompletedChallenge!.State)
 {
-    <h1>
-        Congratulations on Completing @Model.CompletedChallenge.Title Challenge!
-    </h1>
-    <p>
-        You've tackled every question and deepened your understanding. Why stop here?
-    </p>
-    <a href="@Url.Page("BrowseDecks")"
-       class="my-4 px-3 py-2 rounded-xl bg-blue-700 dark:bg-blue-400 text-gray-100 inline-block">
-        Start Another Challenge
-    </a>
-    <p>
-        Explore more topics and continue your learning journey.
-    </p>
-}
-else if (Model.CompletedChallenge!.State == ChallengeState.InReview)
-{
-    <h1>
-        Great Work on Completing @Model.CompletedChallenge.Title Challenge!
-    </h1>
-    <p>
-        While you've made significant progress, there were a few flashcards that stood out. It's an excellent opportunity to revisit and strengthen your grasp on those areas.
-    </p>
-    <a href="@Url.Page("Review", new { challengeId = Model.CompletedChallenge!.Id })"
-       class="my-4 px-3 py-2 rounded-xl bg-blue-700 dark:bg-blue-400 text-gray-100 inline-block">
-        Review the Details
-    </a>
-    <p>
-        Reinforce your understanding for long-term mastery.
-    </p>
+    case ChallengeState.Complete:
+        <h1>
+            Congratulations on Completing @Model.CompletedChallenge.Title Challenge!
+        </h1>
+        <p>
+            You've tackled every question and deepened your understanding. Why stop here?
+        </p>
+        <a href="@Url.Page("BrowseDecks")"
+           class="my-4 px-3 py-2 rounded-xl bg-blue-700 dark:bg-blue-400 text-gray-100 inline-block">
+            Start Another Challenge
+        </a>
+        <p>
+            Explore more topics and continue your learning journey.
+        </p>
+        break;
+    case ChallengeState.InReview:
+        <h1>
+            Great Work on Completing @Model.CompletedChallenge.Title Challenge!
+        </h1>
+        <p>
+            While you've made significant progress, there were a few flashcards that stood out. It's an excellent opportunity to revisit and strengthen your grasp on those areas.
+        </p>
+        <a href="@Url.Page("Review", new { challengeId = Model.CompletedChallenge!.Id })"
+           class="my-4 px-3 py-2 rounded-xl bg-blue-700 dark:bg-blue-400 text-gray-100 inline-block">
+            Review the Details
+        </a>
+        <p>
+            Reinforce your understanding for long-term mastery.
+        </p>
+        break;
+    case ChallengeState.InProgress:
+        break;
+    default:
+        throw new ArgumentOutOfRangeException();
 }

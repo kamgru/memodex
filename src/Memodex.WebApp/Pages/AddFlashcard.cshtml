@@ -11,7 +11,7 @@
 </p>
 
 <form method="post" enctype="multipart/form-data">
-    <input type="hidden" asp-for="@Model.Input!.DeckId" value="@Model.Input!.DeckId">
+    <input type="hidden" asp-for="@Model.Input.DeckId" value="@Model.Input.DeckId">
     <div class="space-y-12">
         <div class="border-b border-gray-900/10 pb-12">
             <h2>Add Flashcard</h2>
@@ -19,14 +19,14 @@
                 <div class="sm:col-span-4">
                     <label>Question</label>
                     <div class="mt-2">
-                        <textarea type="text" asp-for="Input!.Question" required></textarea>
+                        <textarea type="text" asp-for="Input.Question" required></textarea>
                     </div>
                 </div>
                 
                 <div class="sm:col-span-4">
                     <label>Answer</label>
                     <div class="mt-2">
-                        <textarea type="text" asp-for="Input!.Answer" required></textarea>
+                        <textarea type="text" asp-for="Input.Answer" required></textarea>
                     </div>
                 </div>
             </div>

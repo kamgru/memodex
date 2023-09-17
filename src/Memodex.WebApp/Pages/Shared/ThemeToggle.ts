@@ -7,7 +7,6 @@ class ThemeToggle {
         }
 
         toggle.addEventListener('click', this.handleToggleClick);
-
     }
 
     private handleToggleClick: EventListener = (e) => {
@@ -22,7 +21,7 @@ class ThemeToggle {
     private setTheme(theme: string) {
         const tokenInput = document.querySelector('input[name=__RequestVerificationToken]') as HTMLInputElement;
 
-        const url = '/myprofile?handler=updatetheme';
+        const url = '/MyProfile?handler=UpdateTheme';
         fetch(url, {
             method: 'POST',
             headers: {
