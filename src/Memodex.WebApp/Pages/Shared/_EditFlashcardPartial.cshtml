@@ -29,8 +29,11 @@
                 </svg>
 
             </button>
+            @{
+                string editFlashcardUrl = $"EditFlashcards?handler=EditFlashcard&flashcardId={Model.Id}";
+            }
             <button type="button"
-                    hx-get="/EditFlashcards?handler=SingleFlashcard&flashcardId=@Model.Id"
+                    hx-get="@editFlashcardUrl"
                     hx-trigger="cancel"
                     _="on click trigger cancel"
                     class="border rounded p-1 border-slate-500">
