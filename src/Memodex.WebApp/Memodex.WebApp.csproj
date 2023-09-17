@@ -41,9 +41,6 @@
 
 
     <ItemGroup>
-      <None Update="Pages\CreateProfile.ts">
-        <DependentUpon>CreateProfile.cshtml</DependentUpon>
-      </None>
       <None Update="Pages\Engage.ts">
         <DependentUpon>Engage.cshtml</DependentUpon>
       </None>

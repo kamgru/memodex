@@ -9,7 +9,6 @@ builder.Services.AddRazorPages();
 builder.Services.AddSession();
 builder.Services.AddScoped<ProfileProvider>();
 builder.Services.AddSingleton<MediaPathProvider>();
-builder.Services.AddSingleton<StaticFilesPathProvider>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -90,5 +89,4 @@ app.UseAuthorization();
 app.MapRazorPages()
     .RequireAuthorization(options => { options.RequireAuthenticatedUser(); });
 
-// app.UseMiddleware<ProfileSessionMiddleware>();
 app.Run();
