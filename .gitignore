@@ -7,3 +7,4 @@ appsettings.Development.json
 .env
 *.sqlite
 *.db
+*.DotSettings.*

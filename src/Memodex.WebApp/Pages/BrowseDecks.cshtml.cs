@@ -12,11 +12,9 @@ public class BrowseDecks : PageModel
         string Description,
         int ItemCount);
 
-    public int CurrentCategoryId { get; set; }
     public List<DeckItem> Decks { get; set; } = new();
 
-    public async Task<IActionResult> OnGetAsync(
-        int categoryId)
+    public async Task<IActionResult> OnGetAsync()
     {
         await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
@@ -24,10 +22,8 @@ public class BrowseDecks : PageModel
         await using SqliteCommand command = connection.CreateCommand(
             """
             SELECT id, name, description, flashcardCount
-            FROM decks
-            WHERE categoryId = @categoryId;
+            FROM decks;
             """);
-        command.Parameters.AddWithValue("@categoryId", categoryId);
 
         SqliteDataReader reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())
@@ -39,7 +35,6 @@ public class BrowseDecks : PageModel
                 reader.GetInt32(3)));
         }
 
-        CurrentCategoryId = categoryId;
         return Page();
     }
 }

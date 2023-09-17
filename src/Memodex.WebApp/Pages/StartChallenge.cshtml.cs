@@ -7,21 +7,11 @@ namespace Memodex.WebApp.Pages;
 
 public class StartChallenge : PageModel
 {
-    public record CategoryItem(
-        int Id,
-        string Name,
-        string Description,
-        string Image);
-
     public record DeckItem(
         int Id,
         string Name,
         string Description,
         int ItemCount);
-
-    public IEnumerable<CategoryItem> Categories { get; set; } = new List<CategoryItem>();
-    public IEnumerable<DeckItem> Decks { get; set; } = new List<DeckItem>();
-    public int? SelectedCategoryId { get; set; }
 
     public async Task<IActionResult> OnPostAsync(
         int deckId)

@@ -112,26 +112,13 @@ public class Register : PageModel
 
         await using SqliteCommand createDbCmd = userDbConnection.CreateCommand(
             """
-            create table if not exists main.categories
-            (
-                id            integer not null
-                    constraint categories_pk
-                        primary key autoincrement,
-                name          TEXT    not null,
-                description   text,
-                deckCount     integer not null default 0,
-                imageFilename text    not null default 'default.png'
-            );
-
             create table if not exists main.decks
             (
                 id             integer not null
                     constraint decks_pk primary key autoincrement,
                 name           text    not null,
                 description    text,
-                flashcardCount integer not null default 0,
-                categoryId     integer not null
-                    constraint decks_categories_id_fk references categories (id) on delete cascade
+                flashcardCount integer not null default 0
             );
 
             create table if not exists main.flashcards
@@ -154,6 +141,7 @@ public class Register : PageModel
                     constraint challenge_decks_id_fk references decks(id) on delete cascade,
                 state integer not null default 0,
                 currentStepIndex integer not null default 0,
+                stepCount integer not null default 0,
                 createdAt text not null default CURRENT_TIMESTAMP,
                 updatedAt text not null default CURRENT_TIMESTAMP
             );

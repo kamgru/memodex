@@ -10,7 +10,6 @@ builder.Services.AddSession();
 builder.Services.AddScoped<ProfileProvider>();
 builder.Services.AddSingleton<MediaPathProvider>();
 builder.Services.AddSingleton<StaticFilesPathProvider>();
-builder.Services.AddSingleton<Thumbnailer>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

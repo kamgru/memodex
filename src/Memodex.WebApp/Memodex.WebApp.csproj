@@ -16,59 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="Pages\Shared\Components\PickCategory\Default.cshtml" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\man_1.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\man_10.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\man_11.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\man_2.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\man_3.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\man_4.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\man_5.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\man_6.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\man_7.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\man_8.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\man_9.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_man_1.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_man_10.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_man_11.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_man_2.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_man_3.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_man_4.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_man_5.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_man_6.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_man_7.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_man_8.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_man_9.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_man_1.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_man_10.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_man_11.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_man_2.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_man_3.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_man_4.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_man_5.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_man_6.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_man_7.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_man_8.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_man_9.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_woman_1.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_woman_2.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_woman_3.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_woman_4.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_t_woman_5.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_woman_1.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_woman_2.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_woman_3.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_woman_4.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\t_woman_5.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\woman_1.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\woman_2.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\woman_3.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\woman_4.png" />
-      <_ContentIncludedByDefault Remove="wwwroot\img\avatars\woman_5.png" />
-    </ItemGroup>
-
-
-    <ItemGroup>
       <TypeScriptCompile Update="Pages\Shared\Notification.ts">
         <DependentUpon>_Notification.cshtml</DependentUpon>
       </TypeScriptCompile>
@@ -96,9 +43,6 @@
     <ItemGroup>
       <None Update="Pages\CreateProfile.ts">
         <DependentUpon>CreateProfile.cshtml</DependentUpon>
-      </None>
-      <None Update="Pages\EditCategory.ts">
-        <DependentUpon>EditCategory.cshtml.cs</DependentUpon>
       </None>
       <None Update="Pages\Engage.ts">
         <DependentUpon>Engage.cshtml</DependentUpon>

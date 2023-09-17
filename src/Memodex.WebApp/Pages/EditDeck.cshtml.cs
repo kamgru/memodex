@@ -8,10 +8,9 @@ namespace Memodex.WebApp.Pages;
 
 public class EditDeck : PageModel
 {
-    public class DeckItem
+    public class FormInput
     {
         public int Id { get; set; }
-        public int CategoryId { get; set; }
 
         [Required]
         public string Name { get; set; } = string.Empty;
@@ -20,7 +19,7 @@ public class EditDeck : PageModel
     }
 
     [BindProperty]
-    public DeckItem Deck { get; set; } = new();
+    public FormInput Input { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(
         int deckId)
@@ -30,7 +29,7 @@ public class EditDeck : PageModel
 
         SqliteCommand command = connection.CreateCommand(
             """
-            SELECT id, categoryId, name, description
+            SELECT name, description
             FROM decks
             WHERE id = @deckId;
             """);
@@ -42,16 +41,16 @@ public class EditDeck : PageModel
             return RedirectToPage("Index");
         }
 
-        Deck = new DeckItem
+        Input = new FormInput
         {
-            Id = reader.GetInt32(0),
-            CategoryId = reader.GetInt32(1),
-            Name = reader.GetString(2),
-            Description = reader.GetValue(3) as string ?? string.Empty
+            Id = deckId,
+            Name = reader.GetString(0),
+            Description = reader.GetValue(1) as string ?? string.Empty
         };
 
         return Page();
     }
+
 
     public async Task<IActionResult> OnPostAsync()
     {
@@ -69,14 +68,14 @@ public class EditDeck : PageModel
             SET name = @name, description = @description
             WHERE id = @id
             """);
-        command.Parameters.AddWithValue("@id", Deck.Id);
-        command.Parameters.AddWithValue("@name", Deck.Name);
-        command.Parameters.AddWithValue("@description", Deck.Description is null ? DBNull.Value : Deck.Description);
+        command.Parameters.AddWithValue("@id", Input.Id);
+        command.Parameters.AddWithValue("@name", Input.Name);
+        command.Parameters.AddWithValue("@description", Input.Description is null ? DBNull.Value : Input.Description);
         await command.ExecuteNonQueryAsync();
 
-        this.AddNotification(NotificationType.Success, $"Deck {Deck.Name} updated.");
+        this.AddNotification(NotificationType.Success, $"Deck {Input.Name} updated.");
 
-        return RedirectToPage("EditDeck", new { deckId = Deck.Id });
+        return RedirectToPage("EditDeck", new { deckId = Input.Id });
     }
 
     public async Task<IActionResult> OnPostDeleteDeckAsync(
@@ -94,8 +93,8 @@ public class EditDeck : PageModel
         command.Parameters.AddWithValue("@id", deckId);
         await command.ExecuteNonQueryAsync();
 
-        this.AddNotification(NotificationType.Success, $"Deck {Deck.Name} deleted.");
+        this.AddNotification(NotificationType.Success, $"Deck {Input.Name} deleted.");
 
-        return RedirectToPage("BrowseDecks", new { categoryId = Deck.CategoryId });
+        return RedirectToPage("BrowseDecks");
     }
 }

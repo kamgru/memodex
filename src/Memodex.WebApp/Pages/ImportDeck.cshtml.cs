@@ -22,34 +22,6 @@ public class ImportDeck : PageModel
         public IEnumerable<FlashcardItem> Flashcards { get; set; } = new List<FlashcardItem>();
     }
 
-    [BindProperty]
-    public int CategoryId { get; set; }
-
-    public async Task<IActionResult> OnGetAsync(
-        int categoryId)
-    {
-        CategoryId = categoryId;
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
-        await connection.OpenAsync();
-
-        await using SqliteCommand command = connection.CreateCommand(
-            """
-            SELECT EXISTS(
-                SELECT 1
-                FROM categories
-                WHERE Id = @categoryId)
-            """);
-        command.Parameters.AddWithValue("@categoryId", categoryId);
-
-        bool categoryExists = Convert.ToBoolean(await command.ExecuteScalarAsync());
-        if (!categoryExists)
-        {
-            return RedirectToPage("BrowseCategories");
-        }
-
-        return Page();
-    }
-
     public async Task<IActionResult> OnPostAsync(
         IFormFile? formFile)
     {
@@ -77,15 +49,14 @@ public class ImportDeck : PageModel
 
         await using SqliteCommand addDeckCmd = connection.CreateCommand(
             """
-            INSERT INTO decks (name, description, flashcardCount, categoryId)
-            VALUES (@name, @description, @flashcardCount, @categoryId)
+            INSERT INTO decks (name, description, flashcardCount)
+            VALUES (@name, @description, @flashcardCount)
             RETURNING id;
             """);
         addDeckCmd.Parameters.AddWithValue("name", deckItem.Name);
         addDeckCmd.Parameters.AddWithValue("description",
             deckItem.Description is null ? DBNull.Value : deckItem.Description);
         addDeckCmd.Parameters.AddWithValue("flashcardCount", deckItem.Flashcards.Count());
-        addDeckCmd.Parameters.AddWithValue("categoryId", CategoryId);
 
         int deckId = Convert.ToInt32(await addDeckCmd.ExecuteScalarAsync());
 
