@@ -1,5 +1,4 @@
 "use strict";
-
 class DeckImporter {
     constructor() {
         this.handleFileInputChanged = (event) => {
@@ -24,12 +23,12 @@ class DeckImporter {
                     return;
                 }
                 htmx.trigger(form, 'submit');
-            } catch (e) {
+            }
+            catch (e) {
                 showNotification('Error', 'Invalid file format.');
             }
         };
     }
-
     init() {
         const fileInput = document.querySelector('#input-import-deck');
         if (fileInput == null) {
@@ -37,7 +36,6 @@ class DeckImporter {
         }
         fileInput.addEventListener('change', this.handleFileInputChanged);
     }
-
     isDeck(object) {
         return (object !== null &&
             typeof object === 'object' &&
@@ -48,6 +46,5 @@ class DeckImporter {
                 'answer' in card && typeof card.answer === 'string'));
     }
 }
-
 const deckImporter = new DeckImporter();
 deckImporter.init();

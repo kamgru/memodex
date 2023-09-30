@@ -44,6 +44,15 @@
         <None Update="Pages\ImportDeck.ts">
             <DependentUpon>ImportDeck.cshtml</DependentUpon>
         </None>
+        <None Update="Pages\Shared\Notification.ts">
+          <DependentUpon>_Notification.cshtml</DependentUpon>
+        </None>
+        <None Update="Pages\Shared\ThemeToggle.ts">
+          <DependentUpon>_ThemeTogglePartial.cshtml</DependentUpon>
+        </None>
+        <None Update="Pages\Shared\FlashcardEngage.ts">
+          <DependentUpon>_FlashcardEngagePartial.cshtml</DependentUpon>
+        </None>
     </ItemGroup>
 
 
@@ -52,6 +61,5 @@
             <DependentUpon>_FlashcardEngagePartial.cshtml</DependentUpon>
         </Compile>
     </ItemGroup>
-
 
 </Project>

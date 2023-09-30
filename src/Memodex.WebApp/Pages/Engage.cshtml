@@ -13,11 +13,14 @@ else
 {
     <partial name="Shared/_FlashcardEngagePartial" model="Model.CurrentFlashcard"/>
     <div class="flex flex-row justify-end">
-        <form method="post" class="flex mt-10 items-center">
+        <form method="post" class="flex mt-10 items-center" id="engage-controls-form">
             <input type="hidden" asp-for="@Model.Input.ChallengeId" value="@Model.Input.ChallengeId"/>
             <input type="hidden" asp-for="@Model.Input.FlashcardId" value="@Model.Input.FlashcardId"/>
             <label class="mx-3 text-slate-500 dark:text-slate-600">
-                <input type="checkbox" asp-for="@Model.Input.NeedsReview" class="form-checkbox rounded mx-2">
+                <input type="checkbox"
+                       asp-for="@Model.Input.NeedsReview"
+                       class="form-checkbox rounded mx-2"
+                       id="engage-controls-mark-checkbox">
                 mark for review
             </label>
             <button type="submit" class="px-3 py-1 rounded-xl bg-blue-400 text-gray-100 inline-block">
@@ -28,5 +31,8 @@ else
                 </svg>
             </button>
         </form>
+    </div>
+    <div class="italic text-xs text-slate-400 dark:text-slate-700 invisible lg:visible">
+       <span>press R to toggle answer, M to mark for review, N for next flashcard</span>
     </div>
 }

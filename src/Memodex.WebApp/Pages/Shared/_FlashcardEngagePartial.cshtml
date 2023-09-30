@@ -1,35 +1,37 @@
 @model FlashcardEngage
 
-<div class="flex text-gray-400 dark:text-slate-700">
-    <h2 class="">Deck: @Model.DeckTitle</h2>
-    <span class="ml-auto">
-        question @Model.CurrentStep of @Model.DeckItemCount
-    </span>
-</div>
-<div class="dark:text-gray-800 border rounded-xl shadow-xl p-5 mt-5">
-    <h3 class="py-2 text-slate-800 dark:text-slate-400">
-        <pre class="whitespace-pre-wrap">@Model.Question</pre>
-    </h3>
-    <button type="button" id="reveal-btn"
-            class="text-green-600  dark:text-cyan-700 text-xs p-1 px-3 flex flex-row">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-             stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25"/>
-        </svg>
-        reveal
-    </button>
+<flashcard-engage>
+    <div class="flex text-gray-400 dark:text-slate-700">
+        <h2 class="">Deck: @Model.DeckTitle</h2>
+        <span class="ml-auto">
+            question @Model.CurrentStep of @Model.DeckItemCount
+        </span>
+    </div>
+    <div class="dark:text-gray-800 border rounded-xl shadow-xl p-5 mt-5">
+        <h3 class="py-2 text-slate-800 dark:text-slate-400">
+            <pre class="whitespace-pre-wrap">@Model.Question</pre>
+        </h3>
+        <button type="button" id="reveal-btn"
+                class="text-green-600  dark:text-cyan-700 text-xs p-1 px-3 flex flex-row">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25"/>
+            </svg>
+            reveal
+        </button>
 
-    <button class="hidden text-green-600 dark:text-cyan-700 text-xs p-1 px-3 flex flex-row" id="hide-btn"
-            type="button">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-             stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12"/>
-        </svg>
-        hide
-    </button>
-    <h3 class="hidden transition-all text-slate-800 dark:text-slate-400" id="answer">
-        <pre class="whitespace-pre-wrap">@Model.Answer</pre>
-    </h3>
-</div>
+        <button class="hidden text-green-600 dark:text-cyan-700 text-xs p-1 px-3 flex flex-row" id="hide-btn"
+                type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12"/>
+            </svg>
+            hide
+        </button>
+        <h3 class="hidden transition-all text-slate-800 dark:text-slate-400" id="answer">
+            <pre class="whitespace-pre-wrap">@Model.Answer</pre>
+        </h3>
+    </div>
+</flashcard-engage>
