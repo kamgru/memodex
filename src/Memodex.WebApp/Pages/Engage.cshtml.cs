@@ -1,6 +1,7 @@
 using System.Data.Common;
 using Memodex.WebApp.Data;
 using Memodex.WebApp.Infrastructure;
+using Memodex.WebApp.Pages.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -13,19 +14,7 @@ public class Engage : PageModel
         int FlashcardId,
         bool NeedsReview);
 
-    public record FlashcardItem(
-        int Id,
-        string Question,
-        string Answer,
-        string DeckTitle,
-        int DeckItemCount,
-        int CurrentStep);
-
-    public record FlashcardStep(
-        FlashcardItem Flashcard,
-        bool IsLast);
-
-    public FlashcardItem? CurrentFlashcard { get; set; }
+    public FlashcardEngage? CurrentFlashcard { get; set; }
 
     [BindProperty]
     public StepInput? Input { get; set; }
@@ -99,7 +88,7 @@ public class Engage : PageModel
             throw new InvalidOperationException("Could not find flashcard for challenge");
         }
 
-        CurrentFlashcard = new FlashcardItem(
+        CurrentFlashcard = new FlashcardEngage(
             getFlashcardReader.GetInt32(0),
             getFlashcardReader.GetString(1),
             getFlashcardReader.GetString(2),

@@ -123,13 +123,14 @@ public class Register : PageModel
 
             create table if not exists main.flashcards
             (
-                id       integer not null
-                    constraint flashcards_pk
-                        primary key autoincrement,
-                question text    not null,
-                answer   text    not null,
-                deckId   integer not null
-                    constraint flashcards_decks_id_fk references decks (id) on delete cascade
+                id          integer not null
+                        constraint flashcards_pk
+                            primary key autoincrement,
+                ordinalNumber integer not null default 1,
+                question    text    not null,
+                answer      text    not null,
+                deckId      integer not null
+                        constraint flashcards_decks_id_fk references decks (id) on delete cascade
             );
 
             create table if not exists main.challenges
@@ -172,7 +173,7 @@ public class Register : PageModel
         await using SqliteCommand addPrefsCmd = userDbConnection.CreateCommand(
             """
             INSERT INTO main.preferences (key, value)
-            VALUES 
+            VALUES
                 ('preferredTheme', 'light'),
                 ('name', @username),
                 ('avatar', 'default.png');

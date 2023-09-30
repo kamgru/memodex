@@ -22,10 +22,10 @@ public class EditFlashcards : PageModel
         await connection.OpenAsync();
         await using SqliteCommand selectFlashcardsCmd = connection.CreateCommand(
             """
-            SELECT flashcard.id, flashcard.question, flashcard.answer
-            FROM flashcards flashcard
-            WHERE flashcard.deckId = @deckId
-            ORDER BY flashcard.id
+            SELECT id, question, answer, ordinalNumber
+            FROM flashcards 
+            WHERE deckId = @deckId
+            ORDER BY id
             LIMIT @limit
             OFFSET @offset;
             """);
@@ -40,7 +40,8 @@ public class EditFlashcards : PageModel
             flashcards.Add(new FlashcardItem(
                 reader.GetInt32(0),
                 reader.GetString(1),
-                reader.GetString(2)));
+                reader.GetString(2),
+                reader.GetInt32(3)));
         }
 
         SqliteCommand countFlashcardsCmd = connection.CreateCommand(
@@ -111,9 +112,9 @@ public class EditFlashcards : PageModel
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
-            SELECT flashcard.id, flashcard.question, flashcard.answer
-            FROM flashcards flashcard
-            WHERE flashcard.id = @flashcardId
+            SELECT id, question, answer, ordinalNumber
+            FROM flashcards 
+            WHERE id = @flashcardId
             LIMIT 1;
             """);
         command.Parameters.AddWithValue("@flashcardId", flashcardId);
@@ -127,7 +128,8 @@ public class EditFlashcards : PageModel
         FlashcardItem flashcard = new(
             reader.GetInt32(0),
             reader.GetString(1),
-            reader.GetString(2));
+            reader.GetString(2),
+            reader.GetInt32(3));
 
         return new PartialViewResult
         {
@@ -146,7 +148,7 @@ public class EditFlashcards : PageModel
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
-            SELECT id, deckId, question, answer
+            SELECT id, deckId, question, answer, ordinalNumber
             FROM flashcards
             WHERE id = @flashcardId
             LIMIT 1;
@@ -160,11 +162,20 @@ public class EditFlashcards : PageModel
             throw new InvalidOperationException($"Flashcard {flashcardId} not found");
         }
 
+        string question = reader.GetString(2);
+        int questionLineCount = question.Split('\n').Length;
+
+        string answer = reader.GetString(3);
+        int answerLineCount = answer.Split('\n').Length;
+
         EditFlashcardItem flashcard = new(
             reader.GetInt32(0),
             reader.GetInt32(1),
             reader.GetString(2),
-            reader.GetString(3));
+            questionLineCount,
+            reader.GetString(3),
+            answerLineCount,
+            reader.GetInt32(4));
 
         return new PartialViewResult
         {
@@ -186,17 +197,19 @@ public class EditFlashcards : PageModel
             """
             UPDATE flashcards
             SET question = @question, answer = @answer
-            WHERE id = @id;
+            WHERE id = @id
+            RETURNING ordinalNumber;
             """);
         command.Parameters.AddWithValue("@question", request.Question);
         command.Parameters.AddWithValue("@answer", request.Answer);
         command.Parameters.AddWithValue("@id", request.FlashcardId);
-        await command.ExecuteNonQueryAsync();
+        int ordinalNumber = Convert.ToInt32(await command.ExecuteScalarAsync());
 
         FlashcardItem flashcard = new(
             request.FlashcardId,
             request.Question,
-            request.Answer);
+            request.Answer,
+            ordinalNumber);
 
         return new PartialViewResult
         {
@@ -259,13 +272,17 @@ public class EditFlashcards : PageModel
     public record FlashcardItem(
         int Id,
         string Question,
-        string Answer);
+        string Answer,
+        int OrdinalNumber);
 
     public record EditFlashcardItem(
         int Id,
         int DeckId,
         string Question,
-        string Answer);
+        int QuestionLineCount,
+        string Answer,
+        int AnswerLineCount,
+        int OrdinalNumber);
 
     public record UpdateFlashcardRequest(
         int FlashcardId,

@@ -4,7 +4,7 @@
 
 @{
     Layout = "Shared/_Layout";
-    
+
     BackButton backButton = new(Url.Page("BrowseDecks"));
     <partial name="Shared/_BackButtonPartial" model="@backButton"/>
 }
@@ -40,7 +40,7 @@ ring-gray-300 dark:ring-slate-600 dark:bg-slate-800 hover:bg-gray-50 cursor-poin
     2. Deck Information: At the beginning of the file, define the deck's name and description.<br/>
     Example:
 </p>
-<pre>
+<pre class="box">
     <code>
   "name": "Ancient Art & Architecture",
   "description": "Journey through time to uncover the wonders of the ancient world."
@@ -51,7 +51,8 @@ ring-gray-300 dark:ring-slate-600 dark:bg-slate-800 hover:bg-gray-50 cursor-poin
     must have a "question" and an "answer" field.<br/>
     Example:
 </p>
-<pre>
+<div class="pb-5">
+<pre class="box">
 <code>
 {
     "name": "Your Deck Name",
@@ -66,6 +67,7 @@ ring-gray-300 dark:ring-slate-600 dark:bg-slate-800 hover:bg-gray-50 cursor-poin
 }
 </code>
 </pre>
+</div>
 
 @section Scripts
 {

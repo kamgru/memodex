@@ -1,5 +1,5 @@
 "use strict";
-class Review {
+class Engage {
     init() {
         const revealBtn = document.querySelector('#reveal-btn');
         const hideBtn = document.querySelector('#hide-btn');
@@ -10,7 +10,7 @@ class Review {
             revealBtn.classList.toggle('hidden');
             hideBtn.classList.toggle('hidden');
         });
-        hideBtn.addEventListener('click', (e) => {
+        hideBtn === null || hideBtn === void 0 ? void 0 : hideBtn.addEventListener('click', (e) => {
             e.preventDefault();
             answer.classList.toggle('hidden');
             revealBtn === null || revealBtn === void 0 ? void 0 : revealBtn.classList.toggle('hidden');
@@ -18,4 +18,4 @@ class Review {
         });
     }
 }
-new Review().init();
+new Engage().init();

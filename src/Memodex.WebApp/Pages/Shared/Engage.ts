@@ -1,6 +1,6 @@
 class Engage {
     public init() {
-        const revealBtn = document.querySelector('#reveal-btn');
+        const revealBtn = document.querySelector('#reveal-btn') as HTMLButtonElement;
         const hideBtn = document.querySelector('#hide-btn') as HTMLButtonElement;
         const answer = document.querySelector('#answer') as HTMLElement;
 
@@ -11,7 +11,7 @@ class Engage {
             hideBtn.classList.toggle('hidden')
         });
 
-        hideBtn.addEventListener('click', (e) => {
+        hideBtn?.addEventListener('click', (e) => {
             e.preventDefault();
             answer.classList.toggle('hidden');
             revealBtn?.classList.toggle('hidden');
@@ -21,3 +21,4 @@ class Engage {
 }
 
 new Engage().init();
+

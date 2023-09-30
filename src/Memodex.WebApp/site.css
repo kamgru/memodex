@@ -42,11 +42,11 @@ p {
     @apply py-1 mt-1
 }
 
-pre {
+pre.box {
     @apply border rounded border-slate-400 dark:border-slate-700
     bg-slate-200 dark:bg-slate-900;
 
-    overflow: scroll;
+    overflow: auto;
     max-width: 100%;
 }
 

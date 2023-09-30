@@ -41,17 +41,18 @@
 
 
     <ItemGroup>
-      <None Update="Pages\Engage.ts">
-        <DependentUpon>Engage.cshtml</DependentUpon>
-      </None>
       <None Update="Pages\ImportDeck.ts">
         <DependentUpon>ImportDeck.cshtml</DependentUpon>
       </None>
-      <None Update="Pages\Review.ts">
-        <DependentUpon>Review.cshtml</DependentUpon>
-      </None>
     </ItemGroup>
 
+
+
+    <ItemGroup>
+      <Compile Update="Pages\Shared\FlashcardEngage.cs">
+        <DependentUpon>_FlashcardEngagePartial.cshtml</DependentUpon>
+      </Compile>
+    </ItemGroup>
 
 
 </Project>

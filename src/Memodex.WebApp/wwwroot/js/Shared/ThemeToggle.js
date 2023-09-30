@@ -18,7 +18,7 @@ class ThemeToggle {
     }
     setTheme(theme) {
         const tokenInput = document.querySelector('input[name=__RequestVerificationToken]');
-        const url = '/myprofile?handler=updatetheme';
+        const url = '/MyProfile?handler=UpdateTheme';
         fetch(url, {
             method: 'POST',
             headers: {

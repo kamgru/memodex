@@ -1,6 +1,7 @@
 using System.Data.Common;
 using Memodex.WebApp.Data;
 using Memodex.WebApp.Infrastructure;
+using Memodex.WebApp.Pages.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,7 +9,7 @@ namespace Memodex.WebApp.Pages;
 
 public class Review : PageModel
 {
-    public FlashcardItem? CurrentFlashcard { get; set; }
+    public FlashcardEngage? CurrentFlashcard { get; set; }
 
     [BindProperty]
     public StepInput? Input { get; set; }
@@ -96,7 +97,7 @@ public class Review : PageModel
 
         await transaction.CommitAsync();
 
-        CurrentFlashcard = new FlashcardItem(
+        CurrentFlashcard = new FlashcardEngage(
             flashcardId,
             question,
             answer,
