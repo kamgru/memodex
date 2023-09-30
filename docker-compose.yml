@@ -1,12 +1,11 @@
 services:
   
   app:
-    image: kamgru/memodex:latest
+    build: .
     ports:
       - "5000:80"
     environment:
-      - MEMODEX_DB_PASS=P@ssw0rd!
-      - ConnectionStrings__MemodexDb=Server=${MEMODEX_DB_HOST};Database=${MEMODEX_DB_NAME};User Id=${MEMODEX_DB_USER};Password=${MEMODEX_DB_PASS};TrustServerCertificate=true
+      - Media__Path=/app/data
     volumes:
       - memodex:/app/data
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.FileProviders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddRazorPages();
 builder.Services.AddSession();
@@ -69,6 +70,11 @@ app.UseStaticFiles();
 string mediaRootPath = app.Configuration.GetSection("Media")
                            .GetValue<string>("Path")
                        ?? throw new InvalidOperationException("Missing configuration for Media:Path.");
+if (!Path.IsPathRooted(mediaRootPath))
+{
+    mediaRootPath = Path.GetFullPath(mediaRootPath);
+}
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(mediaRootPath),
