@@ -1,4 +1,5 @@
 bin/
+publish/
 obj/
 .idea/
 node_modules/
