@@ -9,6 +9,18 @@ namespace Memodex.WebApp.Pages;
 
 public class Review : PageModel
 {
+    public record FlashcardItem(
+        int Id,
+        string Question,
+        string Answer,
+        string DeckTitle,
+        int DeckItemCount,
+        int CurrentStep);
+
+    public record StepInput(
+        int ChallengeId,
+        int FlashcardId);
+
     public FlashcardEngage? CurrentFlashcard { get; set; }
 
     [BindProperty]
@@ -209,16 +221,4 @@ public class Review : PageModel
             ? RedirectToPage("CompleteChallenge", new { challengeId = Input.ChallengeId })
             : RedirectToPage("Review", new { challengeId = Input.ChallengeId });
     }
-
-    public record FlashcardItem(
-        int Id,
-        string Question,
-        string Answer,
-        string DeckTitle,
-        int DeckItemCount,
-        int CurrentStep);
-
-    public record StepInput(
-        int ChallengeId,
-        int FlashcardId);
 }

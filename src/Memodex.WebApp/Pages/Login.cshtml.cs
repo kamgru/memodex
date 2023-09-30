@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Memodex.WebApp.Data;
+using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
-using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 

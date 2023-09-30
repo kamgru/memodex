@@ -5,11 +5,10 @@ function showNotification(type: string, message: string): void {
     if (notificationPopup && notificationMessage) {
         notificationMessage.textContent = message;
         notificationPopup.classList.remove('hidden');
-        
+
         if (type === 'Error') {
             notificationPopup.classList.add('error');
-        }
-        else if (type === 'Success') {
+        } else if (type === 'Success') {
             notificationPopup.classList.add('success');
         }
 

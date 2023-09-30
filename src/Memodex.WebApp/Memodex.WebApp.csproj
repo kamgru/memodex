@@ -9,49 +9,48 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.9" />
-      <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.10" />
-      <PackageReference Include="Microsoft.Identity.Web" Version="2.13.4" />
-      <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.9"/>
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.10"/>
+        <PackageReference Include="Microsoft.Identity.Web" Version="2.13.4"/>
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <TypeScriptCompile Update="Pages\Shared\Notification.ts">
-        <DependentUpon>_Notification.cshtml</DependentUpon>
-      </TypeScriptCompile>
-      <TypeScriptCompile Update="Pages\ImportDeck.ts">
-        <DependentUpon>ImportDeck.cshtml</DependentUpon>
-      </TypeScriptCompile>
-      <TypeScriptCompile Update="Pages\Shared\ThemeToggle.ts">
-        <DependentUpon>_ThemeTogglePartial.cshtml</DependentUpon>
-      </TypeScriptCompile>
-      <TypeScriptCompile Update="Pages\CreateProfile.ts">
-        <DependentUpon>CreateProfile.cshtml</DependentUpon>
-      </TypeScriptCompile>
-      <TypeScriptCompile Update="Pages\Engage.ts">
-        <DependentUpon>Engage.cshtml</DependentUpon>
-      </TypeScriptCompile>
-      <TypeScriptCompile Update="Pages\Review.ts">
-        <DependentUpon>Review.cshtml</DependentUpon>
-      </TypeScriptCompile>
-      <TypeScriptCompile Update="Pages\EditCategory.ts">
-        <DependentUpon>EditCategory.cshtml</DependentUpon>
-      </TypeScriptCompile>
+        <TypeScriptCompile Update="Pages\Shared\Notification.ts">
+            <DependentUpon>_Notification.cshtml</DependentUpon>
+        </TypeScriptCompile>
+        <TypeScriptCompile Update="Pages\ImportDeck.ts">
+            <DependentUpon>ImportDeck.cshtml</DependentUpon>
+        </TypeScriptCompile>
+        <TypeScriptCompile Update="Pages\Shared\ThemeToggle.ts">
+            <DependentUpon>_ThemeTogglePartial.cshtml</DependentUpon>
+        </TypeScriptCompile>
+        <TypeScriptCompile Update="Pages\CreateProfile.ts">
+            <DependentUpon>CreateProfile.cshtml</DependentUpon>
+        </TypeScriptCompile>
+        <TypeScriptCompile Update="Pages\Engage.ts">
+            <DependentUpon>Engage.cshtml</DependentUpon>
+        </TypeScriptCompile>
+        <TypeScriptCompile Update="Pages\Review.ts">
+            <DependentUpon>Review.cshtml</DependentUpon>
+        </TypeScriptCompile>
+        <TypeScriptCompile Update="Pages\EditCategory.ts">
+            <DependentUpon>EditCategory.cshtml</DependentUpon>
+        </TypeScriptCompile>
     </ItemGroup>
 
 
     <ItemGroup>
-      <None Update="Pages\ImportDeck.ts">
-        <DependentUpon>ImportDeck.cshtml</DependentUpon>
-      </None>
+        <None Update="Pages\ImportDeck.ts">
+            <DependentUpon>ImportDeck.cshtml</DependentUpon>
+        </None>
     </ItemGroup>
 
 
-
     <ItemGroup>
-      <Compile Update="Pages\Shared\FlashcardEngage.cs">
-        <DependentUpon>_FlashcardEngagePartial.cshtml</DependentUpon>
-      </Compile>
+        <Compile Update="Pages\Shared\FlashcardEngage.cs">
+            <DependentUpon>_FlashcardEngagePartial.cshtml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 

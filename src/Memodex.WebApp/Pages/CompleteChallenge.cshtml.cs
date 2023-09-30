@@ -7,6 +7,11 @@ namespace Memodex.WebApp.Pages;
 
 public class CompleteChallenge : PageModel
 {
+    public record ChallengeItem(
+        int Id,
+        string Title,
+        ChallengeState State);
+
     public ChallengeItem? CompletedChallenge { get; set; }
 
     public async Task<IActionResult> OnGetAsync(
@@ -42,9 +47,4 @@ public class CompleteChallenge : PageModel
 
         return Page();
     }
-
-    public record ChallengeItem(
-        int Id,
-        string Title,
-        ChallengeState State);
 }

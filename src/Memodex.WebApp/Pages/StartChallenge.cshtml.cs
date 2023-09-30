@@ -46,10 +46,7 @@ public class StartChallenge : PageModel
 
         await using DbDataReader reader = await getFlashcardsCmd.ExecuteReaderAsync();
         List<int> flashcardIds = new();
-        while (await reader.ReadAsync())
-        {
-            flashcardIds.Add(reader.GetInt32(0));
-        }
+        while (await reader.ReadAsync()) flashcardIds.Add(reader.GetInt32(0));
 
         await using SqliteCommand createChallengeCommand = connection.CreateCommand(
             """

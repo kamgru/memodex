@@ -29,15 +29,15 @@ public class AddDeck : PageModel
 
         SqliteCommand command = connection.CreateCommand(
             """
-            INSERT INTO decks (name) 
+            INSERT INTO decks (name)
             VALUES (@name)
             RETURNING id
             """);
-        
+
         command.Parameters.AddWithValue("@name", Input.Name);
 
         int deckId = Convert.ToInt32(await command.ExecuteScalarAsync());
-        
+
         return RedirectToPage("EditDeck", new { deckId });
     }
 }

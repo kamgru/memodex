@@ -10,6 +10,36 @@ namespace Memodex.WebApp.Pages;
 
 public class EditFlashcards : PageModel
 {
+    public record PageInfo(
+        int DeckId,
+        int ItemsPerPage,
+        PagedData<FlashcardItem> Data);
+
+    public record FlashcardItem(
+        int Id,
+        string Question,
+        string Answer,
+        int OrdinalNumber);
+
+    public record EditFlashcardItem(
+        int Id,
+        int DeckId,
+        string Question,
+        int QuestionLineCount,
+        string Answer,
+        int AnswerLineCount,
+        int OrdinalNumber);
+
+    public record UpdateFlashcardRequest(
+        int FlashcardId,
+        string Question,
+        string Answer);
+
+    public record DeleteFlashcardRequest(
+        int FlashcardId);
+
+    public PageInfo? CurrentPageInfo { get; set; }
+
     private async Task<PagedData<FlashcardItem>> GetFlashcardsAsync(
         int deckId,
         int pageNumber,
@@ -23,7 +53,7 @@ public class EditFlashcards : PageModel
         await using SqliteCommand selectFlashcardsCmd = connection.CreateCommand(
             """
             SELECT id, question, answer, ordinalNumber
-            FROM flashcards 
+            FROM flashcards
             WHERE deckId = @deckId
             ORDER BY id
             LIMIT @limit
@@ -36,13 +66,11 @@ public class EditFlashcards : PageModel
 
         List<FlashcardItem> flashcards = new();
         while (await reader.ReadAsync())
-        {
             flashcards.Add(new FlashcardItem(
                 reader.GetInt32(0),
                 reader.GetString(1),
                 reader.GetString(2),
                 reader.GetInt32(3)));
-        }
 
         SqliteCommand countFlashcardsCmd = connection.CreateCommand(
             """
@@ -113,7 +141,7 @@ public class EditFlashcards : PageModel
         await using SqliteCommand command = connection.CreateCommand(
             """
             SELECT id, question, answer, ordinalNumber
-            FROM flashcards 
+            FROM flashcards
             WHERE id = @flashcardId
             LIMIT 1;
             """);
@@ -163,10 +191,12 @@ public class EditFlashcards : PageModel
         }
 
         string question = reader.GetString(2);
-        int questionLineCount = question.Split('\n').Length;
+        int questionLineCount = question.Split('\n')
+            .Length;
 
         string answer = reader.GetString(3);
-        int answerLineCount = answer.Split('\n').Length;
+        int answerLineCount = answer.Split('\n')
+            .Length;
 
         EditFlashcardItem flashcard = new(
             reader.GetInt32(0),
@@ -261,34 +291,4 @@ public class EditFlashcards : PageModel
 
         return new EmptyResult();
     }
-
-    public record PageInfo(
-        int DeckId,
-        int ItemsPerPage,
-        PagedData<FlashcardItem> Data);
-
-    public PageInfo? CurrentPageInfo { get; set; }
-
-    public record FlashcardItem(
-        int Id,
-        string Question,
-        string Answer,
-        int OrdinalNumber);
-
-    public record EditFlashcardItem(
-        int Id,
-        int DeckId,
-        string Question,
-        int QuestionLineCount,
-        string Answer,
-        int AnswerLineCount,
-        int OrdinalNumber);
-
-    public record UpdateFlashcardRequest(
-        int FlashcardId,
-        string Question,
-        string Answer);
-
-    public record DeleteFlashcardRequest(
-        int FlashcardId);
 }

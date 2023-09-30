@@ -42,7 +42,7 @@ class DeckImporter {
                 showNotification('Error', 'The selected  JSON file does not contain a valid deck.');
             }
             const form = document.querySelector('#form-import-deck') as HTMLFormElement;
-            if (!form){
+            if (!form) {
                 return;
             }
             htmx.trigger(form, 'submit');

@@ -1,4 +1,5 @@
 "use strict";
+
 class EditCategory {
     init() {
         var _a;
@@ -17,4 +18,5 @@ class EditCategory {
         });
     }
 }
+
 new EditCategory().init();

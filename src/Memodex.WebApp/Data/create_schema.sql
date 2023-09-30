@@ -1,4 +1,3 @@
-
 create table if not exists main.categories
 (
     id            integer not null

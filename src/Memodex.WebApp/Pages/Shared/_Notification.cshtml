@@ -1,5 +1,4 @@
 @using Memodex.WebApp.Common
-
 @{
     if (TempData.TryGetValue("Notification", out object? value)
         && Notification.TryDeserialize(value?.ToString(), out Notification? notification))

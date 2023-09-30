@@ -1,4 +1,4 @@
-@model Memodex.WebApp.Pages.EditFlashcards.PageInfo
+@model EditFlashcards.PageInfo
 
 @{
     string url = $"/EditFlashcards?handler=Flashcards&deckId={Model.DeckId}&pageNumber={Model.Data.Page + 1}&itemsPerPage={Model.ItemsPerPage}";

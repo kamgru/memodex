@@ -1,4 +1,5 @@
 "use strict";
+
 class Engage {
     init() {
         const revealBtn = document.querySelector('#reveal-btn');
@@ -18,4 +19,5 @@ class Engage {
         });
     }
 }
+
 new Engage().init();

@@ -10,7 +10,7 @@ h1 {
     @apply text-2xl font-bold mb-6 mt-6 text-blue-900 dark:text-slate-400
 }
 
-h2{
+h2 {
     @apply text-xl pt-1 pb-2 text-blue-900 dark:text-slate-400
 }
 
@@ -20,7 +20,7 @@ label {
 
 input[type=text],
 input[type=password] {
-    @apply block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm px-2 
+    @apply block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm px-2
     text-slate-600 dark:text-slate-400 dark:bg-slate-900 dark:ring-slate-600
 }
 
@@ -34,7 +34,7 @@ textarea {
 }
 
 .btn-outline {
-    @apply text-sm text-blue-600 dark:text-slate-400 border border-blue-600 dark:border-slate-400 px-4 py-2 rounded 
+    @apply text-sm text-blue-600 dark:text-slate-400 border border-blue-600 dark:border-slate-400 px-4 py-2 rounded
     hover:bg-blue-100 dark:hover:bg-slate-900
 }
 

@@ -4,7 +4,10 @@ namespace Memodex.WebApp.Common;
 
 public static class PageModelExtensions
 {
-    public static void AddNotification(this PageModel pageModel, NotificationType type, string message)
+    public static void AddNotification(
+        this PageModel pageModel,
+        NotificationType type,
+        string message)
     {
         pageModel.TempData["Notification"] = new Notification
             {

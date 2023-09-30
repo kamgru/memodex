@@ -14,9 +14,11 @@ public class Notification
     public NotificationType Type { get; init; }
     public required string Message { get; init; }
 
-    public string Serialize() =>
-        JsonSerializer.Serialize(this);
-    
+    public string Serialize()
+    {
+        return JsonSerializer.Serialize(this);
+    }
+
     public static bool TryDeserialize(
         string? json,
         [NotNullWhen(true)]

@@ -17,5 +17,4 @@ public static class SqliteConnectionExtension
 
         return command;
     }
-
 }

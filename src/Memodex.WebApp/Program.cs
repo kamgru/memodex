@@ -42,8 +42,8 @@ if (!File.Exists("memodex.db"))
         """
         create table if not exists users
         (
-            id              integer not null 
-                constraint users_pk 
+            id              integer not null
+                constraint users_pk
                     primary key autoincrement,
             username        varchar(255) not null,
             userId          varchar(255) not null,

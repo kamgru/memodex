@@ -19,7 +19,8 @@ public class Register : PageModel
     {
         [Required]
         [RegularExpression("^[a-zA-Z|0-9|_]*$",
-             ErrorMessage = "Letters, numbers, underscore. No more than 32 character"), MaxLength(32)]
+            ErrorMessage = "Letters, numbers, underscore. No more than 32 character")]
+        [MaxLength(32)]
         public string Username { get; init; } = string.Empty;
 
         [Required]

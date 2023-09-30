@@ -1,4 +1,5 @@
 "use strict";
+
 class ThemeToggle {
     constructor() {
         this.handleToggleClick = (e) => {
@@ -9,6 +10,7 @@ class ThemeToggle {
             this.setTheme(currentTheme);
         };
     }
+
     init() {
         const toggle = document.querySelector('#theme-toggle');
         if (!toggle) {
@@ -16,6 +18,7 @@ class ThemeToggle {
         }
         toggle.addEventListener('click', this.handleToggleClick);
     }
+
     setTheme(theme) {
         const tokenInput = document.querySelector('input[name=__RequestVerificationToken]');
         const url = '/MyProfile?handler=UpdateTheme';
@@ -25,8 +28,9 @@ class ThemeToggle {
                 'Content-Type': 'application/json',
                 'RequestVerificationToken': tokenInput.value
             },
-            body: JSON.stringify({ theme: theme })
+            body: JSON.stringify({theme: theme})
         }).then();
     }
 }
+
 new ThemeToggle().init();

@@ -87,7 +87,7 @@ public class EditDeck : PageModel
 
         SqliteCommand command = connection.CreateCommand(
             """
-            DELETE FROM decks 
+            DELETE FROM decks
             WHERE id = @id;
             """);
         command.Parameters.AddWithValue("@id", deckId);

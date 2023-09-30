@@ -27,13 +27,11 @@ public class BrowseDecks : PageModel
 
         SqliteDataReader reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())
-        {
             Decks.Add(new DeckItem(
                 reader.GetInt32(0),
                 reader.GetString(1),
                 reader.GetValue(2) as string ?? string.Empty,
                 reader.GetInt32(3)));
-        }
 
         return Page();
     }
