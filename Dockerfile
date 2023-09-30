@@ -3,12 +3,21 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+FROM node:18 AS node
+WORKDIR /node
+COPY ["src/Memodex.WebApp/package.json", "src/Memodex.WebApp/package-lock.json", "./"]
+RUN npm install
+COPY ["src/Memodex.WebApp/", "./"]
+RUN npm run build
+
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["src/Memodex.WebApp/Memodex.WebApp.csproj", "Memodex.WebApp/"]
 RUN dotnet restore "Memodex.WebApp/Memodex.WebApp.csproj"
 COPY src/ .
 WORKDIR "Memodex.WebApp"
+COPY --from=node ./node/wwwroot/ ./wwwroot/
+
 RUN dotnet build "Memodex.WebApp.csproj" -c Release -o /app/build
 
 FROM build AS publish
