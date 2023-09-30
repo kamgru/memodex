@@ -62,4 +62,15 @@
         </Compile>
     </ItemGroup>
 
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\js\Infrastructure\KeyboardInput.js" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Folder Include="wwwroot\css\" />
+      <Folder Include="wwwroot\js\" />
+    </ItemGroup>
+
 </Project>

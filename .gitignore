@@ -8,3 +8,5 @@ appsettings.Development.json
 *.sqlite
 *.db
 *.DotSettings.*
+wwwroot/js/*
+wwwroot/css/*
