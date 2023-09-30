@@ -8,5 +8,5 @@ appsettings.Development.json
 *.sqlite
 *.db
 *.DotSettings.*
-wwwroot/js/*
-wwwroot/css/*
+src/Memodex.WebApp/wwwroot/js/*
+src/Memodex.WebApp/wwwroot/css/*
