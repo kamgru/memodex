@@ -14,6 +14,12 @@ public class AddDeck : PageModel
         public string Name { get; init; } = string.Empty;
     }
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+    public AddDeck(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
     [BindProperty]
     public FormInput Input { get; set; } = new();
 
@@ -24,7 +30,7 @@ public class AddDeck : PageModel
             return Page();
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
 
         SqliteCommand command = connection.CreateCommand(

@@ -22,6 +22,14 @@ public class ImportDeck : PageModel
         public IEnumerable<FlashcardItem> Flashcards { get; set; } = new List<FlashcardItem>();
     }
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public ImportDeck(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     public async Task<IActionResult> OnPostAsync(
         IFormFile? formFile)
     {
@@ -42,7 +50,7 @@ public class ImportDeck : PageModel
                             ?? throw new InvalidOperationException("Invalid JSON file");
 
 
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
 
         await using DbTransaction transaction = await connection.BeginTransactionAsync();

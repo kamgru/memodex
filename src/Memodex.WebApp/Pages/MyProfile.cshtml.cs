@@ -9,11 +9,19 @@ public class MyProfile : PageModel
     public record UpdateTheme(
         string Theme);
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public MyProfile(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     public async Task<IActionResult> OnPostUpdateThemeAsync(
         [FromBody]
         UpdateTheme updateTheme)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """

@@ -8,13 +8,16 @@ public class ProfileProvider
 {
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
 
     public ProfileProvider(
         IHttpContextAccessor httpContextAccessor,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        SqliteConnectionFactory sqliteConnectionFactory)
     {
         _httpContextAccessor = httpContextAccessor;
         _configuration = configuration;
+        _sqliteConnectionFactory = sqliteConnectionFactory;
     }
 
     public async Task<CurrentProfile> GetSelectedProfileAsync()
@@ -44,7 +47,7 @@ public class ProfileProvider
         }
 
         await using SqliteConnection mdxDbConnection =
-            SqliteConnectionFactory.CreateForUser(_httpContextAccessor.HttpContext.User);
+            _sqliteConnectionFactory.CreateForUser(_httpContextAccessor.HttpContext.User);
         await mdxDbConnection.OpenAsync();
         await using SqliteCommand getPrefsCmd = mdxDbConnection.CreateCommand(
             """

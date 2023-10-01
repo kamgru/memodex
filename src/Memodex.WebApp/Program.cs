@@ -10,6 +10,8 @@ builder.Services.AddSession();
 builder.Services.AddScoped<ProfileProvider>();
 builder.Services.AddSingleton<MediaPathProvider>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<MediaPhysicalPath>();
+builder.Services.AddSingleton<SqliteConnectionFactory>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -34,25 +36,6 @@ if (builder.Environment.IsDevelopment())
         .AddRazorRuntimeCompilation();
 }
 
-if (!File.Exists("memodex.db"))
-{
-    await using SqliteConnection mdxDbConnection = SqliteConnectionFactory.CreateForApp();
-    await mdxDbConnection.OpenAsync();
-    await using SqliteCommand createDbCmd = mdxDbConnection.CreateCommand(
-        """
-        create table if not exists users
-        (
-            id              integer not null
-                constraint users_pk
-                    primary key autoincrement,
-            username        varchar(255) not null,
-            userId          varchar(255) not null,
-            passwordHash    varchar(255) not null
-        );
-        """);
-    await createDbCmd.ExecuteNonQueryAsync();
-}
-
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -66,17 +49,11 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-string mediaRootPath = app.Configuration.GetSection("Media")
-                           .GetValue<string>("Path")
-                       ?? throw new InvalidOperationException("Missing configuration for Media:Path.");
-if (!Path.IsPathRooted(mediaRootPath))
-{
-    mediaRootPath = Path.Combine(Directory.GetCurrentDirectory(), mediaRootPath);
-}
+MediaPhysicalPath mediaPhysicalPath = app.Services.GetRequiredService<MediaPhysicalPath>();
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(mediaRootPath),
+    FileProvider = new PhysicalFileProvider(mediaPhysicalPath.ToString()),
     RequestPath = "/media"
 });
 app.UseSession();
@@ -93,5 +70,27 @@ app.UseAuthorization();
 
 app.MapRazorPages()
     .RequireAuthorization(options => { options.RequireAuthenticatedUser(); });
+
+
+if (!File.Exists("memodex.db"))
+{
+    SqliteConnectionFactory sqliteConnectionFactory = app.Services.GetRequiredService<SqliteConnectionFactory>();
+    await using SqliteConnection mdxDbConnection = sqliteConnectionFactory.CreateForApp();
+    await mdxDbConnection.OpenAsync();
+    await using SqliteCommand createDbCmd = mdxDbConnection.CreateCommand(
+        """
+        create table if not exists users
+        (
+            id              integer not null
+                constraint users_pk
+                    primary key autoincrement,
+            username        varchar(255) not null,
+            userId          varchar(255) not null,
+            passwordHash    varchar(255) not null
+        );
+        """);
+    await createDbCmd.ExecuteNonQueryAsync();
+}
+
 
 app.Run();

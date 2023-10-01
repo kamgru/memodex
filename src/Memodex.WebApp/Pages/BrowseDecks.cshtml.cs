@@ -6,6 +6,14 @@ namespace Memodex.WebApp.Pages;
 
 public class BrowseDecks : PageModel
 {
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public BrowseDecks(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     public record DeckItem(
         int Id,
         string Name,
@@ -16,7 +24,7 @@ public class BrowseDecks : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
 
         await using SqliteCommand command = connection.CreateCommand(

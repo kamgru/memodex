@@ -20,6 +20,14 @@ public class AddFlashcard : PageModel
         public string Answer { get; init; } = string.Empty;
     }
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public AddFlashcard(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     [BindProperty]
     public FormInput Input { get; set; } = new();
 
@@ -37,7 +45,7 @@ public class AddFlashcard : PageModel
             return Page();
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand insertFlashcardCommand = connection.CreateCommand(

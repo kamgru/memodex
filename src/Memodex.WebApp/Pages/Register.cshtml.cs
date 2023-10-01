@@ -33,6 +33,14 @@ public class Register : PageModel
         public string ConfirmPassword { get; init; } = string.Empty;
     }
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public Register(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     [BindProperty]
     public FormInput Input { get; set; } = new();
 
@@ -43,7 +51,7 @@ public class Register : PageModel
             return Page();
         }
 
-        await using SqliteConnection mdxDbConnection = SqliteConnectionFactory.CreateForApp();
+        await using SqliteConnection mdxDbConnection = _sqliteConnectionFactory.CreateForApp();
         await mdxDbConnection.OpenAsync();
         await using DbTransaction mdxDbTransaction = await mdxDbConnection.BeginTransactionAsync();
 
@@ -105,7 +113,7 @@ public class Register : PageModel
             principal,
             authProps);
 
-        await using SqliteConnection userDbConnection = SqliteConnectionFactory.CreateForUser(
+        await using SqliteConnection userDbConnection = _sqliteConnectionFactory.CreateForUser(
             principal,
             createIfNotExists: true);
         await userDbConnection.OpenAsync();

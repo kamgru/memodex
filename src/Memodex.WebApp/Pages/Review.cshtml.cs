@@ -21,6 +21,14 @@ public class Review : PageModel
         int ChallengeId,
         int FlashcardId);
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public Review(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     public FlashcardEngage? CurrentFlashcard { get; set; }
 
     [BindProperty]
@@ -29,7 +37,7 @@ public class Review : PageModel
     public async Task<IActionResult> OnGetAsync(
         int challengeId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
 
@@ -131,7 +139,7 @@ public class Review : PageModel
             throw new InvalidOperationException("Input is null");
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand getChallengeCommand = connection.CreateCommand(

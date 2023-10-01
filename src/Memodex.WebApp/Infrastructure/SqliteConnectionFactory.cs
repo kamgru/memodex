@@ -2,19 +2,28 @@ using System.Security.Claims;
 
 namespace Memodex.WebApp.Infrastructure;
 
-public static class SqliteConnectionFactory
+public class SqliteConnectionFactory
 {
-    public static SqliteConnection CreateForUser(
+    private readonly MediaPhysicalPath _mediaPhysicalPath;
+
+    public SqliteConnectionFactory(
+        MediaPhysicalPath mediaPhysicalPath)
+    {
+        _mediaPhysicalPath = mediaPhysicalPath;
+    }
+
+    public SqliteConnection CreateForUser(
         ClaimsPrincipal principal,
         bool enableForeignKeys = false,
         bool createIfNotExists = false)
     {
-        string databaseName = principal.Identity switch
+        if (principal.Identity?.Name is null)
         {
-            { Name: null } => "anonymous.db",
-            { IsAuthenticated: true } => $"mdx.{principal.Identity.Name.ToLowerInvariant()}.db",
-            _ => "anonymous.db"
-        };
+            throw new InvalidOperationException("Principal identity is null.");
+        }
+
+        string databaseName = $"mdx.{principal.Identity.Name.ToLowerInvariant()}.db";
+        databaseName = Path.Combine(_mediaPhysicalPath.ToString(), databaseName);
 
         string connectionString = new SqliteConnectionStringBuilder
         {
@@ -26,11 +35,12 @@ public static class SqliteConnectionFactory
         return new SqliteConnection(connectionString);
     }
 
-    public static SqliteConnection CreateForApp()
+    public SqliteConnection CreateForApp()
     {
+        string databaseName = Path.Combine(_mediaPhysicalPath.ToString(), "memodex.db");
         string connectionString = new SqliteConnectionStringBuilder
         {
-            DataSource = "memodex.db",
+            DataSource = databaseName,
             ForeignKeys = true,
             Mode = SqliteOpenMode.ReadWriteCreate
         }.ToString();

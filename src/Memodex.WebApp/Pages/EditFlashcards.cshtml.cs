@@ -38,6 +38,14 @@ public class EditFlashcards : PageModel
     public record DeleteFlashcardRequest(
         int FlashcardId);
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public EditFlashcards(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     public PageInfo? CurrentPageInfo { get; set; }
 
     private async Task<PagedData<FlashcardItem>> GetFlashcardsAsync(
@@ -48,7 +56,7 @@ public class EditFlashcards : PageModel
         pageNumber = Math.Max(1, pageNumber);
         itemsPerPage = Math.Max(10, itemsPerPage);
 
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using SqliteCommand selectFlashcardsCmd = connection.CreateCommand(
             """
@@ -136,7 +144,7 @@ public class EditFlashcards : PageModel
     public async Task<IActionResult> OnGetSingleFlashcardAsync(
         int flashcardId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
@@ -172,7 +180,7 @@ public class EditFlashcards : PageModel
     public async Task<IActionResult> OnGetEditAsync(
         int flashcardId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
@@ -221,7 +229,7 @@ public class EditFlashcards : PageModel
         [FromForm]
         UpdateFlashcardRequest request)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
@@ -255,7 +263,7 @@ public class EditFlashcards : PageModel
         [FromQuery]
         DeleteFlashcardRequest request)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand deleteFlashcardCmd = connection.CreateCommand(

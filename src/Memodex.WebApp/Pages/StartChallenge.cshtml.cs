@@ -13,10 +13,18 @@ public class StartChallenge : PageModel
         string Description,
         int ItemCount);
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public StartChallenge(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     public async Task<IActionResult> OnPostAsync(
         int deckId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
 
         await using DbTransaction transaction = await connection.BeginTransactionAsync();

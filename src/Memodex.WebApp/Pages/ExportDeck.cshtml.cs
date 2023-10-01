@@ -18,10 +18,18 @@ public class ExportDeck : PageModel
         string Description,
         IEnumerable<FlashcardItem> Flashcards);
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public ExportDeck(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     public async Task<IActionResult> OnGetAsync(
         int deckId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand command = connection.CreateCommand(

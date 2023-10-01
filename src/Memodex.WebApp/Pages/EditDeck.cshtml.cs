@@ -18,13 +18,21 @@ public class EditDeck : PageModel
         public string? Description { get; init; }
     }
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public EditDeck(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     [BindProperty]
     public FormInput Input { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(
         int deckId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
 
         SqliteCommand command = connection.CreateCommand(
@@ -59,7 +67,7 @@ public class EditDeck : PageModel
             return Page();
         }
 
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
 
         SqliteCommand command = connection.CreateCommand(
@@ -82,7 +90,7 @@ public class EditDeck : PageModel
         [FromQuery]
         int deckId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User, true);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
 
         SqliteCommand command = connection.CreateCommand(

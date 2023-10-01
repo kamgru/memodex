@@ -26,6 +26,14 @@ public class Login : PageModel
         public bool RememberMe { get; init; }
     }
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public Login(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     [BindProperty]
     public FormInput Input { get; set; } = new();
 
@@ -36,7 +44,7 @@ public class Login : PageModel
             return Page();
         }
 
-        await using SqliteConnection mdxDbConnection = SqliteConnectionFactory.CreateForApp();
+        await using SqliteConnection mdxDbConnection = _sqliteConnectionFactory.CreateForApp();
         await mdxDbConnection.OpenAsync();
 
         SqliteCommand command = mdxDbConnection.CreateCommand(

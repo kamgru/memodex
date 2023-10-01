@@ -12,12 +12,20 @@ public class CompleteChallenge : PageModel
         string Title,
         ChallengeState State);
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public CompleteChallenge(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     public ChallengeItem? CompletedChallenge { get; set; }
 
     public async Task<IActionResult> OnGetAsync(
         int challengeId)
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         const string sql =
             """

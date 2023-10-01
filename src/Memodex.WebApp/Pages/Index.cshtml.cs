@@ -26,11 +26,19 @@ public class IndexModel : PageModel
         string DeckName,
         int StepsToReview);
 
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public IndexModel(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
     public PastChallenges? Challenges { get; set; }
 
     public async Task<IActionResult> OnGet()
     {
-        await using SqliteConnection connection = SqliteConnectionFactory.CreateForUser(User);
+        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User);
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand getUnfinishedChallengeStepsCommand = connection.CreateCommand(
