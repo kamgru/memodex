@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Memodex.WebApp.Data;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -54,5 +55,46 @@ public class CompleteChallenge : PageModel
             (ChallengeState)reader.GetInt32(2));
 
         return Page();
+    }
+
+    public class ChallengeReader
+    {
+        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+        private readonly ClaimsPrincipal _claimsPrincipal;
+
+        public ChallengeReader(
+            SqliteConnectionFactory sqliteConnectionFactory,
+            ClaimsPrincipal claimsPrincipal)
+        {
+            _sqliteConnectionFactory = sqliteConnectionFactory;
+            _claimsPrincipal = claimsPrincipal;
+        }
+
+        public async Task<ChallengeItem?> ReadChallengeAsync(
+            int challengeId)
+        {
+            await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(_claimsPrincipal);
+            await connection.OpenAsync();
+
+            await using SqliteCommand command = connection.CreateCommand(
+                """
+                SELECT challenge.id, deck.name, challenge.state FROM challenges challenge
+                JOIN main.decks deck on deck.id = challenge.deckId
+                WHERE challenge.id = @id
+                LIMIT 1;
+                """);
+            command.Parameters.AddWithValue("@id", challengeId);
+            await using SqliteDataReader reader = await command.ExecuteReaderAsync();
+
+            if (!await reader.ReadAsync())
+            {
+                return null;
+            }
+
+            return new ChallengeItem(
+                challengeId,
+                reader.GetString(1),
+                (ChallengeState)reader.GetInt32(2));
+        }
     }
 }

@@ -19,8 +19,10 @@
 <div class="text-right mb-6">
     <a href="@Url.Page("AddFlashcard", new { deckId = Model.CurrentPageInfo!.DeckId })"
        class="btn-outline">
-        + New Flashcard
+        Add Flashcard
     </a>
 </div>
-
-<partial name="Shared/_FlashcardsListPartial" model="@Model.CurrentPageInfo" class="py-10"/>
+<div role="list">
+    <partial name="Shared/_FlashcardsListPartial" model="@Model.CurrentPageInfo" class="py-10"/>
+</div>
+<span data-testid="flashcard list end"></span>

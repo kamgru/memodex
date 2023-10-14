@@ -43,36 +43,15 @@ public class Login : PageModel
         {
             return Page();
         }
-
-        await using SqliteConnection mdxDbConnection = _sqliteConnectionFactory.CreateForApp();
-        await mdxDbConnection.OpenAsync();
-
-        SqliteCommand command = mdxDbConnection.CreateCommand(
-            """
-            SELECT UserId, Username, PasswordHash
-            FROM users
-            WHERE username = @username
-            LIMIT 1;
-            """);
-        string usernameNormalized = Input.Username.ToLowerInvariant();
-        command.Parameters.AddWithValue("@username", usernameNormalized);
-
-        await using SqliteDataReader reader = await command.ExecuteReaderAsync();
-
-        if (!await reader.ReadAsync())
+        
+        MemodexDatabase memodexDatabase = new(_sqliteConnectionFactory);
+        MdxUser? user = await memodexDatabase.GetUserAsync(Input.Username);
+        if (user is null)
         {
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return Page();
         }
-
-        MdxUser user = new()
-        {
-            UserId = reader.GetString(0),
-            Username = reader.GetString(1),
-            PasswordHash = reader.GetString(2)
-        };
-        await mdxDbConnection.CloseAsync();
-
+        
         PasswordHasher<MdxUser> hasher = new();
         if (hasher.VerifyHashedPassword(user, user.PasswordHash, Input.Password) == PasswordVerificationResult.Failed)
         {
@@ -82,7 +61,7 @@ public class Login : PageModel
 
         List<Claim> claims = new()
         {
-            new Claim(ClaimTypes.Name, usernameNormalized),
+            new Claim(ClaimTypes.Name, user.Username),
             new Claim(ClaimTypes.NameIdentifier, user.UserId)
         };
 

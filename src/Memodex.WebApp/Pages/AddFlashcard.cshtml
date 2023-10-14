@@ -6,25 +6,20 @@
 }
 
 <h1 class="text-3xl font-bold mb-2">Add Flashcard</h1>
-<p class="text-gray-600 mb-4">
-    Add a new flashcard to the deck.
-</p>
-
 <form method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="@Model.Input.DeckId" value="@Model.Input.DeckId">
     <div class="space-y-12">
         <div class="border-b border-gray-900/10 pb-12">
-            <h2>Add Flashcard</h2>
             <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div class="sm:col-span-4">
-                    <label>Question</label>
+                    <label asp-for="Input.Question">Question</label>
                     <div class="mt-2">
                         <textarea type="text" asp-for="Input.Question" required></textarea>
                     </div>
                 </div>
 
                 <div class="sm:col-span-4">
-                    <label>Answer</label>
+                    <label asp-for="Input.Answer">Answer</label>
                     <div class="mt-2">
                         <textarea type="text" asp-for="Input.Answer" required></textarea>
                     </div>

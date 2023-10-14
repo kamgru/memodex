@@ -33,14 +33,14 @@
 
             <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <div class="sm:col-span-4">
-                    <label>Deck Name</label>
+                    <label asp-for="Input.Name">Deck Name</label>
                     <div class="mt-2">
                         <input asp-for="Input.Name"/>
                     </div>
                 </div>
 
                 <div class="col-span-full">
-                    <label>Description</label>
+                    <label asp-for="Input.Description">Description</label>
                     <div class="mt-2">
                         <textarea asp-for="Input.Description" rows="3"></textarea>
                     </div>

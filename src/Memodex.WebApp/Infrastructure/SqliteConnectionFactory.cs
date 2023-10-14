@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Memodex.WebApp.Data;
 
 namespace Memodex.WebApp.Infrastructure;
 
@@ -22,12 +23,9 @@ public class SqliteConnectionFactory
             throw new InvalidOperationException("Principal identity is null.");
         }
 
-        string databaseName = $"mdx.{principal.Identity.Name.ToLowerInvariant()}.db";
-        databaseName = Path.Combine(_mediaPhysicalPath.ToString(), databaseName);
-
         string connectionString = new SqliteConnectionStringBuilder
         {
-            DataSource = databaseName,
+            DataSource = GetDatabaseNameForUser(principal),
             ForeignKeys = enableForeignKeys,
             Mode = createIfNotExists ? SqliteOpenMode.ReadWriteCreate : SqliteOpenMode.ReadWrite
         }.ToString();
@@ -46,5 +44,17 @@ public class SqliteConnectionFactory
         }.ToString();
 
         return new SqliteConnection(connectionString);
+    }
+
+    public string GetDatabaseNameForUser(
+        ClaimsPrincipal principal)
+    {
+        if (principal.Identity?.Name is null)
+        {
+            throw new InvalidOperationException("Principal identity is null.");
+        }
+
+        string databaseName = new UserDatabaseName(principal.Identity.Name).ToString();
+        return Path.Combine(_mediaPhysicalPath.ToString(), databaseName);
     }
 }

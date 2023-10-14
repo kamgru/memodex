@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -15,13 +16,20 @@ public class AddDeck : PageModel
     }
 
     private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
     public AddDeck(
         SqliteConnectionFactory sqliteConnectionFactory)
     {
         _sqliteConnectionFactory = sqliteConnectionFactory;
     }
+
     [BindProperty]
     public FormInput Input { get; set; } = new();
+
+    public IActionResult OnGet()
+    {
+        return Page();
+    }
 
     public async Task<IActionResult> OnPostAsync()
     {
@@ -30,20 +38,39 @@ public class AddDeck : PageModel
             return Page();
         }
 
-        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User, true);
-        await connection.OpenAsync();
-
-        SqliteCommand command = connection.CreateCommand(
-            """
-            INSERT INTO decks (name)
-            VALUES (@name)
-            RETURNING id
-            """);
-
-        command.Parameters.AddWithValue("@name", Input.Name);
-
-        int deckId = Convert.ToInt32(await command.ExecuteScalarAsync());
+        int deckId = await new AddDeckWriter(_sqliteConnectionFactory).AddDeckAsync(
+            Input.Name,
+            User);
 
         return RedirectToPage("EditDeck", new { deckId });
+    }
+
+    public class AddDeckWriter
+    {
+        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+        public AddDeckWriter(
+            SqliteConnectionFactory sqliteConnectionFactory)
+        {
+            _sqliteConnectionFactory = sqliteConnectionFactory;
+        }
+
+        public async Task<int> AddDeckAsync(
+            string name,
+            ClaimsPrincipal user)
+        {
+            await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(user, true);
+            await connection.OpenAsync();
+            SqliteCommand command = connection.CreateCommand(
+                """
+                INSERT INTO decks (name)
+                VALUES (@name)
+                RETURNING id
+                """);
+
+            command.Parameters.AddWithValue("@name", name);
+
+            return Convert.ToInt32(await command.ExecuteScalarAsync());
+        }
     }
 }

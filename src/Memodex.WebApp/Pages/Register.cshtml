@@ -30,22 +30,22 @@
 
 
             <form method="post" novalidate autocomplete="off" class="mx-auto lg:w-1/2">
-                <div asp-validation-summary="ModelOnly" class="text-red-600 font-bold py-2">
+                <div aria-label="Registration error" role="alert" asp-validation-summary="ModelOnly" class="text-red-600 font-bold py-2">
                 </div>
                 <div>
-                    <label>Username</label>
+                    <label asp-for="Input.Username">Username</label>
                     <input asp-for="Input.Username" autofocus/>
-                    <span asp-validation-for="Input.Username" class="text-red-600 font-bold text-sm"></span>
+                    <span role="alert" asp-validation-for="Input.Username" class="text-red-600 font-bold text-sm"></span>
                 </div>
                 <div class="pt-2">
-                    <label>Password</label>
+                    <label asp-for="Input.Password">Password</label>
                     <input asp-for="Input.Password"/>
                     <span asp-validation-for="Input.Password" class="text-red-600 font-bold text-sm"></span>
                 </div>
                 <div class="pt-2">
-                    <label>Confirm Password</label>
+                    <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                     <input asp-for="Input.ConfirmPassword"/>
-                    <span asp-validation-for="Input.ConfirmPassword" class="text-red-600 font-bold text-sm"></span>
+                    <span aria-label="Password confirmation error" role="alert" asp-validation-for="Input.ConfirmPassword" class="text-red-600 font-bold text-sm"></span>
                 </div>
                 <div class="pt-2">
                     <button type="submit" class="btn-outline">Register</button>

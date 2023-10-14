@@ -3,7 +3,7 @@
 <div class="flex pt-2" hx-swap="outerHTML" hx-target="this">
     @Html.AntiForgeryToken()
 
-    <div>
+    <div role="listitem" class="w-full">
         <div class="flex text-gray-400 dark:text-slate-700">
 
             @{
@@ -12,6 +12,7 @@
             <button _="on click trigger edit"
                     hx-get="@editFlashcardUrl"
                     hx-trigger="edit"
+                    aria-label="edit flashcard"
                     class="btn-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 012.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
@@ -34,14 +35,9 @@
                 question @Model.OrdinalNumber
             </span>
         </div>
-        <div class="dark:text-gray-800 border rounded-xl shadow-xl p-5 mt-5">
-            <h3 class="py-2 text-slate-800 dark:text-slate-400">
-                <pre class="whitespace-pre-wrap">@Model.Question</pre>
-            </h3>
-            <hr/>
-            <h3 class="transition-all text-slate-800 dark:text-slate-400" id="answer">
-                <pre class="whitespace-pre-wrap">@Model.Answer</pre>
-            </h3>
+        <div class="dark:text-gray-500 dark:border-slate-600 border rounded-xl shadow-xl p-5 mt-5 divide-slate-600 divide-y">
+            <pre class="whitespace-pre-wrap font-sans p-2">@Model.Question</pre>
+            <pre class="whitespace-pre-wrap font-sans p-2">@Model.Answer</pre>
         </div>
     </div>
 

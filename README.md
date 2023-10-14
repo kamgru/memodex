@@ -76,3 +76,29 @@ dotnet publish -c Release -o publish
 cd publish
 ./Memodex.WebApp
 ```
+## Test
+
+### Integration Tests
+
+```bash
+cd src
+dotnet test --filter Integration
+```
+
+### End-to-End Tests
+
+```bash
+cd src
+dotnet run --project Memodex.WebApp &
+dotnet test --settings Memodex.Tests.E2e/.runsettings --filter E2e
+```
+
+### Running End-to-End tests within Rider
+<pre>
+|-- File
+    |-- Settings
+        |-- Build, Execution, Deployment 
+            |-- Unit Testing 
+                |-- Test Runner
+</pre>
+Add path to the `src/Memodex.Tests.E2e/.runsettings` file to `Test Settings`

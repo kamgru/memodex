@@ -1,3 +1,4 @@
+using Memodex.WebApp.Data;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -5,13 +6,20 @@ using Microsoft.Extensions.FileProviders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddLogging(opt =>
+{
+    opt.ClearProviders();
+    opt.AddConsole();
+});
 builder.Services.AddRazorPages();
 builder.Services.AddSession();
 builder.Services.AddScoped<ProfileProvider>();
 builder.Services.AddSingleton<MediaPathProvider>();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<MediaPhysicalPath>();
-builder.Services.AddSingleton<SqliteConnectionFactory>();
+builder.Services.AddScoped<MediaPhysicalPath>();
+builder.Services.AddScoped<SqliteConnectionFactory>();
+builder.Services.AddScoped<UserDatabase>();
+builder.Services.AddScoped<MemodexDatabase>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -38,6 +46,11 @@ if (builder.Environment.IsDevelopment())
 
 WebApplication app = builder.Build();
 
+using IServiceScope serviceScope = app.Services.CreateScope();
+IServiceProvider serviceProvider = serviceScope.ServiceProvider;
+MemodexDatabase memodexDatabase = serviceProvider.GetRequiredService<MemodexDatabase>();
+await memodexDatabase.EnsureExistsAsync();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -49,7 +62,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-MediaPhysicalPath mediaPhysicalPath = app.Services.GetRequiredService<MediaPhysicalPath>();
+MediaPhysicalPath mediaPhysicalPath = new(builder.Configuration);
 
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -70,27 +83,5 @@ app.UseAuthorization();
 
 app.MapRazorPages()
     .RequireAuthorization(options => { options.RequireAuthenticatedUser(); });
-
-
-if (!File.Exists("memodex.db"))
-{
-    SqliteConnectionFactory sqliteConnectionFactory = app.Services.GetRequiredService<SqliteConnectionFactory>();
-    await using SqliteConnection mdxDbConnection = sqliteConnectionFactory.CreateForApp();
-    await mdxDbConnection.OpenAsync();
-    await using SqliteCommand createDbCmd = mdxDbConnection.CreateCommand(
-        """
-        create table if not exists users
-        (
-            id              integer not null
-                constraint users_pk
-                    primary key autoincrement,
-            username        varchar(255) not null,
-            userId          varchar(255) not null,
-            passwordHash    varchar(255) not null
-        );
-        """);
-    await createDbCmd.ExecuteNonQueryAsync();
-}
-
 
 app.Run();

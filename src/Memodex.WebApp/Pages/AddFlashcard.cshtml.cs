@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Data.Common;
+using System.Security.Claims;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -45,30 +46,59 @@ public class AddFlashcard : PageModel
             return Page();
         }
 
-        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User, true);
-        await connection.OpenAsync();
-        await using DbTransaction transaction = await connection.BeginTransactionAsync();
-        await using SqliteCommand insertFlashcardCommand = connection.CreateCommand(
-            """
-            INSERT INTO flashcards (deckId, question, answer)
-            VALUES (@deckId, @question, @answer)
-            """);
-        insertFlashcardCommand.Parameters.AddWithValue("@deckId", Input.DeckId);
-        insertFlashcardCommand.Parameters.AddWithValue("@question", Input.Question);
-        insertFlashcardCommand.Parameters.AddWithValue("@answer", Input.Answer);
-        await insertFlashcardCommand.ExecuteNonQueryAsync();
-
-        await using SqliteCommand updateDeckCommand = connection.CreateCommand(
-            """
-            UPDATE decks
-            SET flashcardCount = flashcardCount + 1
-            WHERE id = @deckId
-            """);
-        updateDeckCommand.Parameters.AddWithValue("@deckId", Input.DeckId);
-        await updateDeckCommand.ExecuteNonQueryAsync();
-
-        await transaction.CommitAsync();
-
+        AddFlashcardWriter addFlashcardWriter = new(_sqliteConnectionFactory, User);
+        await addFlashcardWriter.AddFlashcardAsync(
+            Input.DeckId,
+            Input.Question,
+            Input.Answer);
+        
         return RedirectToPage("EditFlashcards", new { deckId = Input.DeckId });
+    }
+
+    public class AddFlashcardWriter
+    {
+        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+        private readonly ClaimsPrincipal _claimsPrincipal;
+
+        public AddFlashcardWriter(
+            SqliteConnectionFactory sqliteConnectionFactory,
+            ClaimsPrincipal claimsPrincipal)
+        {
+            _sqliteConnectionFactory = sqliteConnectionFactory;
+            _claimsPrincipal = claimsPrincipal;
+        }
+
+        public async Task<int> AddFlashcardAsync(
+            int deckId,
+            string question,
+            string answer)
+        {
+            await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(_claimsPrincipal, true);
+            await connection.OpenAsync();
+            await using DbTransaction transaction = await connection.BeginTransactionAsync();
+            await using SqliteCommand insertFlashcardCommand = connection.CreateCommand(
+                """
+                INSERT INTO flashcards (deckId, question, answer, ordinalNumber)
+                VALUES (@deckId, @question, @answer, (SELECT COUNT(*) FROM flashcards WHERE deckId = @deckId) + 1)
+                RETURNING id;
+                """);
+            insertFlashcardCommand.Parameters.AddWithValue("@deckId", deckId);
+            insertFlashcardCommand.Parameters.AddWithValue("@question", question);
+            insertFlashcardCommand.Parameters.AddWithValue("@answer", answer);
+            int flashcardId = Convert.ToInt32(await insertFlashcardCommand.ExecuteScalarAsync());
+
+            await using SqliteCommand updateDeckCommand = connection.CreateCommand(
+                """
+                UPDATE decks
+                SET flashcardCount = flashcardCount + 1
+                WHERE id = @deckId
+                RETURNING id;
+                """);
+            updateDeckCommand.Parameters.AddWithValue("@deckId", deckId);
+            await updateDeckCommand.ExecuteNonQueryAsync();
+            await transaction.CommitAsync();
+
+            return flashcardId;
+        }
     }
 }

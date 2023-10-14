@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <Playwright>
+    <LaunchOptions>
+      <Headless>false</Headless>
+    </LaunchOptions>
+  </Playwright>
+  <NUnit>
+    <WorkDirectory></WorkDirectory>
+  </NUnit>
+  <TestRunParameters>
+    <Parameter name="MemodexBaseUrl" value="http://localhost:5080" />
+  </TestRunParameters>
+</RunSettings>
