@@ -5,14 +5,9 @@ using NSubstitute;
 
 namespace Memodex.Tests.Integration;
 
-public record FakeDeck(
-    int Id,
-    string Name);
-
 public class DbFixture : IDisposable
 {
-    public DbFixture(
-        string? username = null)
+    public DbFixture()
     {
         IConfiguration configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new[]
@@ -26,7 +21,7 @@ public class DbFixture : IDisposable
 
         ClaimsIdentity claimsIdentity = new(new[]
         {
-            new Claim(ClaimTypes.Name, username ?? Guid.NewGuid()
+            new Claim(ClaimTypes.Name, Guid.NewGuid()
                 .ToString())
         });
         ClaimsPrincipal = new ClaimsPrincipal(claimsIdentity);
@@ -43,30 +38,6 @@ public class DbFixture : IDisposable
     {
         UserDatabase userDatabase = new(SqliteConnectionFactory, Substitute.For<ILogger<UserDatabase>>());
         await userDatabase.CreateAsync(ClaimsPrincipal);
-    }
-
-    public async Task EnsureUserExistsAsync(
-        string username,
-        string password)
-    {
-        MemodexDatabase memodexDatabase = new(SqliteConnectionFactory);
-        await memodexDatabase.EnsureExistsAsync();
-        await memodexDatabase.AddUserAsync(username, password);
-    }
-
-    public async Task<IEnumerable<FakeDeck>> SeedDecks(int deckCount = 10)
-    {
-        List<FakeDeck> fakeDecks = new();
-        for (int i = 0; i < deckCount; i++)
-        {
-            string deckName = $"Test Deck {i}";
-            fakeDecks.Add(
-                new FakeDeck(
-                    await SeedFlashcards(deckName),
-                    deckName));
-        }
-
-        return fakeDecks;
     }
 
     public async Task<int> SeedFlashcards(string? deckName = null)

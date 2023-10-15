@@ -6,8 +6,6 @@ public class UpdateFlashcardWriterTests : TestFixtureBase
     public async Task UpdateFlashcardAsync_UpdatesQuestionAndAnswer()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand deckCmd = connection.CreateCommand(
@@ -65,8 +63,6 @@ public class UpdateFlashcardWriterTests : TestFixtureBase
     public async Task UpdateFlashcardAsync_WhenFlashcardUpdated_ReturnsOrdinalNumber()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand deckCmd = connection.CreateCommand(

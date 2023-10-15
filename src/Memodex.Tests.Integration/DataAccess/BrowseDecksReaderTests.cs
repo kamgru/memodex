@@ -6,7 +6,6 @@ public class BrowseDecksReaderTests : TestFixtureBase
     public async Task GetDecksAsync_ReturnsAllDecks()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
 

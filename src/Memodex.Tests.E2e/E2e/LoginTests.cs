@@ -1,7 +1,3 @@
-using Microsoft.Playwright;
-using Microsoft.Playwright.NUnit;
-using NUnit.Framework;
-
 namespace Memodex.Tests.E2e.E2e;
 
 [TestFixture]

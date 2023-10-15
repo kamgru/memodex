@@ -6,8 +6,6 @@ public class AddDeckWriterTests : TestFixtureBase
     [Test]
     public async Task AddDeck_AddsDeckToDb()
     {
-        await DbFixture.CreateUserDb();
-
         AddDeck.AddDeckWriter addDeckWriter = new(DbFixture.SqliteConnectionFactory);
         int deckId = await addDeckWriter.AddDeckAsync("Test Deck", DbFixture.ClaimsPrincipal);
 

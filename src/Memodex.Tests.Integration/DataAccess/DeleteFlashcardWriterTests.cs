@@ -6,8 +6,6 @@ public class DeleteFlashcardWriterTests : TestFixtureBase
     public async Task DeleteFlashcardAsync_DeletesFlashcard()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand deckCmd = connection.CreateCommand(
@@ -55,8 +53,6 @@ public class DeleteFlashcardWriterTests : TestFixtureBase
     public async Task DeleteFlashcardAsync_WhenFlashcardDeleted_DeletesAssociatedChallenge()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand deckCmd = connection.CreateCommand(
@@ -115,8 +111,6 @@ public class DeleteFlashcardWriterTests : TestFixtureBase
     public async Task DeleteFlashcardAsync_WhenFlashcardDeleted_UpdateDeckFlashcardCount()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand deckCmd = connection.CreateCommand(

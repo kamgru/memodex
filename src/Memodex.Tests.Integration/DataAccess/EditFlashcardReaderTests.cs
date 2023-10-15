@@ -6,8 +6,6 @@ public class GetEditReaderTests : TestFixtureBase
     public async Task GetEditAsync_ReturnsCorrectFlashcard()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand deckCmd = connection.CreateCommand(

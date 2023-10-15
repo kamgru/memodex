@@ -6,22 +6,12 @@ public class ChallengeReaderTests : TestFixtureBase
     public async Task ReadChallengeAsync_WhenChallengeNotFound_ReturnsNull()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-        await using SqliteConnection connection =
-            DbFixture.SqliteConnectionFactory.CreateForUser(DbFixture.ClaimsPrincipal);
-        await connection.OpenAsync();
-        await using SqliteCommand command = connection.CreateCommand(
-            """
-            SELECT MAX(id) FROM challenges;
-            """);
-        int maxChallengeId = Convert.ToInt32(await command.ExecuteScalarAsync());
-        await connection.CloseAsync();
-
-        // Act
         CompleteChallenge.ChallengeReader challengeReader = new(
             DbFixture.SqliteConnectionFactory,
             DbFixture.ClaimsPrincipal);
-        CompleteChallenge.ChallengeItem? result = await challengeReader.ReadChallengeAsync(maxChallengeId + 1);
+        
+        // Act
+        CompleteChallenge.ChallengeItem? result = await challengeReader.ReadChallengeAsync(1);
 
         // Assert
         Assert.That(result, Is.Null);
@@ -36,7 +26,6 @@ public class ChallengeReaderTests : TestFixtureBase
         ChallengeState challengeState)
     {
         // Arrange
-        await DbFixture.CreateUserDb();
         await using SqliteConnection connection =
             DbFixture.SqliteConnectionFactory.CreateForUser(DbFixture.ClaimsPrincipal);
         await connection.OpenAsync();

@@ -6,8 +6,6 @@ public class FlashcardReaderTests : TestFixtureBase
     public async Task GetSingleFlashcardAsync_ReturnsCorrectFlashcard()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand insertDeckCmd = connection.CreateCommand(
@@ -51,21 +49,11 @@ public class FlashcardReaderTests : TestFixtureBase
     public async Task GetSingleFlashcardAsync_WhenFlashcardNotFound_ReturnsNull()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
-        await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
-        await connection.OpenAsync();
-        await using SqliteCommand maxIdCommand = connection.CreateCommand(
-            """
-            SELECT MAX(id) FROM flashcards;
-            """);
-        int maxId = Convert.ToInt32(await maxIdCommand.ExecuteScalarAsync());
-        int flashcardId = maxId + 1;
-
-        // Act
         EditFlashcards.FlashcardReader flashcardReader =
             new(DbFixture.SqliteConnectionFactory, DbFixture.ClaimsPrincipal);
-        EditFlashcards.FlashcardItem? flashcardItem = await flashcardReader.GetSingleFlashcard(flashcardId);
+        
+        // Act
+        EditFlashcards.FlashcardItem? flashcardItem = await flashcardReader.GetSingleFlashcard(1);
 
         // Assert
         Assert.That(flashcardItem, Is.Null);
@@ -75,7 +63,6 @@ public class FlashcardReaderTests : TestFixtureBase
     public async Task GetManyFlashcardsAsync_ReturnsCorrectFlashcards()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
         int deckId = await DbFixture.SeedFlashcards();
 
         // Act
@@ -97,7 +84,6 @@ public class FlashcardReaderTests : TestFixtureBase
     public async Task GetManyFlashcardsAsync_ReturnsCorrectTotalItemCount()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
         int deckId = await DbFixture.SeedFlashcards();
 
         // Act
@@ -114,7 +100,6 @@ public class FlashcardReaderTests : TestFixtureBase
     public async Task GetManyFlashcardsAsync_WhenPageNumberIsTooHigh_ReturnsEmptyList()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
         int deckId = await DbFixture.SeedFlashcards();
 
         // Act

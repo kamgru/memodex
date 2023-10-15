@@ -6,8 +6,6 @@ public class EditDeckWriterTests : TestFixtureBase
     public async Task EditDeckAsync_WhenDeckExists_UpdatesDeck()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(

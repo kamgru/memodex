@@ -6,8 +6,6 @@ public class DeleteDeckWriterTests : TestFixtureBase
     public async Task DeleteDeckAsync_WhenDeckExists_DeletesDeck()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
@@ -43,8 +41,6 @@ public class DeleteDeckWriterTests : TestFixtureBase
     public async Task DeleteDeckAsync_WhenDeckDeleted_DeletesFlashcards()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(

@@ -6,8 +6,6 @@ public class AddFlashcardWriterTests : TestFixtureBase
     public async Task AddFlashcard_AddsFlashcardToDb()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
@@ -52,8 +50,6 @@ public class AddFlashcardWriterTests : TestFixtureBase
     public async Task AddFlashcard_IncrementsDeckItemCount()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
@@ -90,8 +86,6 @@ public class AddFlashcardWriterTests : TestFixtureBase
     public async Task AddFlashcardAsync_IncrementsOrdinalNumber()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(

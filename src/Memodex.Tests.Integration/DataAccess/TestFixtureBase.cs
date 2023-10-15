@@ -2,13 +2,16 @@ namespace Memodex.Tests.Integration.DataAccess;
 
 public abstract class TestFixtureBase
 {
-    protected readonly DbFixture DbFixture = new();
+    protected DbFixture DbFixture = new();
 
-    [OneTimeSetUp]
-    public async Task OneTimeSetUp() =>
+    [SetUp]
+    public async Task SetUp()
+    {
+        DbFixture = new DbFixture();
         await DbFixture.CreateUserDb();
+    }
 
-    [OneTimeTearDown]
-    public void OneTimeTearDown() =>
-        DbFixture.Dispose();
+    [TearDown]
+    public void TearDown() =>
+        DbFixture?.Dispose();
 }

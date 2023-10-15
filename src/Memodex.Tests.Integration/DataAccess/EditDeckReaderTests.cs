@@ -6,8 +6,6 @@ public class EditDeckReaderTests : TestFixtureBase
     public async Task GetDeckAsync_WhenDeckNotFound_ReturnsNull()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
@@ -30,8 +28,6 @@ public class EditDeckReaderTests : TestFixtureBase
     public async Task GetDeckAsync_WhenDeckExists_ReturnsCorrectDeck()
     {
         // Arrange
-        await DbFixture.CreateUserDb();
-
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
