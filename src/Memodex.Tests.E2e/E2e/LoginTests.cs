@@ -9,13 +9,13 @@ public class LoginTests : PageTest
     {
         const string username = "login_existing_user";
         const string password = "password";
-        
+
         DbFixture dbFixture = new(username);
         await dbFixture.EnsureUserExistsAsync(username, password);
         await dbFixture.CreateUserDb();
-        
+
         await Page.GotoAsync($"{Config.BaseUrl}/Login");
-        
+
         await Page.GetByLabel("Username")
             .FillAsync(username);
 
@@ -45,10 +45,10 @@ public class LoginTests : PageTest
 
         await Page.GetByRole(AriaRole.Button)
             .ClickAsync();
-        
+
         ILocator alertLocator = Page.GetByRole(AriaRole.Alert,
             new PageGetByRoleOptions { Name = "Login error" });
-        
+
         await Expect(alertLocator)
             .ToHaveTextAsync("Invalid login attempt.");
     }
@@ -59,12 +59,12 @@ public class LoginTests : PageTest
         const string username = "login_existing_user";
         const string password = "password";
         const string invalidPassword = "invalidPassword";
-        
+
         DbFixture dbFixture = new(username);
         await dbFixture.EnsureUserExistsAsync(username, password);
-        
+
         await Page.GotoAsync($"{Config.BaseUrl}/Login");
-        
+
         await Page.GetByLabel("Username")
             .FillAsync(username);
 
@@ -73,10 +73,10 @@ public class LoginTests : PageTest
 
         await Page.GetByRole(AriaRole.Button)
             .ClickAsync();
-        
+
         ILocator alertLocator = Page.GetByRole(AriaRole.Alert,
             new PageGetByRoleOptions { Name = "Login error" });
-        
+
         await Expect(alertLocator)
             .ToHaveTextAsync("Invalid login attempt.");
     }

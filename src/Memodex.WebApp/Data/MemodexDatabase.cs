@@ -6,22 +6,30 @@ namespace Memodex.WebApp.Data;
 
 public class AddUserResult
 {
-    public bool IsSuccess { get; }
-    public string ErrorMessage { get; }
-    public MdxUser? User { get; }
-
     private AddUserResult(
-        string? errorMessage, MdxUser? mdxUser = null)
+        string? errorMessage,
+        MdxUser? mdxUser = null)
     {
         ErrorMessage = errorMessage ?? string.Empty;
         IsSuccess = errorMessage is null;
         User = mdxUser;
     }
 
-    public static AddUserResult Success(MdxUser mdxUser) => new(null, mdxUser);
+    public bool IsSuccess { get; }
+    public string ErrorMessage { get; }
+    public MdxUser? User { get; }
+
+    public static AddUserResult Success(
+        MdxUser mdxUser)
+    {
+        return new AddUserResult(null, mdxUser);
+    }
 
     public static AddUserResult Failure(
-        string errorMessage) => new(errorMessage);
+        string errorMessage)
+    {
+        return new AddUserResult(errorMessage);
+    }
 }
 
 public class MemodexDatabase
@@ -117,20 +125,20 @@ public class MemodexDatabase
             """);
         string usernameNormalized = username.ToLowerInvariant();
         getUserCmd.Parameters.AddWithValue("@username", usernameNormalized);
-        
+
         await using SqliteDataReader reader = await getUserCmd.ExecuteReaderAsync();
         if (!await reader.ReadAsync())
         {
             return null;
         }
-        
+
         MdxUser user = new()
         {
             UserId = reader.GetString(0),
             Username = reader.GetString(1),
             PasswordHash = reader.GetString(2)
         };
-        
+
         await mdxDbConnection.CloseAsync();
         return user;
     }

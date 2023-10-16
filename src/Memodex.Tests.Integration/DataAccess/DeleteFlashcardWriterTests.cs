@@ -99,7 +99,7 @@ public class DeleteFlashcardWriterTests : TestFixtureBase
         await using SqliteCommand countCmd = connection.CreateCommand(
             """
             SELECT COUNT(*)
-            FROM challenges 
+            FROM challenges
             WHERE id = @challengeId;
             """);
         countCmd.Parameters.AddWithValue("@challengeId", challengeId);

@@ -41,7 +41,7 @@ public class GetEditReaderTests : TestFixtureBase
             new(DbFixture.SqliteConnectionFactory, DbFixture.ClaimsPrincipal);
         EditFlashcards.EditFlashcardItem editFlashcardItem =
             await editFlashcardReader.GetEditAsync(flashcardIds[1]);
-        
+
         // Assert
         Assert.Multiple(() =>
         {

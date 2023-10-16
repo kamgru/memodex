@@ -13,7 +13,7 @@ public class EditDeckReaderTests : TestFixtureBase
             SELECT MAX(id) FROM decks;
             """);
         object? scalar = await command.ExecuteScalarAsync();
-        int maxDeckId = scalar is DBNull ? 1: Convert.ToInt32(scalar);
+        int maxDeckId = scalar is DBNull ? 1 : Convert.ToInt32(scalar);
         await connection.CloseAsync();
 
         // Act
@@ -32,7 +32,7 @@ public class EditDeckReaderTests : TestFixtureBase
         await connection.OpenAsync();
         await using SqliteCommand command = connection.CreateCommand(
             """
-            INSERT INTO decks (name, description) 
+            INSERT INTO decks (name, description)
             VALUES ('Test Deck', 'Test Description')
             RETURNING id;
             """);

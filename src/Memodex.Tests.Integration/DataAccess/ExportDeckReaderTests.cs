@@ -17,13 +17,13 @@ public class ExportDeckReaderTests : TestFixtureBase
         int maxDeckId = maxDeckIdObj is DBNull ? 1 : Convert.ToInt32(maxDeckIdObj);
         int deckId = maxDeckId + 1;
         await connection.CloseAsync();
-        
+
         ExportDeck.ExportDeckReader exportDeckReader =
             new(DbFixture.SqliteConnectionFactory, DbFixture.ClaimsPrincipal);
-        
+
         // Act
         ExportDeck.DeckItem? deckItem = await exportDeckReader.GetDeckAsync(deckId);
-        
+
         // Assert
         Assert.That(deckItem, Is.Null);
     }
@@ -34,7 +34,7 @@ public class ExportDeckReaderTests : TestFixtureBase
         // Arrange
         string deckName = RandomString.Generate();
         string deckDescription = RandomString.Generate();
-        
+
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand insertDeckCmd = connection.CreateCommand(
@@ -47,13 +47,13 @@ public class ExportDeckReaderTests : TestFixtureBase
         insertDeckCmd.Parameters.AddWithValue("@deckDescription", deckDescription);
         int deckId = Convert.ToInt32(await insertDeckCmd.ExecuteScalarAsync());
         await connection.CloseAsync();
-        
+
         ExportDeck.ExportDeckReader exportDeckReader =
             new(DbFixture.SqliteConnectionFactory, DbFixture.ClaimsPrincipal);
-        
+
         // Act
         ExportDeck.DeckItem? deckItem = await exportDeckReader.GetDeckAsync(deckId);
-        
+
         // Assert
         Assert.Multiple(() =>
         {
@@ -68,7 +68,7 @@ public class ExportDeckReaderTests : TestFixtureBase
     {
         // Arrange
         string deckName = RandomString.Generate();
-        
+
         await using SqliteConnection connection = DbFixture.CreateConnectionForUser();
         await connection.OpenAsync();
         await using SqliteCommand insertDeckCmd = connection.CreateCommand(
@@ -79,13 +79,13 @@ public class ExportDeckReaderTests : TestFixtureBase
             """);
         insertDeckCmd.Parameters.AddWithValue("@deckName", deckName);
         int deckId = Convert.ToInt32(await insertDeckCmd.ExecuteScalarAsync());
-        
+
         ExportDeck.ExportDeckReader exportDeckReader =
             new(DbFixture.SqliteConnectionFactory, DbFixture.ClaimsPrincipal);
-        
+
         // Act
         ExportDeck.DeckItem? deckItem = await exportDeckReader.GetDeckAsync(deckId);
-        
+
         // Assert
         Assert.Multiple(() =>
         {
@@ -109,13 +109,13 @@ public class ExportDeckReaderTests : TestFixtureBase
             """);
         int deckId = Convert.ToInt32(await insertDeckCmd.ExecuteScalarAsync());
         await connection.CloseAsync();
-        
+
         ExportDeck.ExportDeckReader exportDeckReader =
             new(DbFixture.SqliteConnectionFactory, DbFixture.ClaimsPrincipal);
-        
+
         // Act 
         ExportDeck.DeckItem? deckItem = await exportDeckReader.GetDeckAsync(deckId);
-        
+
         // Assert
         Assert.Multiple(() =>
         {
@@ -137,7 +137,7 @@ public class ExportDeckReaderTests : TestFixtureBase
             RETURNING id;
             """);
         int deckId = Convert.ToInt32(await insertDeckCmd.ExecuteScalarAsync());
-        
+
         await using SqliteCommand insertFlashcardsCmd = connection.CreateCommand(
             """
             INSERT INTO flashcards (question, answer, deckId)
@@ -150,13 +150,13 @@ public class ExportDeckReaderTests : TestFixtureBase
         insertFlashcardsCmd.Parameters.AddWithValue("@deckId", deckId);
         await insertFlashcardsCmd.ExecuteNonQueryAsync();
         await connection.CloseAsync();
-        
+
         ExportDeck.ExportDeckReader exportDeckReader =
             new(DbFixture.SqliteConnectionFactory, DbFixture.ClaimsPrincipal);
-        
+
         // Act
         ExportDeck.DeckItem? deckItem = await exportDeckReader.GetDeckAsync(deckId);
-        
+
         // Assert
         Assert.Multiple(() =>
         {

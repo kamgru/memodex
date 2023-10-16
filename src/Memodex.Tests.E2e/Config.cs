@@ -1,5 +1,3 @@
-using NUnit.Framework;
-
 namespace Memodex.Tests.E2e;
 
 public static class Config

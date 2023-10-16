@@ -49,7 +49,6 @@ public class ImportDeck : PageModel
                                 })
                             ?? throw new InvalidOperationException("Invalid JSON file");
 
-
         await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User, true);
         await connection.OpenAsync();
 

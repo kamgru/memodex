@@ -4,9 +4,9 @@ namespace Memodex.Tests.E2e.E2e;
 [Parallelizable(ParallelScope.Self)]
 public class DeckManagementTests : PageTest
 {
-    private const string Password = "password";
-    private string _username = RandomString.Generate();
     private DbFixture _dbFixture = new();
+    private string _username = RandomString.Generate();
+    private const string Password = "password";
 
     [SetUp]
     public async Task Setup()
@@ -270,7 +270,7 @@ public class DeckManagementTests : PageTest
 
         await Page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { Name = "Add Flashcard" })
             .ClickAsync();
-        
+
         await Expect(Page.GetByRole(AriaRole.Heading))
             .ToHaveTextAsync("Add Flashcard");
 
@@ -285,7 +285,7 @@ public class DeckManagementTests : PageTest
 
         await Page.GetByTestId("flashcard list end")
             .ScrollIntoViewIfNeededAsync();
-        
+
         await Expect(Page.GetByRole(AriaRole.List))
             .ToHaveTextAsync(new Regex($@"\s*{question}\s*{answer}"));
     }

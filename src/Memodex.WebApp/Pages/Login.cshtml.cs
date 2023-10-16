@@ -43,7 +43,7 @@ public class Login : PageModel
         {
             return Page();
         }
-        
+
         MemodexDatabase memodexDatabase = new(_sqliteConnectionFactory);
         MdxUser? user = await memodexDatabase.GetUserAsync(Input.Username);
         if (user is null)
@@ -51,7 +51,7 @@ public class Login : PageModel
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return Page();
         }
-        
+
         PasswordHasher<MdxUser> hasher = new();
         if (hasher.VerifyHashedPassword(user, user.PasswordHash, Input.Password) == PasswordVerificationResult.Failed)
         {

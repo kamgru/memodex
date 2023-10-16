@@ -51,7 +51,7 @@ public class FlashcardReaderTests : TestFixtureBase
         // Arrange
         EditFlashcards.FlashcardReader flashcardReader =
             new(DbFixture.SqliteConnectionFactory, DbFixture.ClaimsPrincipal);
-        
+
         // Act
         EditFlashcards.FlashcardItem? flashcardItem = await flashcardReader.GetSingleFlashcard(1);
 

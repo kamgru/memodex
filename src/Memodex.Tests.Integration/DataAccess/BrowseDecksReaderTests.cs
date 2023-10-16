@@ -20,9 +20,10 @@ public class BrowseDecksReaderTests : TestFixtureBase
         await command.ExecuteNonQueryAsync();
 
         // Act
-        BrowseDecks.BrowseDecksReader browseDecksReader = new(DbFixture.SqliteConnectionFactory, DbFixture.ClaimsPrincipal);
+        BrowseDecks.BrowseDecksReader browseDecksReader =
+            new(DbFixture.SqliteConnectionFactory, DbFixture.ClaimsPrincipal);
         IEnumerable<BrowseDecks.DeckItem> decks = await browseDecksReader.GetDecksAsync();
-        
+
         // Assert
         Assert.Multiple(() =>
         {

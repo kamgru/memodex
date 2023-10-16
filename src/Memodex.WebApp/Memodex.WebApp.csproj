@@ -44,13 +44,13 @@
             <DependentUpon>ImportDeck.cshtml</DependentUpon>
         </None>
         <None Update="Pages\Shared\Notification.ts">
-          <DependentUpon>_Notification.cshtml</DependentUpon>
+            <DependentUpon>_Notification.cshtml</DependentUpon>
         </None>
         <None Update="Pages\Shared\ThemeToggle.ts">
-          <DependentUpon>_ThemeTogglePartial.cshtml</DependentUpon>
+            <DependentUpon>_ThemeTogglePartial.cshtml</DependentUpon>
         </None>
         <None Update="Pages\Shared\FlashcardEngage.ts">
-          <DependentUpon>_FlashcardEngagePartial.cshtml</DependentUpon>
+            <DependentUpon>_FlashcardEngagePartial.cshtml</DependentUpon>
         </None>
     </ItemGroup>
 
@@ -63,13 +63,13 @@
 
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="wwwroot\js\Infrastructure\KeyboardInput.js" />
+        <_ContentIncludedByDefault Remove="wwwroot\js\Infrastructure\KeyboardInput.js"/>
     </ItemGroup>
 
 
     <ItemGroup>
-      <Folder Include="wwwroot\css\" />
-      <Folder Include="wwwroot\js\" />
+        <Folder Include="wwwroot\css\"/>
+        <Folder Include="wwwroot\js\"/>
     </ItemGroup>
 
 </Project>

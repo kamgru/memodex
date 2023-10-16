@@ -32,7 +32,7 @@ public class EditDeckWriterTests : TestFixtureBase
         selectCommand.Parameters.AddWithValue("@id", deckId);
         await using SqliteDataReader reader = await selectCommand.ExecuteReaderAsync();
         await reader.ReadAsync();
-        
+
         Assert.Multiple(() =>
         {
             Assert.That(reader.GetString(0), Is.EqualTo("New Name"));

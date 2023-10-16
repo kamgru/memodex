@@ -21,44 +21,10 @@ public class AddFlashcard : PageModel
         public string Answer { get; init; } = string.Empty;
     }
 
-    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
-
-    public AddFlashcard(
-        SqliteConnectionFactory sqliteConnectionFactory)
-    {
-        _sqliteConnectionFactory = sqliteConnectionFactory;
-    }
-
-    [BindProperty]
-    public FormInput Input { get; set; } = new();
-
-    public IActionResult OnGet(
-        int deckId)
-    {
-        Input.DeckId = deckId;
-        return Page();
-    }
-
-    public async Task<IActionResult> OnPostAsync()
-    {
-        if (!ModelState.IsValid)
-        {
-            return Page();
-        }
-
-        AddFlashcardWriter addFlashcardWriter = new(_sqliteConnectionFactory, User);
-        await addFlashcardWriter.AddFlashcardAsync(
-            Input.DeckId,
-            Input.Question,
-            Input.Answer);
-        
-        return RedirectToPage("EditFlashcards", new { deckId = Input.DeckId });
-    }
-
     public class AddFlashcardWriter
     {
-        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
         private readonly ClaimsPrincipal _claimsPrincipal;
+        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
 
         public AddFlashcardWriter(
             SqliteConnectionFactory sqliteConnectionFactory,
@@ -100,5 +66,39 @@ public class AddFlashcard : PageModel
 
             return flashcardId;
         }
+    }
+
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public AddFlashcard(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
+    [BindProperty]
+    public FormInput Input { get; set; } = new();
+
+    public IActionResult OnGet(
+        int deckId)
+    {
+        Input.DeckId = deckId;
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid)
+        {
+            return Page();
+        }
+
+        AddFlashcardWriter addFlashcardWriter = new(_sqliteConnectionFactory, User);
+        await addFlashcardWriter.AddFlashcardAsync(
+            Input.DeckId,
+            Input.Question,
+            Input.Answer);
+
+        return RedirectToPage("EditFlashcards", new { deckId = Input.DeckId });
     }
 }

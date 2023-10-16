@@ -2,7 +2,8 @@ namespace Memodex.Tests.E2e;
 
 public static class RandomString
 {
-    private static char[] _chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".ToCharArray();
+    private static readonly char[] _chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".ToCharArray();
 
     public static string Generate(
         int length = 10)

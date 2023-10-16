@@ -31,8 +31,18 @@ public class DbFixture : IDisposable
 
     public ClaimsPrincipal ClaimsPrincipal { get; }
 
-    public SqliteConnection CreateConnectionForUser() =>
-        SqliteConnectionFactory.CreateForUser(ClaimsPrincipal, true, true);
+    public void Dispose()
+    {
+        if (File.Exists(SqliteConnectionFactory.GetDatabaseNameForUser(ClaimsPrincipal)))
+        {
+            File.Delete(SqliteConnectionFactory.GetDatabaseNameForUser(ClaimsPrincipal));
+        }
+    }
+
+    public SqliteConnection CreateConnectionForUser()
+    {
+        return SqliteConnectionFactory.CreateForUser(ClaimsPrincipal, true, true);
+    }
 
     public async Task CreateUserDb()
     {
@@ -40,7 +50,8 @@ public class DbFixture : IDisposable
         await userDatabase.CreateAsync(ClaimsPrincipal);
     }
 
-    public async Task<int> SeedFlashcards(string? deckName = null)
+    public async Task<int> SeedFlashcards(
+        string? deckName = null)
     {
         await using SqliteConnection connection = CreateConnectionForUser();
         await connection.OpenAsync();
@@ -98,13 +109,5 @@ public class DbFixture : IDisposable
         await connection.CloseAsync();
 
         return deckId;
-    }
-
-    public void Dispose()
-    {
-        if (File.Exists(SqliteConnectionFactory.GetDatabaseNameForUser(ClaimsPrincipal)))
-        {
-            File.Delete(SqliteConnectionFactory.GetDatabaseNameForUser(ClaimsPrincipal));
-        }
     }
 }

@@ -48,11 +48,11 @@ public class DeleteDeckWriterTests : TestFixtureBase
             INSERT INTO decks (name, description)
             VALUES ('Test Deck', 'Test Description')
             RETURNING id;
-            
+
             WITH inserted AS (
                 SELECT last_insert_rowid() AS id)
-                INSERT INTO flashcards (question, answer, deckId) 
-                VALUES 
+                INSERT INTO flashcards (question, answer, deckId)
+                VALUES
                     ('Test Question 1', 'Test Answer 1', (SELECT id FROM inserted LIMIT 1)),
                     ('Test Question 2', 'Test Answer 2', (SELECT id FROM inserted LIMIT 1)),
                     ('Test Question 3', 'Test Answer 3', (SELECT id FROM inserted LIMIT 1));

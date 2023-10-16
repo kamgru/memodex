@@ -10,7 +10,7 @@ public class RegisterTests : PageTest
         string username = RandomString.Generate();
         string password = Guid.NewGuid()
             .ToString();
-        
+
         await Page.GotoAsync($"{Config.BaseUrl}/Register");
 
         await Page.GetByLabel("Username")

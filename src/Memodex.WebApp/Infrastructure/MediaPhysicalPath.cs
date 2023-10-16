@@ -2,8 +2,8 @@ namespace Memodex.WebApp.Infrastructure;
 
 public class MediaPhysicalPath
 {
-    private readonly IConfiguration _configuration;
     private static string? _mediaRootPath;
+    private readonly IConfiguration _configuration;
 
     public MediaPhysicalPath(
         IConfiguration configuration)
@@ -19,8 +19,8 @@ public class MediaPhysicalPath
         }
 
         _mediaRootPath = _configuration.GetSection("Media")
-                                   .GetValue<string>("Path")
-                               ?? throw new InvalidOperationException("Missing configuration for Media:Path.");
+                             .GetValue<string>("Path")
+                         ?? throw new InvalidOperationException("Missing configuration for Media:Path.");
         if (!Path.IsPathRooted(_mediaRootPath))
         {
             _mediaRootPath = Path.Combine(Directory.GetCurrentDirectory(), _mediaRootPath);

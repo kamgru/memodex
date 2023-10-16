@@ -105,7 +105,7 @@ public class AddFlashcardWriterTests : TestFixtureBase
         {
             await addFlashcardWriter.AddFlashcardAsync(deckId, "Test Question", "Test Answer");
         }
-        
+
         // Assert
         await connection.OpenAsync();
         await using SqliteCommand assertCommand = connection.CreateCommand(

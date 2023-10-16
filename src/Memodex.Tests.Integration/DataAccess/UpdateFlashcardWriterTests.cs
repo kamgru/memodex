@@ -51,7 +51,7 @@ public class UpdateFlashcardWriterTests : TestFixtureBase
         flashcardCmd2.Parameters.AddWithValue("@id", flashcardIds[1]);
         await using SqliteDataReader assertionReader = await flashcardCmd2.ExecuteReaderAsync();
         await assertionReader.ReadAsync();
-        
+
         Assert.Multiple(() =>
         {
             Assert.That(assertionReader.GetString(0), Is.EqualTo("New Question"));

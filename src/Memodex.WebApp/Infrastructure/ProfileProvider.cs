@@ -57,7 +57,10 @@ public class ProfileProvider
 
         Dictionary<string, string> userPrefs = new();
         await using SqliteDataReader prefsReader = await getPrefsCmd.ExecuteReaderAsync();
-        while (await prefsReader.ReadAsync()) userPrefs.Add(prefsReader.GetString(0), prefsReader.GetString(1));
+        while (await prefsReader.ReadAsync())
+        {
+            userPrefs.Add(prefsReader.GetString(0), prefsReader.GetString(1));
+        }
 
         if (!userPrefs.TryGetValue("avatar", out string? value))
         {

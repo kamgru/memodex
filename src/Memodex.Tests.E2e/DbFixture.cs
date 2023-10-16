@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using NUnit.Framework;
 
 namespace Memodex.Tests.E2e;
 
@@ -37,8 +36,18 @@ public class DbFixture : IDisposable
 
     public ClaimsPrincipal ClaimsPrincipal { get; }
 
-    public SqliteConnection CreateConnectionForUser() =>
-        SqliteConnectionFactory.CreateForUser(ClaimsPrincipal, true, true);
+    public void Dispose()
+    {
+        if (File.Exists(SqliteConnectionFactory.GetDatabaseNameForUser(ClaimsPrincipal)))
+        {
+            File.Delete(SqliteConnectionFactory.GetDatabaseNameForUser(ClaimsPrincipal));
+        }
+    }
+
+    public SqliteConnection CreateConnectionForUser()
+    {
+        return SqliteConnectionFactory.CreateForUser(ClaimsPrincipal, true, true);
+    }
 
     public async Task CreateUserDb()
     {
@@ -55,7 +64,8 @@ public class DbFixture : IDisposable
         await memodexDatabase.AddUserAsync(username, password);
     }
 
-    public async Task<IEnumerable<FakeDeck>> SeedDecks(int deckCount = 10)
+    public async Task<IEnumerable<FakeDeck>> SeedDecks(
+        int deckCount = 10)
     {
         List<FakeDeck> fakeDecks = new();
         for (int i = 0; i < deckCount; i++)
@@ -70,7 +80,8 @@ public class DbFixture : IDisposable
         return fakeDecks;
     }
 
-    public async Task<int> SeedFlashcards(string? deckName = null)
+    public async Task<int> SeedFlashcards(
+        string? deckName = null)
     {
         await using SqliteConnection connection = CreateConnectionForUser();
         await connection.OpenAsync();
@@ -128,13 +139,5 @@ public class DbFixture : IDisposable
         await connection.CloseAsync();
 
         return deckId;
-    }
-
-    public void Dispose()
-    {
-        if (File.Exists(SqliteConnectionFactory.GetDatabaseNameForUser(ClaimsPrincipal)))
-        {
-            File.Delete(SqliteConnectionFactory.GetDatabaseNameForUser(ClaimsPrincipal));
-        }
     }
 }

@@ -7,33 +7,16 @@ namespace Memodex.WebApp.Pages;
 
 public class BrowseDecks : PageModel
 {
-    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
-
-    public BrowseDecks(
-        SqliteConnectionFactory sqliteConnectionFactory)
-    {
-        _sqliteConnectionFactory = sqliteConnectionFactory;
-    }
-
     public record DeckItem(
         int Id,
         string Name,
         string Description,
         int ItemCount);
 
-    public IReadOnlyList<DeckItem> Decks { get; set; } = new List<DeckItem>();
-
-    public async Task<IActionResult> OnGetAsync()
-    {
-        BrowseDecksReader browseDecksReader = new(_sqliteConnectionFactory, User);
-        Decks = await browseDecksReader.GetDecksAsync();
-        return Page();
-    }
-
     public class BrowseDecksReader
     {
-        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
         private readonly ClaimsPrincipal _claimsPrincipal;
+        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
 
         public BrowseDecksReader(
             SqliteConnectionFactory sqliteConnectionFactory,
@@ -67,5 +50,22 @@ public class BrowseDecks : PageModel
 
             return decks;
         }
+    }
+
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+    public BrowseDecks(
+        SqliteConnectionFactory sqliteConnectionFactory)
+    {
+        _sqliteConnectionFactory = sqliteConnectionFactory;
+    }
+
+    public IReadOnlyList<DeckItem> Decks { get; set; } = new List<DeckItem>();
+
+    public async Task<IActionResult> OnGetAsync()
+    {
+        BrowseDecksReader browseDecksReader = new(_sqliteConnectionFactory, User);
+        Decks = await browseDecksReader.GetDecksAsync();
+        return Page();
     }
 }
