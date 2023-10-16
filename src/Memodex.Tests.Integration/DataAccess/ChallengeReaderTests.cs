@@ -9,7 +9,7 @@ public class ChallengeReaderTests : TestFixtureBase
         CompleteChallenge.ChallengeReader challengeReader = new(
             DbFixture.SqliteConnectionFactory,
             DbFixture.ClaimsPrincipal);
-        
+
         // Act
         CompleteChallenge.ChallengeItem? result = await challengeReader.ReadChallengeAsync(1);
 

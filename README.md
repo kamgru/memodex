@@ -76,6 +76,7 @@ dotnet publish -c Release -o publish
 cd publish
 ./Memodex.WebApp
 ```
+
 ## Test
 
 ### Integration Tests
@@ -94,6 +95,7 @@ dotnet test --settings Memodex.Tests.E2e/.runsettings --filter E2e
 ```
 
 ### Running End-to-End tests within Rider
+
 <pre>
 |-- File
     |-- Settings

@@ -42,7 +42,7 @@
                 <p class="mt-1 truncate text-xs" id="description_@deck.Id">@deck.Description</p>
             </div>
             <div class="flex flex-col items-end justify-center px-2">
-                <a href="@Url.Page("EditFlashcards", new { deckId = deck.Id })" 
+                <a href="@Url.Page("EditFlashcards", new { deckId = deck.Id })"
                    aria-label="edit flashcards"
                    class="btn-icon">
                     @deck.ItemCount

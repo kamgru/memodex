@@ -12,6 +12,8 @@ public abstract class TestFixtureBase
     }
 
     [TearDown]
-    public void TearDown() =>
+    public void TearDown()
+    {
         DbFixture?.Dispose();
+    }
 }

@@ -101,7 +101,7 @@ public class MemodexDatabaseTests : TestFixtureBase
         command.Parameters.AddWithValue("@userId", addUserResult.User!.UserId);
         long count = Convert.ToInt64(await command.ExecuteScalarAsync());
         await connection.CloseAsync();
-        
+
         Assert.That(count, Is.EqualTo(0));
     }
 }

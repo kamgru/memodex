@@ -6,8 +6,8 @@ namespace Memodex.WebApp.Data;
 
 public class UserDatabase
 {
-    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
     private readonly ILogger<UserDatabase> _logger;
+    private readonly SqliteConnectionFactory _sqliteConnectionFactory;
 
     public UserDatabase(
         SqliteConnectionFactory sqliteConnectionFactory,

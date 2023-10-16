@@ -15,6 +15,35 @@ public class AddDeck : PageModel
         public string Name { get; init; } = string.Empty;
     }
 
+    public class AddDeckWriter
+    {
+        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+        public AddDeckWriter(
+            SqliteConnectionFactory sqliteConnectionFactory)
+        {
+            _sqliteConnectionFactory = sqliteConnectionFactory;
+        }
+
+        public async Task<int> AddDeckAsync(
+            string name,
+            ClaimsPrincipal user)
+        {
+            await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(user, true);
+            await connection.OpenAsync();
+            SqliteCommand command = connection.CreateCommand(
+                """
+                INSERT INTO decks (name)
+                VALUES (@name)
+                RETURNING id
+                """);
+
+            command.Parameters.AddWithValue("@name", name);
+
+            return Convert.ToInt32(await command.ExecuteScalarAsync());
+        }
+    }
+
     private readonly SqliteConnectionFactory _sqliteConnectionFactory;
 
     public AddDeck(
@@ -43,34 +72,5 @@ public class AddDeck : PageModel
             User);
 
         return RedirectToPage("EditDeck", new { deckId });
-    }
-
-    public class AddDeckWriter
-    {
-        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
-
-        public AddDeckWriter(
-            SqliteConnectionFactory sqliteConnectionFactory)
-        {
-            _sqliteConnectionFactory = sqliteConnectionFactory;
-        }
-
-        public async Task<int> AddDeckAsync(
-            string name,
-            ClaimsPrincipal user)
-        {
-            await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(user, true);
-            await connection.OpenAsync();
-            SqliteCommand command = connection.CreateCommand(
-                """
-                INSERT INTO decks (name)
-                VALUES (@name)
-                RETURNING id
-                """);
-
-            command.Parameters.AddWithValue("@name", name);
-
-            return Convert.ToInt32(await command.ExecuteScalarAsync());
-        }
     }
 }

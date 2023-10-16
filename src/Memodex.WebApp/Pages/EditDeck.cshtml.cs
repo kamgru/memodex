@@ -19,6 +19,112 @@ public class EditDeck : PageModel
         public string? Description { get; init; }
     }
 
+    public class EditDeckWriter
+    {
+        private readonly ClaimsPrincipal _claimsPrincipal;
+        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+        public EditDeckWriter(
+            SqliteConnectionFactory sqliteConnectionFactory,
+            ClaimsPrincipal claimsPrincipal)
+        {
+            _sqliteConnectionFactory = sqliteConnectionFactory;
+            _claimsPrincipal = claimsPrincipal;
+        }
+
+        public async Task EditDeckAsync(
+            int deckId,
+            string name,
+            string? description)
+        {
+            await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(_claimsPrincipal, true);
+            await connection.OpenAsync();
+
+            SqliteCommand command = connection.CreateCommand(
+                """
+                UPDATE decks
+                SET name = @name, description = @description
+                WHERE id = @id
+                """);
+            command.Parameters.AddWithValue("@id", deckId);
+            command.Parameters.AddWithValue("@name", name);
+            command.Parameters.AddWithValue("@description", description is null ? DBNull.Value : description);
+            await command.ExecuteNonQueryAsync();
+            await connection.CloseAsync();
+        }
+    }
+
+    public class EditDeckReader
+    {
+        private readonly ClaimsPrincipal _claimsPrincipal;
+        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+        public EditDeckReader(
+            SqliteConnectionFactory sqliteConnectionFactory,
+            ClaimsPrincipal claimsPrincipal)
+        {
+            _sqliteConnectionFactory = sqliteConnectionFactory;
+            _claimsPrincipal = claimsPrincipal;
+        }
+
+        public async Task<FormInput?> GetDeckAsync(
+            int deckId)
+        {
+            await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(_claimsPrincipal);
+            await connection.OpenAsync();
+            await using SqliteCommand command = connection.CreateCommand(
+                """
+                SELECT name, description
+                FROM decks
+                WHERE id = @deckId;
+                """);
+            command.Parameters.AddWithValue("@deckId", deckId);
+            SqliteDataReader reader = await command.ExecuteReaderAsync();
+
+            if (!await reader.ReadAsync())
+            {
+                return null;
+            }
+
+            return new FormInput
+            {
+                Id = deckId,
+                Name = reader.GetString(0),
+                Description = reader.GetValue(1) as string ?? string.Empty
+            };
+        }
+    }
+
+    public class DeleteDeckWriter
+    {
+        private readonly ClaimsPrincipal _claimsPrincipal;
+        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
+
+        public DeleteDeckWriter(
+            SqliteConnectionFactory sqliteConnectionFactory,
+            ClaimsPrincipal claimsPrincipal)
+        {
+            _sqliteConnectionFactory = sqliteConnectionFactory;
+            _claimsPrincipal = claimsPrincipal;
+        }
+
+        public async Task DeleteDeckAsync(
+            int deckId)
+        {
+            await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(_claimsPrincipal, true);
+            await connection.OpenAsync();
+
+            SqliteCommand command = connection.CreateCommand(
+                """
+                DELETE FROM decks
+                WHERE id = @id;
+                """);
+            command.Parameters.AddWithValue("@id", deckId);
+            await command.ExecuteNonQueryAsync();
+            await connection.CloseAsync();
+        }
+    }
+
     private readonly SqliteConnectionFactory _sqliteConnectionFactory;
 
     public EditDeck(
@@ -77,111 +183,5 @@ public class EditDeck : PageModel
         this.AddNotification(NotificationType.Success, $"Deck {Input.Name} deleted.");
 
         return RedirectToPage("BrowseDecks");
-    }
-
-    public class EditDeckWriter
-    {
-        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
-        private readonly ClaimsPrincipal _claimsPrincipal;
-
-        public EditDeckWriter(
-            SqliteConnectionFactory sqliteConnectionFactory,
-            ClaimsPrincipal claimsPrincipal)
-        {
-            _sqliteConnectionFactory = sqliteConnectionFactory;
-            _claimsPrincipal = claimsPrincipal;
-        }
-
-        public async Task EditDeckAsync(
-            int deckId,
-            string name,
-            string? description)
-        {
-            await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(_claimsPrincipal, true);
-            await connection.OpenAsync();
-
-            SqliteCommand command = connection.CreateCommand(
-                """
-                UPDATE decks
-                SET name = @name, description = @description
-                WHERE id = @id
-                """);
-            command.Parameters.AddWithValue("@id", deckId);
-            command.Parameters.AddWithValue("@name", name);
-            command.Parameters.AddWithValue("@description", description is null ? DBNull.Value : description);
-            await command.ExecuteNonQueryAsync();
-            await connection.CloseAsync();
-        }
-    }
-
-    public class EditDeckReader
-    {
-        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
-        private readonly ClaimsPrincipal _claimsPrincipal;
-
-        public EditDeckReader(
-            SqliteConnectionFactory sqliteConnectionFactory,
-            ClaimsPrincipal claimsPrincipal)
-        {
-            _sqliteConnectionFactory = sqliteConnectionFactory;
-            _claimsPrincipal = claimsPrincipal;
-        }
-
-        public async Task<FormInput?> GetDeckAsync(
-            int deckId)
-        {
-            await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(_claimsPrincipal);
-            await connection.OpenAsync();
-            await using SqliteCommand command = connection.CreateCommand(
-                """
-                SELECT name, description
-                FROM decks
-                WHERE id = @deckId;
-                """);
-            command.Parameters.AddWithValue("@deckId", deckId);
-            SqliteDataReader reader = await command.ExecuteReaderAsync();
-
-            if (!await reader.ReadAsync())
-            {
-                return null;
-            }
-
-            return new FormInput
-            {
-                Id = deckId,
-                Name = reader.GetString(0),
-                Description = reader.GetValue(1) as string ?? string.Empty
-            };
-        }
-    }
-
-    public class DeleteDeckWriter
-    {
-        private readonly SqliteConnectionFactory _sqliteConnectionFactory;
-        private readonly ClaimsPrincipal _claimsPrincipal;
-
-        public DeleteDeckWriter(
-            SqliteConnectionFactory sqliteConnectionFactory,
-            ClaimsPrincipal claimsPrincipal)
-        {
-            _sqliteConnectionFactory = sqliteConnectionFactory;
-            _claimsPrincipal = claimsPrincipal;
-        }
-
-        public async Task DeleteDeckAsync(
-            int deckId)
-        {
-            await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(_claimsPrincipal, true);
-            await connection.OpenAsync();
-
-            SqliteCommand command = connection.CreateCommand(
-                """
-                DELETE FROM decks
-                WHERE id = @id;
-                """);
-            command.Parameters.AddWithValue("@id", deckId);
-            await command.ExecuteNonQueryAsync();
-            await connection.CloseAsync();
-        }
     }
 }

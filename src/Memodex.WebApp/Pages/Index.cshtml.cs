@@ -54,6 +54,7 @@ public class IndexModel : PageModel
         await using SqliteDataReader reader = await getUnfinishedChallengeStepsCommand.ExecuteReaderAsync();
         List<UnfinishedChallenge> unfinishedChallenges = new();
         while (await reader.ReadAsync())
+        {
             unfinishedChallenges.Add(new UnfinishedChallenge(
                 reader.GetInt32(0),
                 reader.GetDateTime(1),
@@ -61,6 +62,7 @@ public class IndexModel : PageModel
                 reader.GetString(3),
                 reader.GetInt32(4) + 1,
                 reader.GetInt32(5)));
+        }
 
         await using SqliteCommand getInReviewChallenges = connection.CreateCommand(
             """
@@ -78,11 +80,13 @@ public class IndexModel : PageModel
 
         List<InReviewChallenge> inReviewChallenges = new();
         while (await needsReviewReader.ReadAsync())
+        {
             inReviewChallenges.Add(new InReviewChallenge(
                 needsReviewReader.GetInt32(0),
                 needsReviewReader.GetDateTime(1),
                 needsReviewReader.GetString(2),
                 needsReviewReader.GetInt32(3)));
+        }
 
         await transaction.CommitAsync();
 

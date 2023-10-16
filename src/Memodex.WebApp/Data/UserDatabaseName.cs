@@ -3,7 +3,7 @@ namespace Memodex.WebApp.Data;
 public class UserDatabaseName
 {
     private readonly string _userDatabaseName;
-    
+
     public UserDatabaseName(
         string username)
     {
@@ -15,5 +15,8 @@ public class UserDatabaseName
         _userDatabaseName = $"mdx.{username.ToLowerInvariant()}.db";
     }
 
-    public override string ToString() => _userDatabaseName;
+    public override string ToString()
+    {
+        return _userDatabaseName;
+    }
 }

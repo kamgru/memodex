@@ -4,9 +4,22 @@ namespace Memodex.Tests.E2e.E2e;
 
 public class DeckExportTests : PageTest
 {
+    private class ExportedDeck
+    {
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public List<ExportedFlashcard> Flashcards { get; set; } = new();
+    }
+
+    private class ExportedFlashcard
+    {
+        public string Question { get; } = "";
+        public string Answer { get; } = "";
+    }
+
     private const string Password = "password";
-    private string _username = RandomString.Generate();
     private DbFixture _dbFixture = new();
+    private string _username = RandomString.Generate();
 
     [SetUp]
     public async Task Setup()
@@ -57,19 +70,6 @@ public class DeckExportTests : PageTest
         IDownload download = await waitForDownloadTask;
 
         Assert.That(download.SuggestedFilename, Is.EqualTo($"{deck.Name}.json"));
-    }
-
-    private class ExportedDeck
-    {
-        public string Name { get; set; } = "";
-        public string Description { get; set; } = "";
-        public List<ExportedFlashcard> Flashcards { get; set; } = new();
-    }
-
-    private class ExportedFlashcard
-    {
-        public string Question { get; init; } = "";
-        public string Answer { get; init; } = "";
     }
 
     [Test]

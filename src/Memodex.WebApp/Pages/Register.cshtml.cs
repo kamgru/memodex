@@ -79,7 +79,7 @@ public class Register : PageModel
             authProps);
 
         await _userDatabase.CreateAsync(principal);
-        
+
         return RedirectToPage("/Index");
     }
 }
