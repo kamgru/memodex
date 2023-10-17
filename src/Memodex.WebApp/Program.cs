@@ -74,7 +74,7 @@ app.UseRouting();
 CookiePolicyOptions cookiePolicyOptions = new()
 {
     MinimumSameSitePolicy = SameSiteMode.None,
-    Secure = CookieSecurePolicy.Always
+    Secure = CookieSecurePolicy.SameAsRequest
 };
 app.UseCookiePolicy(cookiePolicyOptions);
 app.UseAuthentication();
