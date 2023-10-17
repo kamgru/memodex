@@ -8,10 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.9"/>
-        <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.10"/>
-        <PackageReference Include="Microsoft.Identity.Web" Version="2.13.4"/>
-        <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.9" />
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.10" />
+        <PackageReference Include="Microsoft.Identity.Web" Version="2.13.4" />
+        <PackageReference Include="NLog" Version="5.2.5" />
+        <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.5" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -63,13 +65,13 @@
 
 
     <ItemGroup>
-        <_ContentIncludedByDefault Remove="wwwroot\js\Infrastructure\KeyboardInput.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\js\Infrastructure\KeyboardInput.js" />
     </ItemGroup>
 
 
     <ItemGroup>
-        <Folder Include="wwwroot\css\"/>
-        <Folder Include="wwwroot\js\"/>
+        <Folder Include="wwwroot\css\" />
+        <Folder Include="wwwroot\js\" />
     </ItemGroup>
 
 </Project>

@@ -3,14 +3,13 @@ using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.FileProviders;
+using NLog.Web;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddLogging(opt =>
-{
-    opt.ClearProviders();
-    opt.AddConsole();
-});
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
+
 builder.Services.AddRazorPages();
 builder.Services.AddSession();
 builder.Services.AddScoped<ProfileProvider>();
