@@ -6,7 +6,7 @@
     </LaunchOptions>
   </Playwright>
   <NUnit>
-    <WorkDirectory></WorkDirectory>
+    <WorkDirectory>/home/kamil/dev/memodex/src/Memodex.Tests.E2e/../../data</WorkDirectory>
   </NUnit>
   <TestRunParameters>
     <Parameter name="MemodexBaseUrl" value="http://localhost:5080" />
