@@ -51,11 +51,9 @@ IServiceProvider serviceProvider = serviceScope.ServiceProvider;
 MemodexDatabase memodexDatabase = serviceProvider.GetRequiredService<MemodexDatabase>();
 await memodexDatabase.EnsureExistsAsync();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -75,7 +73,7 @@ app.UseRouting();
 CookiePolicyOptions cookiePolicyOptions = new()
 {
     MinimumSameSitePolicy = SameSiteMode.Strict,
-    Secure = CookieSecurePolicy.Always
+    Secure = CookieSecurePolicy.SameAsRequest
 };
 app.UseCookiePolicy(cookiePolicyOptions);
 app.UseAuthentication();
