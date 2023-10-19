@@ -11,8 +11,7 @@ all your flashcard needs.
 ### Docker
 
 ```bash
-docker run -v mdxvol:/app/data --name memodex -d -p 5000:80 -e
-Media__Path=/app/data kamgru/memodex
+docker run -v mdxvol:/app/data --name memodex -d -p 5000:80 -e Media__Path=/app/data kamgru/memodex
 ```
 
 ### Docker Compose
