@@ -13,10 +13,9 @@ public class DeckExportTests : AuthenticatedPageTest
 
     private class ExportedFlashcard
     {
-        public string Question { get; set; } = "";
-        public string Answer { get; set; } = "";
+        public string Question { get; init; } = "";
+        public string Answer { get; init; } = "";
     }
-
 
     [Test]
     public async Task GivenExistingDeck_WhenUserExports_DownloadsJsonFile()
@@ -86,7 +85,7 @@ public class DeckExportTests : AuthenticatedPageTest
         string json = await File.ReadAllTextAsync("deck.json");
 
         ExportedDeck? deck = JsonSerializer.Deserialize<ExportedDeck>(json,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         Assert.Multiple(() =>
         {

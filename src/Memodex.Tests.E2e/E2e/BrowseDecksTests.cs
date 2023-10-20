@@ -2,7 +2,7 @@ namespace Memodex.Tests.E2e.E2e;
 
 [TestFixture]
 [Parallelizable(ParallelScope.Self)]
-public class BrowseDecksTests : AuthenticatedPageTest 
+public class BrowseDecksTests : AuthenticatedPageTest
 {
     [Test]
     public async Task BrowseDecks_DisplaysListOfDecks()

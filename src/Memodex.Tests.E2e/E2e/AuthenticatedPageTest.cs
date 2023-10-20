@@ -3,8 +3,8 @@ namespace Memodex.Tests.E2e.E2e;
 public abstract class AuthenticatedPageTest : PageTest
 {
     private const string Password = "password";
-    protected DbFixture DbFixture = new();
     private string _username = RandomString.Generate();
+    protected DbFixture DbFixture = new();
 
     [SetUp]
     public async Task Setup()
