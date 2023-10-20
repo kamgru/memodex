@@ -219,7 +219,7 @@ public class DeckManagementTests : AuthenticatedPageTest
     [Test]
     public async Task GivenDeckWithFlashcards_WhenUserAddsFlashcard_ItIsVisibleInFlashcardList()
     {
-        FakeDeck deck = (await DbFixture.SeedDecks(1)).Single();
+        FakeDeck deck = await DbFixture.CreateFakeDeck();
         string question = $"{RandomString.Generate(3)} {RandomString.Generate(5)}";
         string answer = $"{RandomString.Generate(8)} {RandomString.Generate(2)}";
 
@@ -255,5 +255,57 @@ public class DeckManagementTests : AuthenticatedPageTest
 
         await Expect(Page.GetByRole(AriaRole.List))
             .ToHaveTextAsync(new Regex($@"\s*{question}\s*{answer}"));
+    }
+
+    [Test]
+    public async Task GivenDeckWithFlashcards_WhenUserDeletesFlashcard_ItIsNotVisibleInFlashcardList()
+    {
+        FakeDeck deck = await DbFixture.CreateFakeDeck(flashcardCount: 1);
+        FakeFlashcard flashcard = deck.Flashcards.First();
+
+        await Page.GetByRole(AriaRole.Navigation)
+            .GetByRole(AriaRole.Link, new LocatorGetByRoleOptions { Name = "Decks" })
+            .ClickAsync();
+
+        ILocator deckList = Page.GetByRole(AriaRole.List, new PageGetByRoleOptions { Name = "deck list" });
+
+        await Expect(deckList)
+            .ToHaveTextAsync(new Regex($@"\s*{deck.Name}"));
+
+        await Page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { Name = "Edit Flashcards" })
+            .ClickAsync();
+
+        Page.Dialog += (
+            _,
+            dialog) =>
+        {
+            dialog.AcceptAsync();
+        };
+
+        await Page.GetByRole(AriaRole.Listitem)
+            .GetByRole(AriaRole.Button, new LocatorGetByRoleOptions { Name = "delete flashcard" })
+            .ClickAsync();
+
+        await Expect(Page.GetByRole(AriaRole.List))
+            .Not.ToHaveTextAsync(new Regex($@"\s*{flashcard.Question}\s*{flashcard.Answer}"));
+    }
+
+    [Test]
+    public async Task GivenDeckWithFlashcards_WhenUserClicksOnTitle_ChallengeStarts()
+    {
+        FakeDeck fakeDeck = await DbFixture.CreateFakeDeck();
+
+        await Page.GetByRole(AriaRole.Navigation)
+            .GetByRole(AriaRole.Link, new LocatorGetByRoleOptions { Name = "Decks" })
+            .ClickAsync();
+
+        await Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Start Challenge" })
+            .ClickAsync();
+
+        await Expect(Page)
+            .ToHaveURLAsync(new Regex(".*Engage[?]challengeId=[0-9]*", RegexOptions.IgnoreCase));
+
+        await Expect(Page.GetByRole(AriaRole.Heading, new PageGetByRoleOptions { Level = 2 }))
+            .ToHaveTextAsync($"Deck: {fakeDeck.Name}");
     }
 }

@@ -11,16 +11,20 @@ public class DeckExportTests : AuthenticatedPageTest
         public List<ExportedFlashcard> Flashcards { get; set; } = new();
     }
 
+    // ReSharper disable once ClassNeverInstantiated.Local
     private class ExportedFlashcard
     {
+        // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
         public string Question { get; init; } = "";
+
         public string Answer { get; init; } = "";
+        // ReSharper restore AutoPropertyCanBeMadeGetOnly.Local
     }
 
     [Test]
     public async Task GivenExistingDeck_WhenUserExports_DownloadsJsonFile()
     {
-        FakeDeck deck = (await DbFixture.SeedDecks(1)).Single();
+        FakeDeck deck = await DbFixture.CreateFakeDeck();
 
         await Page.GetByRole(AriaRole.Navigation)
             .GetByRole(AriaRole.Link, new LocatorGetByRoleOptions { Name = "Decks" })

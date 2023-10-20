@@ -22,6 +22,7 @@
                 string? deleteFlashcardUrl = Url.Page("EditFlashcards", "DeleteFlashcard", new { flashcardId = Model.Id });
             }
             <button class="btn-icon"
+                    aria-label="delete flashcard"
                     hx-post="@deleteFlashcardUrl"
                     hx-trigger="delete"
                     hx-confirm="Are you sure you want to delete this flashcard? This will also remove any challenge steps associated with it."
