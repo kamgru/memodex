@@ -2,45 +2,12 @@ namespace Memodex.Tests.E2e.E2e;
 
 [TestFixture]
 [Parallelizable(ParallelScope.Self)]
-public class BrowseDecksTests : PageTest
+public class BrowseDecksTests : AuthenticatedPageTest 
 {
-    private readonly string _username = RandomString.Generate();
-    private DbFixture _dbFixture = new();
-    private const string Password = "password";
-
-
-    [SetUp]
-    public async Task Setup()
-    {
-        _dbFixture = new DbFixture(_username);
-        await _dbFixture.EnsureUserExistsAsync(_username, Password);
-        await _dbFixture.CreateUserDb();
-
-        await Page.GotoAsync($"{Config.BaseUrl}/Login");
-
-        await Page.GetByLabel("Username")
-            .FillAsync(_username);
-
-        await Page.GetByLabel("Password", new PageGetByLabelOptions { Exact = true })
-            .FillAsync(Password);
-
-        await Page.GetByRole(AriaRole.Button)
-            .ClickAsync();
-
-        await Expect(Page)
-            .ToHaveURLAsync($"{Config.BaseUrl}/");
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        _dbFixture.Dispose();
-    }
-
     [Test]
     public async Task BrowseDecks_DisplaysListOfDecks()
     {
-        await _dbFixture.SeedDecks();
+        await DbFixture.SeedDecks();
 
         await Page.GotoAsync(Config.BaseUrl);
 
@@ -49,7 +16,7 @@ public class BrowseDecksTests : PageTest
             .ClickAsync();
 
         await Expect(Page)
-            .ToHaveURLAsync($"{Config.BaseUrl}/BrowseDecks");
+            .ToHaveURLAsync(new Regex(".*BrowseDecks"));
 
         ILocator listLocator = Page.GetByRole(AriaRole.List, new PageGetByRoleOptions { Name = "deck list" });
 

@@ -25,8 +25,8 @@ public class LoginTests : PageTest
         await Page.GetByRole(AriaRole.Button)
             .ClickAsync();
 
-        await Expect(Page)
-            .ToHaveURLAsync($"{Config.BaseUrl}/");
+        await Expect(Page.GetByRole(AriaRole.Heading))
+            .ToHaveTextAsync("Ready to Test Your Knowledge?");
     }
 
     [Test]

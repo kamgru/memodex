@@ -2,41 +2,8 @@ namespace Memodex.Tests.E2e.E2e;
 
 [TestFixture]
 [Parallelizable(ParallelScope.Self)]
-public class DeckManagementTests : PageTest
+public class DeckManagementTests : AuthenticatedPageTest
 {
-    private DbFixture _dbFixture = new();
-    private string _username = RandomString.Generate();
-    private const string Password = "password";
-
-    [SetUp]
-    public async Task Setup()
-    {
-        _username = RandomString.Generate();
-        _dbFixture = new DbFixture(_username);
-        await _dbFixture.EnsureUserExistsAsync(_username, Password);
-        await _dbFixture.CreateUserDb();
-
-        await Page.GotoAsync($"{Config.BaseUrl}/Login");
-
-        await Page.GetByLabel("Username")
-            .FillAsync(_username);
-
-        await Page.GetByLabel("Password", new PageGetByLabelOptions { Exact = true })
-            .FillAsync(Password);
-
-        await Page.GetByRole(AriaRole.Button)
-            .ClickAsync();
-
-        await Expect(Page)
-            .ToHaveURLAsync($"{Config.BaseUrl}/");
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        _dbFixture.Dispose();
-    }
-
     [Test]
     public async Task WhenDeckCreated_IsVisibleInDeckList()
     {
@@ -252,7 +219,7 @@ public class DeckManagementTests : PageTest
     [Test]
     public async Task GivenDeckWithFlashcards_WhenUserAddsFlashcard_ItIsVisibleInFlashcardList()
     {
-        FakeDeck deck = (await _dbFixture.SeedDecks(1)).Single();
+        FakeDeck deck = (await DbFixture.SeedDecks(1)).Single();
         string question = $"{RandomString.Generate(3)} {RandomString.Generate(5)}";
         string answer = $"{RandomString.Generate(8)} {RandomString.Generate(2)}";
 

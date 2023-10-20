@@ -25,8 +25,8 @@ public class RegisterTests : PageTest
         await Page.GetByRole(AriaRole.Button)
             .ClickAsync();
 
-        await Expect(Page)
-            .ToHaveURLAsync($"{Config.BaseUrl}/");
+        await Expect(Page.GetByRole(AriaRole.Heading))
+            .ToHaveTextAsync("Ready to Test Your Knowledge?");
 
         string databaseName = new UserDatabaseName(username).ToString();
         File.Delete(databaseName);
