@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Memodex.Tests.E2e.E2e;
+namespace Memodex.Tests.E2e;
 
 public class DeckExportTests : AuthenticatedPageTest
 {

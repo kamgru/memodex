@@ -1,4 +1,4 @@
-namespace Memodex.Tests.E2e.E2e;
+namespace Memodex.Tests.E2e;
 
 [TestFixture]
 [Parallelizable(ParallelScope.Self)]
