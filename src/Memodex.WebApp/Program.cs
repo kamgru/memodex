@@ -46,6 +46,12 @@ if (builder.Environment.IsDevelopment())
 
 WebApplication app = builder.Build();
 
+string? basePath = builder.Configuration.GetValue<string>("BasePath");
+if (!string.IsNullOrWhiteSpace(basePath))
+{
+    app.UsePathBase(basePath);
+}
+
 using IServiceScope serviceScope = app.Services.CreateScope();
 IServiceProvider serviceProvider = serviceScope.ServiceProvider;
 MemodexDatabase memodexDatabase = serviceProvider.GetRequiredService<MemodexDatabase>();

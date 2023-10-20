@@ -3,7 +3,7 @@
 <div hx-swap="outerHTML" hx-target="this">
     @Html.AntiForgeryToken()
     @{
-        const string updateFlashcardUrl = "/EditFlashcards?handler=UpdateFlashcard";
+        string? updateFlashcardUrl = Url.Page("EditFlashcards", "UpdateFlashcard");
     }
     <div class="text-gray-400 dark:text-slate-700 text-right pt-2">question @Model.OrdinalNumber</div>
     <div class="dark:text-gray-800 border rounded-xl shadow-xl mt-5 p-5 bg-white dark:bg-slate-800">
@@ -36,7 +36,7 @@
 
                 </button>
                 @{
-                    string editFlashcardUrl = $"EditFlashcards?handler=SingleFlashcard&flashcardId={Model.Id}";
+                    string? editFlashcardUrl = Url.Page("EditFlashcards", "SingleFlashcard", new { flashcardId = Model.Id });
                 }
                 <button type="button"
                         hx-get="@editFlashcardUrl"

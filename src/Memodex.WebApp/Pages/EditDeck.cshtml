@@ -57,7 +57,7 @@ focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 foc
             Update Deck
         </button>
         @{
-            string deleteDeckUrl = $"EditDeck?handler=DeleteDeck&deckId={Model.Input.Id}";
+            string? deleteDeckUrl = Url.Page("EditDeck", "DeleteDeck", new { deckId = Model.Input.Id });
         }
         <button type="submit" formaction="@deleteDeckUrl"
                 onclick="return confirm('Are you sure you want to delete this deck? This will also delete any challenges associated with it.');"

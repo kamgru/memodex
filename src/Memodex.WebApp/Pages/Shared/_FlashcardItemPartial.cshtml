@@ -7,7 +7,7 @@
         <div class="flex text-gray-400 dark:text-slate-700">
 
             @{
-                string editFlashcardUrl = $"EditFlashcards?handler=Edit&flashcardId={Model.Id}";
+                string? editFlashcardUrl = Url.Page("EditFlashcards", "Edit", new { flashcardId = Model.Id });
             }
             <button _="on click trigger edit"
                     hx-get="@editFlashcardUrl"
@@ -19,7 +19,7 @@
                 </svg>
             </button>
             @{
-                string deleteFlashcardUrl = $"EditFlashcards?handler=DeleteFlashcard&flashcardId={Model.Id}";
+                string? deleteFlashcardUrl = Url.Page("EditFlashcards", "DeleteFlashcard", new { flashcardId = Model.Id });
             }
             <button class="btn-icon"
                     hx-post="@deleteFlashcardUrl"
