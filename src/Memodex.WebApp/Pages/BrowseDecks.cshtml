@@ -24,10 +24,10 @@
     {
         <li class="flex justify-between gap-x-4 py-5">
             <div class="min-w-0 flex-auto">
-                <form method="post" action="/StartChallenge">
+                <form method="post" action="@Url.Page("StartChallenge")">
                     <input type="hidden" name="deckId" value="@deck.Id"/>
                     @Html.AntiForgeryToken()
-                    <button class="flex justify-between items-center space-x-2">
+                    <button class="flex justify-between items-center space-x-2" aria-label="start challenge">
 
                         <svg xmlns="http://www.w3.org/2000/svg"
                              fill="none" viewBox="0 0 24 24" stroke-width="1.5"

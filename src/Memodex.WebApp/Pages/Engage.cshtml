@@ -5,34 +5,29 @@
     Layout = "_Layout";
 }
 
-@if (Model.CurrentFlashcard is null || Model.Input is null)
-{
-    <span>error</span>
-}
-else
-{
-    <partial name="Shared/_FlashcardEngagePartial" model="Model.CurrentFlashcard"/>
-    <div class="flex flex-row justify-end">
-        <form method="post" class="flex mt-10 items-center" id="engage-controls-form">
-            <input type="hidden" asp-for="@Model.Input.ChallengeId" value="@Model.Input.ChallengeId"/>
-            <input type="hidden" asp-for="@Model.Input.FlashcardId" value="@Model.Input.FlashcardId"/>
-            <label class="mx-3 text-slate-500 dark:text-slate-600">
-                <input type="checkbox"
-                       asp-for="@Model.Input.NeedsReview"
-                       class="form-checkbox rounded mx-2"
-                       id="engage-controls-mark-checkbox">
-                mark for review
-            </label>
-            <button type="submit" class="px-3 py-1 rounded-xl bg-blue-400 text-gray-100 inline-block">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                     stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/>
-                </svg>
-            </button>
-        </form>
-    </div>
-    <div class="italic text-xs text-slate-400 dark:text-slate-700 invisible lg:visible">
-        <span>press R to toggle answer, M to mark for review, N for next flashcard</span>
-    </div>
-}
+<span data-input-context="engage"></span>
+<partial name="Shared/_FlashcardEngagePartial" model="Model.CurrentFlashcard"/>
+
+<div class="flex flex-row justify-end">
+    <form method="post" class="flex mt-10 items-center" id="engage-controls-form">
+        <input type="hidden" asp-for="@Model.Input!.ChallengeId" value="@Model.Input!.ChallengeId"/>
+        <input type="hidden" asp-for="@Model.Input!.FlashcardId" value="@Model.Input!.FlashcardId"/>
+        <label class="mx-3 text-slate-500 dark:text-slate-600">
+            <input type="checkbox"
+                   asp-for="@Model.Input!.NeedsReview"
+                   class="form-checkbox rounded mx-2"
+                   id="engage-controls-mark-checkbox">
+            mark for review
+        </label>
+        <button type="submit" class="px-3 py-1 rounded-xl bg-blue-400 text-gray-100 inline-block">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/>
+            </svg>
+        </button>
+    </form>
+</div>
+<div class="italic text-xs text-slate-400 dark:text-slate-700 invisible lg:visible">
+    <span>press R to toggle answer, M to mark for review, N for next flashcard</span>
+</div>

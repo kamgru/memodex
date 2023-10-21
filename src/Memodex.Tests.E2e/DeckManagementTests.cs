@@ -1,42 +1,9 @@
-namespace Memodex.Tests.E2e.E2e;
+namespace Memodex.Tests.E2e;
 
 [TestFixture]
 [Parallelizable(ParallelScope.Self)]
-public class DeckManagementTests : PageTest
+public class DeckManagementTests : AuthenticatedPageTest
 {
-    private DbFixture _dbFixture = new();
-    private string _username = RandomString.Generate();
-    private const string Password = "password";
-
-    [SetUp]
-    public async Task Setup()
-    {
-        _username = RandomString.Generate();
-        _dbFixture = new DbFixture(_username);
-        await _dbFixture.EnsureUserExistsAsync(_username, Password);
-        await _dbFixture.CreateUserDb();
-
-        await Page.GotoAsync($"{Config.BaseUrl}/Login");
-
-        await Page.GetByLabel("Username")
-            .FillAsync(_username);
-
-        await Page.GetByLabel("Password", new PageGetByLabelOptions { Exact = true })
-            .FillAsync(Password);
-
-        await Page.GetByRole(AriaRole.Button)
-            .ClickAsync();
-
-        await Expect(Page)
-            .ToHaveURLAsync($"{Config.BaseUrl}/");
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        _dbFixture.Dispose();
-    }
-
     [Test]
     public async Task WhenDeckCreated_IsVisibleInDeckList()
     {
@@ -252,7 +219,7 @@ public class DeckManagementTests : PageTest
     [Test]
     public async Task GivenDeckWithFlashcards_WhenUserAddsFlashcard_ItIsVisibleInFlashcardList()
     {
-        FakeDeck deck = (await _dbFixture.SeedDecks(1)).Single();
+        FakeDeck deck = await DbFixture.CreateFakeDeck();
         string question = $"{RandomString.Generate(3)} {RandomString.Generate(5)}";
         string answer = $"{RandomString.Generate(8)} {RandomString.Generate(2)}";
 
@@ -288,5 +255,57 @@ public class DeckManagementTests : PageTest
 
         await Expect(Page.GetByRole(AriaRole.List))
             .ToHaveTextAsync(new Regex($@"\s*{question}\s*{answer}"));
+    }
+
+    [Test]
+    public async Task GivenDeckWithFlashcards_WhenUserDeletesFlashcard_ItIsNotVisibleInFlashcardList()
+    {
+        FakeDeck deck = await DbFixture.CreateFakeDeck(flashcardCount: 1);
+        FakeFlashcard flashcard = deck.Flashcards.First();
+
+        await Page.GetByRole(AriaRole.Navigation)
+            .GetByRole(AriaRole.Link, new LocatorGetByRoleOptions { Name = "Decks" })
+            .ClickAsync();
+
+        ILocator deckList = Page.GetByRole(AriaRole.List, new PageGetByRoleOptions { Name = "deck list" });
+
+        await Expect(deckList)
+            .ToHaveTextAsync(new Regex($@"\s*{deck.Name}"));
+
+        await Page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { Name = "Edit Flashcards" })
+            .ClickAsync();
+
+        Page.Dialog += (
+            _,
+            dialog) =>
+        {
+            dialog.AcceptAsync();
+        };
+
+        await Page.GetByRole(AriaRole.Listitem)
+            .GetByRole(AriaRole.Button, new LocatorGetByRoleOptions { Name = "delete flashcard" })
+            .ClickAsync();
+
+        await Expect(Page.GetByRole(AriaRole.List))
+            .Not.ToHaveTextAsync(new Regex($@"\s*{flashcard.Question}\s*{flashcard.Answer}"));
+    }
+
+    [Test]
+    public async Task GivenDeckWithFlashcards_WhenUserClicksOnTitle_ChallengeStarts()
+    {
+        FakeDeck fakeDeck = await DbFixture.CreateFakeDeck();
+
+        await Page.GetByRole(AriaRole.Navigation)
+            .GetByRole(AriaRole.Link, new LocatorGetByRoleOptions { Name = "Decks" })
+            .ClickAsync();
+
+        await Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Start Challenge" })
+            .ClickAsync();
+
+        await Expect(Page)
+            .ToHaveURLAsync(new Regex(".*Engage[?]challengeId=[0-9]*", RegexOptions.IgnoreCase));
+
+        await Expect(Page.GetByRole(AriaRole.Heading, new PageGetByRoleOptions { Level = 2 }))
+            .ToHaveTextAsync($"Deck: {fakeDeck.Name}");
     }
 }

@@ -1,7 +1,15 @@
 @model EditFlashcards.PageInfo
 
 @{
-    string url = $"/EditFlashcards?handler=Flashcards&deckId={Model.DeckId}&pageNumber={Model.Data.Page + 1}&itemsPerPage={Model.ItemsPerPage}";
+    string? url = Url.Page(
+        "EditFlashcards",
+        "Flashcards",
+        new
+        {
+            deckId = Model.DeckId,
+            pageNumber = Model.Data.Page + 1,
+            itemsPerPage = Model.ItemsPerPage
+        });
 }
 <div hx-get="@url"
      hx-trigger="revealed"
