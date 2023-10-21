@@ -72,20 +72,21 @@ public class DbFixture : IDisposable
         string deckName = "Fake Deck",
         int flashcardCount = 35)
     {
+        flashcardCount = Math.Clamp(flashcardCount, 1, 35);
         await using SqliteConnection connection = CreateConnectionForUser();
         await connection.OpenAsync();
         await using DbTransaction transaction = await connection.BeginTransactionAsync();
         await using SqliteCommand deckCmd = connection.CreateCommand(
             """
-            INSERT INTO decks (name, description)
-            VALUES (@deckName, 'Test Deck Description')
+            INSERT INTO decks (name, description, flashcardCount)
+            VALUES (@deckName, 'Test Deck Description', @flashcardCount)
             RETURNING id;
             """);
         deckCmd.Parameters.AddWithValue("@deckName", deckName);
+        deckCmd.Parameters.AddWithValue("@flashcardCount", flashcardCount);
         int deckId = Convert.ToInt32(await deckCmd.ExecuteScalarAsync());
 
         List<FakeFlashcard> fakeFlashcards = new();
-        flashcardCount = Math.Clamp(flashcardCount, 1, 35);
         for (int i = 0; i < flashcardCount; i++)
         {
             string question = $"Question {i + 1}";

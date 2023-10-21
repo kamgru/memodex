@@ -42,15 +42,22 @@ public class CompleteChallenge : PageModel
             command.Parameters.AddWithValue("@id", challengeId);
             await using SqliteDataReader reader = await command.ExecuteReaderAsync();
 
+            ChallengeItem? challengeItem;
+
             if (!await reader.ReadAsync())
             {
-                return null;
+                challengeItem = null;
+            }
+            else
+            {
+                challengeItem = new ChallengeItem(
+                    challengeId,
+                    reader.GetString(1),
+                    (ChallengeState)reader.GetInt32(2));
             }
 
-            return new ChallengeItem(
-                challengeId,
-                reader.GetString(1),
-                (ChallengeState)reader.GetInt32(2));
+            await connection.CloseAsync();
+            return challengeItem;
         }
     }
 
@@ -67,33 +74,15 @@ public class CompleteChallenge : PageModel
     public async Task<IActionResult> OnGetAsync(
         int challengeId)
     {
-        await using SqliteConnection connection = _sqliteConnectionFactory.CreateForUser(User);
-        await connection.OpenAsync();
-        const string sql =
-            """
-            SELECT challenge.id, deck.name, challenge.state FROM challenges challenge
-            JOIN main.decks deck on deck.id = challenge.deckId
-            WHERE challenge.id = @id
-            LIMIT 1;
-            """;
-        await using SqliteCommand command = connection.CreateCommand();
-        command.CommandText = sql;
-        command.Parameters.AddWithValue("@id", challengeId);
-        await using SqliteDataReader reader = await command.ExecuteReaderAsync();
-        if (!await reader.ReadAsync())
+        ChallengeReader challengeReader = new(_sqliteConnectionFactory, User);
+        ChallengeItem? challengeItem = await challengeReader.ReadChallengeAsync(challengeId);
+
+        if (challengeItem is null or { State: ChallengeState.InProgress })
         {
-            throw new InvalidOperationException($"Challenge {challengeId} not found");
+            return RedirectToPage("Index");
         }
 
-        if (reader.GetInt32(2) == (int)ChallengeState.InProgress)
-        {
-            throw new InvalidOperationException($"Challenge {challengeId} is in progress");
-        }
-
-        CompletedChallenge = new ChallengeItem(
-            challengeId,
-            reader.GetString(1),
-            (ChallengeState)reader.GetInt32(2));
+        CompletedChallenge = challengeItem;
 
         return Page();
     }
