@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.FileProviders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddLogging(opt =>
 {
     opt.ClearProviders();
@@ -44,9 +43,14 @@ if (builder.Environment.IsDevelopment())
         .AddRazorRuntimeCompilation();
 }
 
+string? basePath = builder.Configuration.GetValue<string>("BasePath");
+if (!string.IsNullOrWhiteSpace(basePath))
+{
+    builder.Host.UseContentRoot(basePath);
+}
+
 WebApplication app = builder.Build();
 
-string? basePath = builder.Configuration.GetValue<string>("BasePath");
 if (!string.IsNullOrWhiteSpace(basePath))
 {
     app.UsePathBase(basePath);
