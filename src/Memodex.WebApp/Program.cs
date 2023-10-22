@@ -2,6 +2,7 @@ using Memodex.WebApp.Data;
 using Memodex.WebApp.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.FileProviders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -43,17 +44,14 @@ if (builder.Environment.IsDevelopment())
         .AddRazorRuntimeCompilation();
 }
 
+WebApplication app = builder.Build();
+
 string? basePath = builder.Configuration.GetValue<string>("BasePath");
 if (!string.IsNullOrWhiteSpace(basePath))
 {
-    builder.Host.UseContentRoot(basePath);
-}
-
-WebApplication app = builder.Build();
-
-if (!string.IsNullOrWhiteSpace(basePath))
-{
     app.UsePathBase(basePath);
+    app.UseRewriter(new RewriteOptions()
+        .AddRedirect("favicon.ico", $"{basePath}/favicon.ico"));
 }
 
 using IServiceScope serviceScope = app.Services.CreateScope();
