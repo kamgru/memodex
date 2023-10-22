@@ -50,8 +50,6 @@ string? basePath = builder.Configuration.GetValue<string>("BasePath");
 if (!string.IsNullOrWhiteSpace(basePath))
 {
     app.UsePathBase(basePath);
-    app.UseRewriter(new RewriteOptions()
-        .AddRewrite("favicon.ico", $"{basePath}/favicon.ico", true));
 }
 
 using IServiceScope serviceScope = app.Services.CreateScope();
