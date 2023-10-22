@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.FileProviders;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddLogging(opt =>
 {
     opt.ClearProviders();
