@@ -51,7 +51,7 @@ if (!string.IsNullOrWhiteSpace(basePath))
 {
     app.UsePathBase(basePath);
     app.UseRewriter(new RewriteOptions()
-        .AddRedirect("favicon.ico", $"{basePath}/favicon.ico"));
+        .AddRewrite("favicon.ico", $"{basePath}/favicon.ico", true));
 }
 
 using IServiceScope serviceScope = app.Services.CreateScope();
