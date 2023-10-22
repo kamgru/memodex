@@ -32,6 +32,8 @@ volumes:
   memodex:
 ```
 
+## How to build
+
 ### Build Docker Image from source
 
 ```bash
@@ -105,3 +107,37 @@ dotnet test --settings Memodex.Tests.E2e/.runsettings --filter E2e
                 |-- Test Runner
 </pre>
 Add path to the `src/Memodex.Tests.E2e/.runsettings` file to `Test Settings`
+
+## How to host behind Nginx reverse proxy
+
+The bare bones configuration for hosting behind Nginx reverse proxy, assuming
+the app is running on port 5000 and the subpath is `/memodex`.
+
+```nginx
+http {
+        map $http_connection $connection_upgrade {
+                "~*Upgrade" $http_connection;
+                default keep-alive;
+        }
+
+        server {
+                listen 80;
+                server_name example.com;
+                location /memodex {
+                        proxy_pass              http://127.0.0.1:5000;
+                        proxy_http_version      1.1;
+                        proxy_set_header        Upgrade $http_upgrade;
+                        proxy_set_header        Connection $connection_upgrade;
+                        proxy_set_header        Host $host;
+                        proxy_cache_bypass      $http_upgrade;
+                        proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_set_header        X-Forwarded-Proto $scheme;
+                }
+        }
+```
+
+In order to run the app on a subpath, set the `PathBase` 
+environment variable to the subpath, depending on the hosting method:
+- Docker: `-e PathBase=/memodex`
+- Docker Compose: `environment: - PathBase=/memodex`
+- `appsettings.json`: `"PathBase": "/memodex"
